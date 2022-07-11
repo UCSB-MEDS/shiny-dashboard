@@ -2,10 +2,10 @@
 # header, sidebar, body
 dashboardPage(
   dashboardHeader(
-    
+    title = "Bren Dashboard"
   ), # EO dashboardHeader
   dashboardSidebar(
-    
+    title = "Menu"
   ), # EO dashboardSideBar
   
   dashboardBody(
