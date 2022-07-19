@@ -61,13 +61,12 @@ dashboardPage(
           tabName = "demo_5yr",
           text = "5 Year Demographics"
         ) # EO sub 5 yr demo 
-      )#, # EO student demographics menuItem
+      ), # EO student demographics menuItem
       # hidden demo menuItem ----
-      # hidden(menuItem("hidden_demo",
-      #                 tabName = "hidden_demo")
-      #        ) # EO hidden demo menuItem
-      
-      
+      hidden(menuItem("hidden_demo",
+                      tabName = "hidden_demo")
+             ) # EO hidden demo menuItem
+
     ) # EO sidebarMenu
   ), # EO dashboardSidebar
   
@@ -89,10 +88,8 @@ dashboardPage(
           infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
         ), # EO FR first row
         fluidRow(
-          box(
-            title = "Title 1", width = 12, solidHeader = TRUE, status = "primary",
-            "Box content"
-          )
+          box(title = "Title 1", width = 12, solidHeader = TRUE, status = "primary",
+            "Box content")
         ), # EO FR second row
         fluidRow(
           box(title = "Title 2", "box 2 content"),
@@ -104,7 +101,10 @@ dashboardPage(
       # tabs career ----
       tabItem(
         tabName = "hidden_career",
-        h2("Career Outcomes Home Content")
+        h2("Career Outcomes Home Content"),
+        fluidRow(
+          
+        ) # EO FR first row
       ), # EO career home tabItem
       tabItem(
         tabName = "curr_career",
@@ -118,7 +118,7 @@ dashboardPage(
       
       # tabs demo ----
       tabItem(
-        tabName = "demo_home",
+        tabName = "hidden_demo",
         h2("Student Demographics Home Content")
       ), # EO demo home tabItem
       tabItem(
