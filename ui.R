@@ -8,7 +8,6 @@ dashboardPage(
   
   # SIDEBAR ----
   dashboardSidebar(
-    title = "Menu",
     sidebarMenu(
       id = "sidebarID",
       
@@ -62,11 +61,11 @@ dashboardPage(
           tabName = "demo_5yr",
           text = "5 Year Demographics"
         ) # EO sub 5 yr demo 
-      ), # EO student demographics menuItem
+      )#, # EO student demographics menuItem
       # hidden demo menuItem ----
-      hidden(menuItem("hidden_demo",
-                      tabName = "hidden_demo")
-             ) # EO hidden demo menuItem
+      # hidden(menuItem("hidden_demo",
+      #                 tabName = "hidden_demo")
+      #        ) # EO hidden demo menuItem
       
       
     ) # EO sidebarMenu
@@ -81,7 +80,24 @@ dashboardPage(
       # tabs curr yr ----
       tabItem(
         tabName = "curr_yr",
-        h2("2021 Dashboard Content")
+        h2("2021 Dashboard Content"),
+        # curr yr db layout
+        fluidRow(
+          # Note(HD): value boxes are larger than info boxes
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+        ), # EO FR first row
+        fluidRow(
+          box(
+            title = "Title 1", width = 12, solidHeader = TRUE, status = "primary",
+            "Box content"
+          )
+        ), # EO FR second row
+        fluidRow(
+          box(title = "Title 2", "box 2 content"),
+          box(title = "Title 3", "box 3 content")
+        ) # EO FR third row
       ), # EO curr yr tabItem
       
       
@@ -102,7 +118,7 @@ dashboardPage(
       
       # tabs demo ----
       tabItem(
-        tabName = "hidden_demo",
+        tabName = "demo_home",
         h2("Student Demographics Home Content")
       ), # EO demo home tabItem
       tabItem(

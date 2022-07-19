@@ -8,11 +8,11 @@ server <- function(input, output, session){
 
   }) # EO OE
   
-  observeEvent(input$sidebarItemExpanded, {
-    if(input$sidebarItemExpanded == "DEMO"){
-      updateTabItems(session, "sidebarID", selected = "hidden_demo")
-    }
-    
-  }) # EO OE
+  # observeEvent(input$sidebarItemExpanded, {
+  #   if(input$sidebarItemExpanded == "DEMO"){
+  #     updateTabItems(session, "sidebarID", selected = "hidden_demo")
+  #   }
+  #   
+  # }) # EO OE
   
 } # EO server
