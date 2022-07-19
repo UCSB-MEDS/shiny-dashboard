@@ -8,9 +8,9 @@ dashboardPage(
   
   # SIDEBAR ----
   dashboardSidebar(
-    id = "tabs",
     title = "Menu",
     sidebarMenu(
+      id = "sidebarID",
       # curr yr ----
       menuItem(
         tabName = "curr_yr",
@@ -20,28 +20,35 @@ dashboardPage(
       
       # career ----
       menuItem(
+        id = "career_id",
+        expandedName = "CAREER",
         tabName = "career_home",
         text = "Career Outcomes 101",
         icon = icon("th"),
         
-        # curr career ----
+        # sub curr career ----
         menuSubItem(
           tabName = "curr_career",
           text = "Current Career Data"
-        ), # EO curr_career menuSubItem
+        ), # EO sub curr career menuSubItem
         
-        # 5 yr career ----
+        # sub 5 yr career ----
         menuSubItem(
           tabName = "career_5yr",
           text = "5 Year Career Data"
-        ) # EO 5 yr career
-      ) # EO career menuItem
+        ) # EO sub 5 yr career
+      ), # EO career menuItem
+      
+      hidden(menuItem("hidden_career", 
+                      tabName = "hidden_career")
+             ) # EO hidden_career menuItem
       
     ) # EO sidebarMenu
   ), # EO dashboardSidebar
   
   # BODY ----
   dashboardBody(
+    useShinyjs(),
     tabItems(
       # Note(HD): tabName must match tabName in menuItem
       tabItem(
@@ -50,19 +57,19 @@ dashboardPage(
       ), # EO curr yr tabItem
       
       tabItem(
-        tabName = "career_home",
+        tabName = "hidden_career",
         h2("Career Outcomes Home Content")
       ), # EO career home tabItem
       
       tabItem(
         tabName = "curr_career",
         "Current Career Content"
-      ), # EO curr career tabItem
+      ), # EO sub curr career tabItem
       
       tabItem(
         tabName = "career_5yr",
         "5 yr Career Content"
-      ) # EO 5 yr career tabItem
+      ) # EO sub 5 yr career tabItem
     ) # EO tabItems
     
   ) # EO dashboardBody
