@@ -119,7 +119,9 @@ dashboardPage(
           box(width = 6, title = "Title 2", "box 2 content")
         ), # EO FR first row
         fluidRow(
-          box(width = 12, title = "Title 3", "box 3 content")
+          tabBox(width = 12, title = "Title 3",
+                 tabPanel("Tab1", "First tab content"),
+                 tabPanel("Tab2", "Tab content 2"))
         ) # EO FR second row
       ), # EO sub curr career tabItem
       tabItem(
@@ -130,7 +132,9 @@ dashboardPage(
           box(width = 6, title = "Title 2", "box 2 content")
         ), # EO FR first row
         fluidRow(
-          box(width = 12, title = "Title 3", "box 3 content")
+          tabBox(width = 12, title = "Title 3",
+                 tabPanel("Tab1", "First tab content"),
+                 tabPanel("Tab2", "Tab content 2"))
         ) # EO FR second row
       ), # EO sub 5 yr career tabItem
       
@@ -156,7 +160,9 @@ dashboardPage(
           box(width = 6, title = "Title 2", "box 2 content")
         ), # EO FR first row
         fluidRow(
-          box(width = 12, title = "Title 3", "box 3 content")
+          tabBox(width = 12, title = "Title 3",
+                 tabPanel("Tab1", "First tab content"),
+                 tabPanel("Tab2", "Tab content 2"))
         ) # EO FR second row
       ), # EO curr student demo tabItem
       tabItem(
@@ -167,7 +173,9 @@ dashboardPage(
           box(width = 6, title = "Title 2", "box 2 content")
         ), # EO FR first row
         fluidRow(
-          box(width = 12, title = "Title 3", "box 3 content")
+          tabBox(width = 12, title = "Title 3",
+                 tabPanel("Tab1", "First tab content"),
+                 tabPanel("Tab2", "Tab content 2"))
         ) # EO FR second row
       ) # EO 5 yr demo tabItem
   
