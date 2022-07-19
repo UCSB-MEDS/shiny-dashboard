@@ -17,7 +17,7 @@ dashboardPage(
       menuItem(
         tabName = "curr_yr",
         text = "2021 Data",
-        icon = icon("dashboard")
+        icon = icon("star", lib = "glyphicon")
       ), # EO curr yr menuItem
       
       
@@ -55,12 +55,12 @@ dashboardPage(
         # sub curr yr demo ----
         menuSubItem(
           tabName = "curr_demo",
-          text = "Current Student Demographics"
+          text = "Current Demographics"
           ), # EO sub curr yr demo
         # sub 5 yr demo ----
         menuSubItem(
           tabName = "demo_5yr",
-          text = "5 Year Student Demographics"
+          text = "5 Year Demographics"
         ) # EO sub 5 yr demo 
       ), # EO student demographics menuItem
       # hidden demo menuItem ----
