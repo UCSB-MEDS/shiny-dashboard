@@ -103,31 +103,72 @@ dashboardPage(
         tabName = "hidden_career",
         h2("Career Outcomes Home Content"),
         fluidRow(
-          
-        ) # EO FR first row
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 1", "box 1 content")
+        ) # EO FR second row
       ), # EO career home tabItem
       tabItem(
         tabName = "curr_career",
-        "Current Career Content"
+        h3("Current Career Content"),
+        fluidRow(
+          box(width = 6, title = "Title 1", "box 1 content"),
+          box(width = 6, title = "Title 2", "box 2 content")
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 3", "box 3 content")
+        ) # EO FR second row
       ), # EO sub curr career tabItem
       tabItem(
         tabName = "career_5yr",
-        "5 yr Career Content"
+        h3("5 yr Career Content"),
+        fluidRow(
+          box(width = 6, title = "Title 1", "box 1 content"),
+          box(width = 6, title = "Title 2", "box 2 content")
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 3", "box 3 content")
+        ) # EO FR second row
       ), # EO sub 5 yr career tabItem
       
       
       # tabs demo ----
       tabItem(
         tabName = "hidden_demo",
-        h2("Student Demographics Home Content")
+        h2("Student Demographics Home Content"),
+        fluidRow(
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
+          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 1", "box 1 content")
+        ) # EO FR second row
       ), # EO demo home tabItem
       tabItem(
         tabName = "curr_demo",
-        "Current Student Demographics Content"
+        h3("Current Student Demographics Content"),
+        fluidRow(
+          box(width = 6, title = "Title 1", "box 1 content"),
+          box(width = 6, title = "Title 2", "box 2 content")
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 3", "box 3 content")
+        ) # EO FR second row
       ), # EO curr student demo tabItem
       tabItem(
         tabName = "demo_5yr",
-        "5 yr Student Demographics Content"
+        h3("5 yr Student Demographics Content"),
+        fluidRow(
+          box(width = 6, title = "Title 1", "box 1 content"),
+          box(width = 6, title = "Title 2", "box 2 content")
+        ), # EO FR first row
+        fluidRow(
+          box(width = 12, title = "Title 3", "box 3 content")
+        ) # EO FR second row
       ) # EO 5 yr demo tabItem
   
     ) # EO tabItems
