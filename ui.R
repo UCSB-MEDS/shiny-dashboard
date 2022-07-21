@@ -83,7 +83,7 @@ dashboardPage(
         # curr yr db layout
         fluidRow(
           # Note(HD): value boxes are larger than info boxes
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          valueBoxOutput(outputId = "military_stat"), 
           infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
           infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
         ), # EO FR first row
