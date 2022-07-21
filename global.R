@@ -6,6 +6,7 @@ library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
 library(shinyjs)
+library(lubridate)
 
 # IMPORT DATA ----
 apps_clean <- readRDS("data/apps_all_clean.rds")

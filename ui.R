@@ -84,15 +84,20 @@ dashboardPage(
         fluidRow(
           # Note(HD): value boxes are larger than info boxes
           valueBoxOutput(outputId = "military_stat"), 
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+          infoBoxOutput(outputId = "undocumented_stat"),
+          infoBoxOutput(outputId = "urm_stat")
         ), # EO FR first row
         fluidRow(
-          box(title = "Title 1", width = 12, solidHeader = TRUE, status = "primary",
-            "Box content")
+          box(title = "Graduate Program Cohort Sizes (2021)", 
+              width = 12, 
+              solidHeader = TRUE, 
+              status = "primary",
+            plotOutput(outputId = "program_size_curr"))
         ), # EO FR second row
         fluidRow(
-          box(title = "Title 2", "box 2 content"),
+          box(title = "MESM Applicant / Admit / Take",
+              plotOutput(outputId = "mesm_admit_stats")),
+          
           box(title = "Title 3", "box 3 content")
         ) # EO FR third row
       ), # EO curr yr tabItem
