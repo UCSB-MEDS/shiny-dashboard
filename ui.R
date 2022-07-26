@@ -82,23 +82,25 @@ dashboardPage(
         h2("2021 Dashboard Content"),
         # curr yr db layout
         fluidRow(
-          # Note(HD): value boxes are larger than info boxes
-          valueBoxOutput(outputId = "military_stat"), 
-          infoBoxOutput(outputId = "undocumented_stat"),
-          infoBoxOutput(outputId = "urm_stat")
+          box(title = "Get to know our students",
+              width = 12,
+              solidHeader = TRUE,
+              status = "navy",
+              "Here is some text explaining the dashboard, 
+              why it's important, and what a user can do with it")
         ), # EO FR first row
         fluidRow(
-          box(title = "Graduate Program Cohort Sizes (2021)", 
-              width = 12, 
-              solidHeader = TRUE, 
-              status = "primary",
-            plotOutput(outputId = "program_size_curr"))
+          valueBoxOutput(outputId = "military_stat"), 
+          valueBoxOutput(outputId = "undocumented_stat"),
+          valueBoxOutput(outputId = "urm_stat")
         ), # EO FR second row
         fluidRow(
-          box(title = "MESM Applicant / Admit / Take",
-              plotOutput(outputId = "mesm_admit_stats")),
-          
-          box(title = "Title 3", "box 3 content")
+          tabBox(width = 12, title = "Bren at a Glance",
+                 tabPanel("Graduate Program Cohort Sizes (2021)",
+                          plotOutput(outputId = "program_size_curr")),
+                 tabPanel("Applicant/Admit/Take",
+                          plotOutput(outputId = "mesm_admit_stats"))
+          ) # EO tabbox
         ) # EO FR third row
       ), # EO curr yr tabItem
       

@@ -35,7 +35,8 @@ server <- function(input, output, session){
   output$military_stat <- renderValueBox({
     valueBox("Students who have served in military",
              value = round((military_status$military_status_count / 119) * 100),
-             icon = icon("flag"))
+             icon = icon("flag"),
+             color = "aqua")
     
   })
   
@@ -54,11 +55,11 @@ server <- function(input, output, session){
     summarize(undocumented_count = n()) %>% 
     filter(undocumented_status == "Y")
   # undocumented output
-  output$undocumented_stat <- renderInfoBox({
-    infoBox(title = paste0("Undocumented ", "\n", "students"), # Note(HD): paste doesn't seem to work
-            value = undocumented$undocumented_count, 
-            icon = icon("user"), 
-            fill = TRUE)
+  output$undocumented_stat <- renderValueBox({
+    valueBox("Undocumented students",
+             value = undocumented$undocumented_count,
+             icon = icon("user"),
+             color = "green")
   })
   
   ## SO urm stat ----
@@ -101,10 +102,11 @@ server <- function(input, output, session){
     group_by(urm_status) %>% 
     summarize(count = n())
   # urm output
-  output$urm_stat <- renderInfoBox({
-    infoBox("URM Students", 
-            value = urm$count, 
-            icon = icon("user"))
+  output$urm_stat <- renderValueBox({
+    valueBox("URM Students", 
+             value = urm$count,
+             icon = icon("user"),
+             color = "blue")
   })
   
   ## SO program size curr ----
@@ -141,7 +143,7 @@ server <- function(input, output, session){
       theme(legend.position = "none")
   })
   
-  # SO MESM admit stats
+  ## SO MESM admit stats ----
   output$mesm_admit_stats <- renderPlot({
     ay_year_df <- apps_clean %>%
       # convert UNIX timestamp to datetime
@@ -226,7 +228,8 @@ server <- function(input, output, session){
                position = "dodge") +
       coord_flip() +
       scale_x_continuous(breaks = seq(min(admissions_stacked$ay_year),
-                                      max(admissions_stacked$ay_year))) +
+                                      max(admissions_stacked$ay_year)),
+                         trans = "reverse") +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
       scale_fill_manual(
