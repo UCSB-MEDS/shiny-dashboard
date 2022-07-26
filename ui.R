@@ -25,7 +25,7 @@ dashboardPage(
         id = "career_id",
         expandedName = "CAREER",
         tabName = "career_home",
-        text = "Career Outcomes",
+        text = "Career Placements",
         icon = icon("road", lib = "glyphicon"),
         # sub curr career ----
         menuSubItem(
@@ -106,16 +106,37 @@ dashboardPage(
       # tabs career ----
       tabItem(
         tabName = "hidden_career",
-        h2("Career Outcomes Home Content"),
+        h2("Career Placement Home Content"),
         fluidRow(
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+          ## valueBox stats ----
+          valueBox(paste0(88, "%"), 
+                   "LANDED THAT DREAM JOB",
+                   icon = icon("star"), 
+                   color = "aqua"
+                   ), # EO valueBox 88% stat
+          valueBox(paste0("$", 70, ",", 730),
+                  "AVERAGE STARTING SALARY",
+                  icon = icon("usd"),
+                  color = "green"
+                  ), # EO valueBox starting salary stat
+          valueBox(paste0(76, "%"),
+                   "STAY CONNECTED",
+                   icon = icon("globe"),
+                   color = "blue"
+                   ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
-          box(width = 12, title = "Title 1", "box 1 content")
+          ## home page map ----
+          box(width = 12, 
+              solidHeader = TRUE,
+              status = "primary",
+              title = "Bren Alumni Solve Environmental Problems in Every Sector", 
+              "box 1 content",
+              leafletOutput(outputId = "car_sectorMap")
+              ) # EO box career home
         ) # EO FR second row
       ), # EO career home tabItem
+      ## curr car page ----
       tabItem(
         tabName = "curr_career",
         h3("Current Career Content"),
@@ -125,10 +146,15 @@ dashboardPage(
         ), # EO FR first row
         fluidRow(
           tabBox(width = 12, title = "Title 3",
-                 tabPanel("Tab1", "First tab content"),
-                 tabPanel("Tab2", "Tab content 2"))
+                 tabPanel("Source", "Where are MESM graduates learning about jobs?",
+                          plotOutput(outputId = "curr_mesm_source")
+                          ), # EO curr mesm source tabPanel
+                 tabPanel("Placement Status", "What kind of jobs are MESM graduates obtaining 6 months after graduation?",
+                          plotOutput(outputId = "curr_mesm_status"))
+                 ) # EO curr mesm place status tabPanel
         ) # EO FR second row
       ), # EO sub curr career tabItem
+      ## 5 yr car page ----
       tabItem(
         tabName = "career_5yr",
         h3("5 yr Career Content"),
