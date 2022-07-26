@@ -243,6 +243,179 @@ server <- function(input, output, session){
            y = NULL,
            fill = NULL)
   })
+  
+  
+  # CAREER HOME DB ----
+  
+  ## SO sector map ----
+  output$car_sectorMap <- renderLeaflet({
+    
+    # ca / out of state / international
+    us_names <- c("USA", "US", "Usa")
+    ca_names <- c("Ca", "CALIFORNIA")
+    
+    mesmP_map <- mesmP %>% 
+      select(c(
+        employer_account_name,
+        work_location_city,
+        mesm_class_year,
+        work_location_state,
+        work_location_country
+      )) %>% 
+      # standardize state values
+      mutate(work_location_state = case_when(
+        work_location_state %in% ca_names ~ "CA",
+        work_location_state == "Maryland" ~ "MD",
+        work_location_state == "Washington" ~ "WA",
+        work_location_state == "District of Columbia" ~ "DC",
+        # Note(HD): Don't need this because we replace with Seoul below
+        #work_location_state == "N/A" ~ NA_character_, 
+        work_location_state == "michoacan" ~ "Michoacan",
+        # reassign NA values to correct state values
+        work_location_city == "Washington DC" ~ "DC",
+        work_location_city == "Oxnard" ~ "CA",
+        work_location_city == "Santa Cruz" ~ "CA",
+        work_location_city == "Fort Collins" ~ "CO",
+        work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
+        work_location_city == "Amsterdam" ~ "North Holland",
+        work_location_city == "Seoul" ~ "Seoul",
+        TRUE ~ work_location_state
+      )) %>% 
+      # standardize united states values
+      mutate(work_location_country = case_when(
+        work_location_country %in% us_names ~ "United States",
+        # reassign NA values to correct country values
+        work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
+        work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
+        employer_account_name == "Cruz Foam" ~ "United States",
+        employer_account_name == "United Water Conservation District" ~ "United States",
+        TRUE ~ work_location_country
+      )) %>% 
+      # add latitude
+      mutate(lat = case_when(
+        work_location_state == "Ontario" ~ 51.2538,
+        work_location_state == "Galapagos" ~ -0.9538,
+        work_location_state == "Tahiti" ~ -17.6509,
+        work_location_state == "Michoacan" ~ 19.5665,
+        work_location_state == "North Holland" ~ 52.5206,
+        work_location_state == "Seoul" ~ 37.532600,
+        TRUE ~ NA_real_
+      )) %>% 
+      # add longitude
+      mutate(long = case_when(
+        work_location_state == "Ontario" ~ -85.3232,
+        work_location_state == "Galapagos" ~ -90.9656,
+        work_location_state == "Tahiti" ~ -149.4260,
+        work_location_state == "Michoacan" ~ -101.7068,
+        work_location_state == "North Holland" ~ 4.7885,
+        work_location_state == "Seoul" ~ 127.024612,
+        TRUE ~ NA_real_
+      ))
+    
+    # df international placements
+    mesmP_international <- mesmP_map %>% 
+      filter(work_location_country != "United States") %>% 
+      st_as_sf(coords = c("long", "lat"),
+               crs = 4326)
+    
+    # get state geometries using tigris
+    df_state_geometries_us <- tigris::states(year = 2018) %>%
+      select(GEOID, STUSPS, NAME, geometry) %>% 
+      rename(fips = GEOID,
+             state_abbrev = STUSPS,
+             state = NAME) %>% 
+      rmapshaper::ms_simplify(keep = 0.005, keep_shapes = TRUE)
+    
+    # join with mesmP_map
+    mesmP_domestic <- mesmP_map %>% 
+      filter(work_location_country == "United States") %>% 
+      select(-c(lat, long)) %>% 
+      left_join(df_state_geometries_us, by = c("work_location_state" = "state_abbrev")) %>% 
+      select(-c(fips, state)) %>% 
+      st_as_sf() %>% 
+      st_transform(crs = 4326) %>% 
+      # Note(HD): create center point from multipolygon 
+      st_centroid()
+    
+    # rbind dfs
+    mesmP_map_all <- rbind(mesmP_international, mesmP_domestic) 
+    
+    mesmP_map_stats <- mesmP_map_all %>% 
+      group_by(work_location_state) %>% 
+      summarize(count = n())
+    
+    # full map
+    # 2019 - 2021
+    popup <- paste0("Location: ", mesmP_map_stats$work_location_state, 
+                    "<br>", 
+                    "Count: ", mesmP_map_stats$count)
+    
+    leaflet(mesmP_map_stats) %>% 
+      addTiles() %>% 
+      addCircleMarkers(radius = ~count,
+                       popup = popup)
+  }) # EO sector map
+  
+  # SO CURR CAREER DB ----
+  
+  ## SO job source ----
+  output$curr_mesm_source <- renderPlot({
+    
+    mesmP_source <- mesmP %>% 
+      select(c(mesm_class_year,
+               job_source)) %>% 
+      group_by(mesm_class_year, 
+               job_source) %>% 
+      summarize(count = n()) %>% 
+      # 2 NAs 2019; 3 NAs 2021
+      drop_na()
+    
+    # 2021
+    ggplot(data = mesmP_source %>% filter(mesm_class_year == 2021),
+           aes(x = reorder(job_source, count),
+               y = count)) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      labs(title = "MESM Job Source (2021)",
+           # Note(HD): percentage includes 3 NAs ??
+           subtitle = "Personal/ Professional network + Bren Network = 58%",
+           x = NULL, 
+           y = "Number of students") +
+      theme_minimal() +
+      theme(plot.subtitle = element_text(size = 9,
+                                         face = "italic")) +
+      geom_text(aes(label = count),
+                fontface = "bold",
+                size = 4,
+                hjust = -0.21)
+  }) # EO job source
+  
+  ## SO placement status ----
+  output$curr_mesm_status <- renderPlot({
+    mesm_status <- mesmS %>% 
+      group_by(mesm_class_year,
+               member_status) %>% 
+      summarize(count = n())
+    
+    # 2021
+    # color time off & searching
+    # subtitle of students who got a job 6 months after graduating 
+    ggplot(data = mesm_status %>% filter(mesm_class_year == 2021),
+           aes(x = reorder(member_status, count),
+               y = count)) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "MESM Placement Overview (2021)",
+           subtitle = "",
+           x = NULL,
+           y = "Number of students") +
+      geom_text(aes(label = count),
+                hjust = -0.22,
+                size = 4) 
+  }) # EO placement status 
+  
 
   
 } # EO server
