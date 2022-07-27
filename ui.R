@@ -100,10 +100,16 @@ ui <- dashboardPage(
         ), # EO FR second row
         fluidRow(
           tabBox(width = 6,
-                 tabPanel("2021 Fall Admissions",
+                 tabPanel("2021 Admissions",
                           plotly::plotlyOutput(outputId = "admit_2021")),
-                 tabPanel("Applicant/Admit/Take",
-                          plotOutput(outputId = "mesm_admit_stats")),
+                 tabPanel("Previous Admissions",
+                          plotly::plotlyOutput(outputId = "admit_stats_all"),
+                          radioButtons(inputId = "admit_stats_all",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD"),
+                                       selected = "MESM",
+                                       inline = TRUE)
+                          ), # EO tabPanel previous admissions
           ), # EO tabBox
           tabBox(width = 6,
                  tabPanel("demographics"),
