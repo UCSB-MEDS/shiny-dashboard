@@ -59,39 +59,130 @@ server <- function(input, output, session){
       )
   })
   
-  ## SO program size curr ----
-  output$program_size_curr <- renderPlot({
-    # current year
-    program_size_curr <- bren_apps %>% 
-      select(c("ay_year",
-               "application_id",
-               "objective1")) %>%
+  ## SO admission stats 2021  ----
+  output$admit_2021 <- renderPlotly({
+    ## DATA WRANGLING ##
+    # app id 57928 submitted 2015-03-26
+    # app id 163517 submitted 2021-07-26
+    ay_year_df <- apps_clean %>%
+      # convert UNIX timestamp to datetime
+      mutate(submitted_date = as.numeric(unlist(submitted_date)),
+             submitted_date = anytime::anydate(submitted_date)) %>%
+      # add year col
+      mutate(ay_year = case_when(
+        # 2016 apps: 2015-09-01 to 2016-03-31
+        year(submitted_date) == 2015 & month(submitted_date) >= 3 ~ 2016,
+        year(submitted_date) == 2016 & month(submitted_date) <= 3 ~ 2016,
+        # 2017 apps: 2016-09-01 to 2017-03-31
+        year(submitted_date) == 2016 & month(submitted_date) >= 9 ~ 2017,
+        year(submitted_date) == 2017 & month(submitted_date) <= 3 ~ 2017,
+        # 2018 apps: 2017-09-01 to 2018-03-31
+        year(submitted_date) == 2017 & month(submitted_date) >= 9 ~ 2018,
+        year(submitted_date) == 2018 & month(submitted_date) <= 3 ~ 2018,
+        # 2019 apps: 2018-09-01 to 2019-03-31
+        year(submitted_date) == 2018 & month(submitted_date) >= 9 ~ 2019,
+        year(submitted_date) == 2019 & month(submitted_date) <= 3 ~ 2019,
+        # 2020 apps: 2019-09-01 to 2020-03-31
+        year(submitted_date) == 2019 & month(submitted_date) >= 9 ~ 2020,
+        year(submitted_date) == 2020 & month(submitted_date) <= 3 ~ 2020,
+        # 2021 apps: 2020-09-01 to 2021-03-31
+        year(submitted_date) == 2020 & month(submitted_date) >= 9 ~ 2021,
+        year(submitted_date) == 2021 & month(submitted_date) <= 7 ~ 2021)) 
+    
+    # total number of applicants per yr by program
+    apps_tot <- ay_year_df %>% 
+      group_by(ay_year,
+               objective1) %>% 
+      summarize(Applied = n())
+    
+    # total number of admitted applicants per yr by program
+    admit_tot <- ay_year_df %>% 
+      mutate(decision = case_when(
+        decision %in% c("Provisionally Admitted","Unconditionally Admitted") ~ "Admitted",
+        TRUE ~ decision
+      )) %>% 
+      group_by(ay_year,
+               objective1,
+               decision) %>% 
+      summarize(Admitted = n())
+    
+    # total number of YES SIR submissions per year by program
+    sir_yes_tot <- ay_year_df %>% 
+      group_by(ay_year,
+               objective1,
+               sir) %>% 
+      summarize(Take = n())
+    
+    # full df
+    admissions <- left_join(sir_yes_tot,
+                            apps_tot,
+                            by = c("ay_year", "objective1")) %>% 
+      left_join(admit_tot, by = c("ay_year", "objective1")) %>% 
+      filter(decision == "Admitted",
+             sir == "Yes") %>% 
+      mutate(admit_rate = (Admitted / Applied),
+             take_rate = (Take / Admitted))
+    
+    # stacked df 2021
+    admissions_stacked <- admissions %>% 
+      select(c(ay_year,
+               objective1,
+               Take,
+               Applied,
+               Admitted)) %>% 
       filter(ay_year == 2021) %>% 
-      group_by(objective1) %>%
-      summarize(prog_count = n())
-    #plot
-    ggplot(data = program_size_curr,
-           aes(x = reorder(objective1, prog_count),
-               y = prog_count,
-               fill = objective1)) +
-      geom_bar(stat = "identity") +
-      geom_text(aes(label = prog_count,
-                    color = objective1),
-                vjust = 1.3,
-                size = 4,
-                fontface = "bold") +
+      pivot_longer(cols = c(Take,
+                            Applied,
+                            Admitted),
+                   names_to = "admin_tots",
+                   values_to = "counts") %>% 
+      mutate(admin_tots = factor(admin_tots, levels = c("Applied",
+                                                        "Admitted",
+                                                        "Take")))
+    ## PLOTTING ##
+    # ggplot 
+    admissions_stacked_plot <- ggplot(data = admissions_stacked,
+                                      aes(x = ay_year,
+                                          y = counts,
+                                          fill = reorder(admin_tots, counts),
+                                          text = "none")) +
+      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Applied"),
+               stat = "identity", 
+               aes(text = paste0("Applied: ", counts))) +
+      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Admitted"),
+               stat = "identity",
+               width = 0.75,
+               aes(text = paste0("Admitted: ", counts))) +
+      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Take"),
+               stat = "identity",
+               width = 0.6,
+               aes(text = paste0("Take: ", counts))) +
+      scale_x_continuous(breaks = seq(min(admissions_stacked$ay_year),
+                                      max(admissions_stacked$ay_year))) +
       theme_minimal() +
-      labs(title = NULL,
+      scale_fill_manual(
+        values = c(
+          "Applied" = "#dcd6cc",
+          "Admitted" = "#9cbebe",
+          "Take" = "#003660"
+        )
+      ) +
+      labs(title = "2021 Fall Admissions by Degree Program",
            x = NULL,
-           y = "Number of students") +
-      scale_fill_manual(values = c("MEDS" = "#047C91",
-                                   "MESM" = "#6D7D33",
-                                   "PHD" = "#005AA3")) +
-      scale_color_manual(values = c("MEDS" = "#FFFFFF",
-                                    "MESM" = "#FFFFFF",
-                                    "PHD" = "#FFFFFF")) +
-      theme(legend.position = "none")
-  })
+           y = NULL,
+           fill = NULL) +
+      facet_wrap(~objective1, nrow = 1)
+    
+    # plotly
+    plotly::ggplotly(admissions_stacked_plot, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+  }) # EO admissions stats 2021
   
   ## SO MESM admit stats ----
   output$mesm_admit_stats <- renderPlot({

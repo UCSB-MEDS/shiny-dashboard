@@ -100,8 +100,8 @@ ui <- dashboardPage(
         ), # EO FR second row
         fluidRow(
           tabBox(width = 6,
-                 tabPanel("Graduate Program Cohort Sizes (2021)",
-                          plotOutput(outputId = "program_size_curr")),
+                 tabPanel("2021 Fall Admissions",
+                          plotly::plotlyOutput(outputId = "admit_2021")),
                  tabPanel("Applicant/Admit/Take",
                           plotOutput(outputId = "mesm_admit_stats")),
           ), # EO tabBox
