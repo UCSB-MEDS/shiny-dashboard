@@ -1,6 +1,13 @@
 /* career home page styling */
 /* this is not working figure out later */
-.small-box.bg-aqua {
-  background-color: #04859b !important;
+.small-box.bg-light-blue {
+  background-color: #168496 !important;
 }
 
+.small-box.bg-blue  {
+  background-color: #003660 !important;
+}
+
+.small-box.bg-green {
+  background-color: #6d7d33 !important;
+}

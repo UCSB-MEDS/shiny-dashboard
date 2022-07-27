@@ -11,14 +11,12 @@ ui <- dashboardPage(
     sidebarMenu(
       id = "sidebarID",
       
-      
       # curr yr ----
       menuItem(
         tabName = "curr_yr",
         text = "2021 Data",
         icon = icon("star", lib = "glyphicon")
       ), # EO curr yr menuItem
-      
       
       # career ----
       menuItem(
@@ -42,7 +40,6 @@ ui <- dashboardPage(
       hidden(menuItem("hidden_career", 
                       tabName = "hidden_career")
              ), # EO hidden_career menuItem
-      
       
       # student demographics ----
       menuItem(
@@ -70,6 +67,7 @@ ui <- dashboardPage(
     ) # EO sidebarMenu
   ), # EO dashboardSidebar
   
+  
   # BODY ----
   dashboardBody(
     # call styles sheet
@@ -96,17 +94,22 @@ ui <- dashboardPage(
               why it's important, and what a user can do with it")
         ), # EO FR first row
         fluidRow(
-          valueBoxOutput(outputId = "military_stat"), 
-          valueBoxOutput(outputId = "undocumented_stat"),
-          valueBoxOutput(outputId = "urm_stat")
+          valueBoxOutput(outputId = "meds_curr_size"), 
+          valueBoxOutput(outputId = "mesm_curr_size"),
+          valueBoxOutput(outputId = "phd_curr_size")
         ), # EO FR second row
         fluidRow(
-          tabBox(width = 12, title = "Bren at a Glance",
+          tabBox(width = 6,
                  tabPanel("Graduate Program Cohort Sizes (2021)",
                           plotOutput(outputId = "program_size_curr")),
                  tabPanel("Applicant/Admit/Take",
-                          plotOutput(outputId = "mesm_admit_stats"))
-          ) # EO tabbox
+                          plotOutput(outputId = "mesm_admit_stats")),
+          ), # EO tabBox
+          tabBox(width = 6,
+                 tabPanel("demographics"),
+                 tabPanel("career")
+            
+          ) # EO tabBox
         ) # EO FR third row
       ), # EO curr yr tabItem
       
@@ -119,8 +122,7 @@ ui <- dashboardPage(
           ## valueBox stats ----
           valueBox(paste0(88, "%"), 
                    "LANDED THAT DREAM JOB",
-                   icon = icon("star")#, 
-                   #color = "aqua"
+                   icon = icon("star")
                    ), # EO valueBox 88% stat
           valueBox(paste0("$", 70, ",", 730),
                   "AVERAGE STARTING SALARY",

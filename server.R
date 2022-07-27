@@ -17,97 +17,46 @@ server <- function(input, output, session){
   
   
   # 2021 DB ----
-  ## SO military stat ----
-  # military 2021 df
-  military_status <- bren_apps %>% 
-    select(c("ay_year",
-             "objective1",
-             "military_service")) %>% 
+  ## SO program sizes valueBox ----
+  # program size df
+  program_size <- bren_apps %>% 
+    select(c(ay_year,
+             objective1)) %>% 
     filter(ay_year == 2021) %>% 
-    mutate(military_service = as.numeric(unlist(military_service)),
-           military_status = case_when(military_service > 1 ~ "Y",
-                                       TRUE ~ "N")) %>% 
-    group_by(military_status) %>% 
-    summarize(military_status_count = n()) %>% 
-    filter(military_status == "Y") %>% 
-    mutate(percent = (military_status_count / 119) * 100) # Note(HD): can't get percentage?
-  # military output
-  output$military_stat <- renderValueBox({
-    valueBox("Students who have served in military",
-             value = round((military_status$military_status_count / 119) * 100),
-             icon = icon("flag")#,
-             #color = "aqua"
-             )
-    
-  })
-  
-  ## SO undocumented stat ----
-  undocumented <- bren_apps %>% 
-    select(c("ay_year",
-             "application_id",
-             "objective1",
-             "visa")) %>% 
-    # undocumented status
-    mutate(undocumented_status = case_when(
-      visa %in% c("DACA/AB540",
-                  "Undocumented Status") ~ "Y",
-      TRUE ~ "N")) %>% 
-    group_by(ay_year, objective1, undocumented_status) %>% 
-    summarize(undocumented_count = n()) %>% 
-    filter(undocumented_status == "Y")
-  # undocumented output
-  output$undocumented_stat <- renderValueBox({
-    valueBox("Undocumented students",
-             value = undocumented$undocumented_count,
-             icon = icon("user"),
-             color = "green")
-  })
-  
-  ## SO urm stat ----
-  # urm vars
-  category_urms <- c("African American / Black",
-                     "American Indian / Alaska Native")
-  visa_urms <- c("Permanent Residency Pending (Work Permit)",
-                 "Permanent Resident")
-  # urm wrangling
-  urm <- bren_apps %>% 
-    select("ay_year",
-           "application_id",
-           "objective1",
-           "citizenship_country",
-           "residency_country",
-           "birth_country",
-           "visa",
-           "background",
-           "category",
-           "hispanic_latino") %>% 
-    # replace NULL string with NA
-    naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
-    mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
-    rowwise() %>% # Note(HD): look into this, but forces to go through every row?
-    mutate(urm_status = case_when(
-      # us citizens are hispanic/latino
-      hispanic_latino == TRUE & citizenship_country == "US" ~ "Y",
-      # permanent residents are hispanic/latino
-      hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
-      # us citizens identify as urms
-      TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-      & citizenship_country == "US" ~ "Y",
-      # permanent residents identify as urms
-      TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-      & visa %in% visa_urms ~ "Y",
-      # everything else
-      TRUE ~ "N")) %>% 
-    filter(urm_status == "Y",
-           ay_year == 2021) %>% 
-    group_by(urm_status) %>% 
+    group_by(objective1) %>% 
     summarize(count = n())
-  # urm output
-  output$urm_stat <- renderValueBox({
-    valueBox("URM Students", 
-             value = urm$count,
-             icon = icon("user"),
-             color = "blue")
+  
+  meds_size <- program_size %>% filter(objective1 == "MEDS")
+  mesm_size <- program_size %>% filter(objective1 == "MESM")
+  phd_size <- program_size %>% filter(objective1 == "PHD")
+  
+  # MEDS valueBox output
+  output$meds_curr_size <- renderValueBox({
+    shinydashboard::valueBox(
+      "MEDS students in 2021 cohort",
+      value = meds_size$count,
+      icon = icon("users", lib = "font-awesome"),
+      color = "light-blue"
+    )
+  })
+  # MESM valueBox output
+  output$mesm_curr_size <- renderValueBox({
+      valueBox(
+        "MESM students in 2021 cohort",
+        value = mesm_size$count,
+        icon = icon("users", lib = "font-awesome"),
+        color = "blue"
+      )
+             
+  })
+  # PHD valueBox output
+  output$phd_curr_size <- renderValueBox({
+    valueBox(
+      "PhD students in 2021 cohort",
+      value = phd_size$count,
+      icon = icon("users", lib = "font-awesome"),
+      color = "green"
+      )
   })
   
   ## SO program size curr ----
