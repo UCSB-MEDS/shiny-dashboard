@@ -1,6 +1,6 @@
 # shiny dashboard has three main components:
 # header, sidebar, body
-dashboardPage(
+ui <- dashboardPage(
   # HEADER ----
   dashboardHeader(
     title = "Bren Dashboard"
@@ -72,6 +72,12 @@ dashboardPage(
   
   # BODY ----
   dashboardBody(
+    # call styles sheet
+    tags$head(
+      tags$link(rel = "stylesheet",
+                type = "text/css",
+                href = "styles.css")
+    ), # EO tags$head
     useShinyjs(),
     tabItems(
       # Note(HD): tabName must match tabName in menuItem
@@ -113,8 +119,8 @@ dashboardPage(
           ## valueBox stats ----
           valueBox(paste0(88, "%"), 
                    "LANDED THAT DREAM JOB",
-                   icon = icon("star"), 
-                   color = "aqua"
+                   icon = icon("star")#, 
+                   #color = "aqua"
                    ), # EO valueBox 88% stat
           valueBox(paste0("$", 70, ",", 730),
                   "AVERAGE STARTING SALARY",

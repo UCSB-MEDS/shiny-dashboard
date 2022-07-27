@@ -35,8 +35,9 @@ server <- function(input, output, session){
   output$military_stat <- renderValueBox({
     valueBox("Students who have served in military",
              value = round((military_status$military_status_count / 119) * 100),
-             icon = icon("flag"),
-             color = "aqua")
+             icon = icon("flag")#,
+             #color = "aqua"
+             )
     
   })
   
