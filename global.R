@@ -9,6 +9,7 @@ library(shinyjs)
 library(lubridate)
 library(leaflet)
 library(sf)
+library(plotly)
 
 # IMPORT DATA ----
 apps_clean <- readRDS("data/apps_all_clean.rds")
