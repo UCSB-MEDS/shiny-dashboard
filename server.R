@@ -675,6 +675,239 @@ server <- function(input, output, session){
     
     plotly::ggplotly(avg_salary, tooltip = "text")
     
-  })
+  }) # EO compensation plot
+  
+  
+  # DEMOGRAPHICS DB ----
+  
+  ## SO gender ----
+  ## DATA WRANGLING ##
+  gender_program_time <- bren_apps %>% 
+    select(c("ay_year",
+             "application_id",
+             "gender",
+             "objective1")) %>% 
+    group_by(ay_year,
+             objective1,
+             gender) %>% 
+    summarize(gender_count = n())
+  
+  gender_cohort_tot_all <- bren_apps %>% 
+    select(c(
+      "ay_year",
+      "application_id",
+      "gender",
+      "objective1")) %>%
+    group_by(objective1,
+             ay_year) %>%
+    summarize(cohort_tot = n())
+  
+  gender_stats_time <- left_join(gender_program_time, 
+                                 gender_cohort_tot_all, 
+                                 by = c("ay_year",
+                                        "objective1")) %>% 
+    mutate(gender_percent = round((gender_count / cohort_tot) * 100)) %>% 
+    mutate(gender = factor(gender, levels = c("F", "M", "U"),
+                           labels = c("Female", "Male", "Undeclared")))
+  
+  ## PLOTTING ##
+  output$gender_all <- renderPlotly({
+    
+    # group bar chart over time 
+    # think about adding text on MEDS plot to emphasize inaugural year? Not lack of data?
+    gender_all <- ggplot(data = gender_stats_time,
+                         aes(x = ay_year,
+                             y = gender_percent,
+                             fill = reorder(gender, gender_percent),
+                             text = paste0("Gender: ", gender, "\n",
+                                           "Percent: ", gender_percent, "%"))) +
+      geom_bar(position = "dodge",
+               stat = "identity") +
+      scale_x_continuous(breaks = seq(min(gender_stats_time$ay_year),
+                                      max(gender_stats_time$ay_year))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "Gender diversity and distribution trends by degree program",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("Female" = "#9cbebe",
+                                   "Male" = "#003660",
+                                   "Undeclared" = "#dcd6cc")) +
+      facet_wrap(~objective1, ncol = 1)
+    
+    plotly::ggplotly(gender_all, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+    
+  }) # EO gender plotly
+  
+  ## SO age ----
+  ## DATA WRANGLING ##
+  # 2016-2021
+  age_program_all <- bren_apps %>% 
+    select(c("ay_year",
+             "application_id",
+             "objective1",
+             "dob")) %>%
+    # calculate age
+    mutate(dob_year = year(dob)) %>% 
+    mutate(age = ay_year - dob_year) %>% 
+    # students older than 50 will be grouped and marked as 50
+    mutate(age = case_when(age >= 50 ~ 50,
+                           TRUE ~ age))
+  
+  # Note(HD:) used median bc data isn't normal and there's lots of outliers
+  age_program_stats <- age_program_all %>% 
+    group_by(ay_year, objective1) %>% 
+    summarize(mean_age = mean(age),
+              median_age = median(age))
+  
+  ## PLOTTING ##
+  output$age_all <- renderPlotly({
+    # 5 year median line plot
+    age_all <- ggplot(data = age_program_stats,
+                      aes(x = ay_year,
+                          y = median_age,
+                          color = objective1)) +
+      geom_line() +
+      geom_point(aes(text = paste0("Program: ", objective1, "\n",
+                                   "Median Age: ", median_age, "\n",
+                                   "Year: ", ay_year))) +
+      theme_minimal() +
+      scale_color_manual(
+        values = c(
+          "MEDS" = "#047C91",
+          "MESM" = "#6D7D33",
+          "PHD" = "#005AA3"
+        )) +
+      labs(title = "Median age distribution trends by degree program",
+           y = "Median age",
+           x = NULL,
+           color = NULL)
+    
+    plotly::ggplotly(age_all, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+  }) # EO age plotly
+  
+  
+  # SO CA res/ non res/ international ----
+  ## DATA WRANGLING ##
+  # 2021
+  origin_program <- bren_apps %>% 
+    select(c("ay_year",
+             "application_id",
+             "objective1",
+             "citizenship_country",
+             "residency_country",
+             "birth_country",
+             "california_resident",
+             "ca_high_school",
+             "visa")) %>% 
+    # filter for just current yr
+    filter(ay_year == 2021) %>% 
+    mutate(california_resident = unlist(california_resident)) %>% 
+    # residency status
+    mutate(residency = case_when(
+      # ca residency
+      california_resident == TRUE & visa %in% c(NA,
+                                                "DACA/AB540",
+                                                "Permanent Resident",
+                                                "Permanent Residency Pending (Work Permit)",
+                                                "Undocumented Status") ~ "ca resident",
+      # non ca resident
+      california_resident == FALSE & visa %in% c(NA,
+                                                 "Permanent Resident",
+                                                 "Permanent Residency Pending (Work Permit)",
+                                                 "Undocumented Status") ~ "non ca resident",
+      # international
+      visa %in% c("F-1 Student",
+                  "J-1",
+                  "Family of H,H1,H2,H3") ~ "international"
+    )) %>% 
+    group_by(ay_year, objective1, residency) %>% 
+    summarize(residency_count = n())
+  
+  # 2016-2021
+  origin_program_all <- bren_apps %>% 
+    select(c("ay_year",
+             "application_id",
+             "objective1",
+             "citizenship_country",
+             "residency_country",
+             "birth_country",
+             "california_resident",
+             "ca_high_school",
+             "visa")) %>% 
+    mutate(california_resident = unlist(california_resident)) %>% 
+    # residency status
+    mutate(residency = case_when(
+      # ca residency
+      california_resident == TRUE & visa %in% c(NA,
+                                                "DACA/AB540",
+                                                "Permanent Resident",
+                                                "Permanent Residency Pending (Work Permit)",
+                                                "Undocumented Status") ~ "ca resident",
+      # non ca resident
+      california_resident == FALSE & visa %in% c(NA,
+                                                 "Permanent Resident",
+                                                 "Permanent Residency Pending (Work Permit)",
+                                                 "Undocumented Status") ~ "non ca resident",
+      # international
+      visa %in% c("F-1 Student",
+                  "J-1",
+                  "Family of H,H1,H2,H3") ~ "international"
+    )) %>% 
+    group_by(ay_year, objective1, residency) %>% 
+    summarize(residency_count = n())
+  
+  residency_stats_all <- left_join(origin_program_all,
+                                   prog_cohort_tot_all, 
+                                   by = c("ay_year",
+                                          "objective1")) %>% 
+    mutate(residency_percent = round((residency_count / cohort_tot) * 100)) %>% 
+    mutate(residency = factor(residency, levels = c("ca resident",
+                                                    "non ca resident",
+                                                    "international"),
+                              labels = c("CA Resident",
+                                         "Nonresident",
+                                         "International")))
+  
+  ## PLOTTING ##
+  residency_all <- ggplot(data = residency_stats_all,
+                          aes(x = ay_year,
+                              y = residency_percent,
+                              fill = reorder(residency, residency_percent),
+                              text = paste0("Residency: ", residency, "\n",
+                                            "Percent: ", residency_percent, "%"))) +
+    geom_bar(position = "dodge",
+             stat = "identity") +
+    scale_x_continuous(breaks = seq(min(residency_stats_all$ay_year),
+                                    max(residency_stats_all$ay_year))) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank()) +
+    labs(title = "Residency distribution trends by degree program",
+         x = NULL,
+         y = NULL,
+         fill = NULL) +
+    scale_fill_manual(values = c("CA Resident" = "#9cbebe",
+                                 "Nonresident" = "#003660",
+                                 "International" = "#dcd6cc"),) +
+    facet_wrap(~objective1, ncol = 1)
+  
+  plotly::ggplotly(residency_all, tooltip = "text")
+  
   
 } # EO server

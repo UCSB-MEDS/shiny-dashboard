@@ -175,18 +175,43 @@ ui <- dashboardPage(
       ), # EO career home tabItem
       
       
-      # tabs demo ----
+      # tabs demographics ----
       tabItem(
         tabName = "demo_db",
         h2("Student Demographics Home Content"),
         fluidRow(
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"), fill = TRUE),
-          infoBox("New Orders", 10 * 2, icon = icon("credit-card"))
+          ## * definitions ----
+          box(title = "IPEDS and UC Demographics Definitions",
+              width = 12,
+              solidHeader = TRUE,
+              status = "navy",
+              "Here is some text explaining important information and definitions 
+              so a user can interpret these visuals accurately."
+          ) # EO info box
         ), # EO FR first row
+        
         fluidRow(
-          box(width = 12, title = "Title 1", "box 1 content")
-        ) # EO FR second row
+          ## * valueBoxes ----
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
+          valueBox(10 * 2, "New Orders", icon = icon("credit-card"))
+        ), # EO FR second row
+        
+        ## * plots ----
+        fluidRow(
+          box(width = 6,
+              title = "Where students are coming from"
+              ), # EO map box  
+          tabBox(width = 6,
+                 tabPanel("Gender",
+                          plotly::plotlyOutput(outputId = "gender_all")),
+                 tabPanel("Age",
+                          plotly::plotlyOutput(outputId = "age_all")),
+                 tabPanel("Race & Ethnicity"),
+                 tabPanel("Residency")
+                 ), # EO demographics over time tabBox
+          
+        ) # EO FR third row
       ) # EO demo home tabItem
       
     ) # EO tabItems
