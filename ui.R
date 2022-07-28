@@ -20,50 +20,18 @@ ui <- dashboardPage(
       
       # career ----
       menuItem(
-        id = "career_id",
-        expandedName = "CAREER",
-        tabName = "career_home",
+        tabName = "career_db",
         text = "Career Placements",
-        icon = icon("road", lib = "glyphicon"),
-        # sub curr career ----
-        menuSubItem(
-          tabName = "curr_career",
-          text = "Current Career Data"
-        ), # EO sub curr career menuSubItem
-        # sub 5 yr career ----
-        menuSubItem(
-          tabName = "career_5yr",
-          text = "5 Year Career Data"
-        ) # EO sub 5 yr career
+        icon = icon("road", lib = "glyphicon")
       ), # EO career menuItem
-      # hidden career menuItem ----
-      hidden(menuItem("hidden_career", 
-                      tabName = "hidden_career")
-             ), # EO hidden_career menuItem
       
       # student demographics ----
       menuItem(
-        id = "demo_id",
-        expandedName = "DEMO",
-        tabName = "demo_home",
+        tabName = "demo_db",
         text = "Student Demographics",
-        icon = icon("user", lib = "glyphicon"),
-        # sub curr yr demo ----
-        menuSubItem(
-          tabName = "curr_demo",
-          text = "Current Demographics"
-          ), # EO sub curr yr demo
-        # sub 5 yr demo ----
-        menuSubItem(
-          tabName = "demo_5yr",
-          text = "5 Year Demographics"
-        ) # EO sub 5 yr demo 
-      ), # EO student demographics menuItem
-      # hidden demo menuItem ----
-      hidden(menuItem("hidden_demo",
-                      tabName = "hidden_demo")
-             ) # EO hidden demo menuItem
-
+        icon = icon("user", lib = "glyphicon")
+      )#, # EO student demographics menuItem
+      
     ) # EO sidebarMenu
   ), # EO dashboardSidebar
   
@@ -76,7 +44,11 @@ ui <- dashboardPage(
                 type = "text/css",
                 href = "styles.css")
     ), # EO tags$head
+    
+    # Note(HD): initally added to use hidden()
     useShinyjs(),
+    
+    
     tabItems(
       # Note(HD): tabName must match tabName in menuItem
       
@@ -84,7 +56,7 @@ ui <- dashboardPage(
       tabItem(
         tabName = "curr_yr",
         h2("2021 Dashboard Content"),
-        # curr yr db layout
+        # * intro text ----
         fluidRow(
           box(title = "Get to know our students",
               width = 12,
@@ -93,11 +65,13 @@ ui <- dashboardPage(
               "Here is some text explaining the dashboard, 
               why it's important, and what a user can do with it")
         ), # EO FR first row
+        # * valueBoxes ----
         fluidRow(
           valueBoxOutput(outputId = "meds_curr_size"), 
           valueBoxOutput(outputId = "mesm_curr_size"),
           valueBoxOutput(outputId = "phd_curr_size")
         ), # EO FR second row
+        # * admissions plots ----
         fluidRow(
           tabBox(width = 6,
                  tabPanel("2021 Admissions",
@@ -109,8 +83,9 @@ ui <- dashboardPage(
                                        choices = c("MEDS", "MESM", "PHD"),
                                        selected = "MESM",
                                        inline = TRUE)
-                          ), # EO tabPanel previous admissions
+                 ), # EO tabPanel previous admissions
           ), # EO tabBox
+          # * demo and car plots ----
           tabBox(width = 6,
                  tabPanel("2021 Demographics",
                           plotly::plotlyOutput(outputId = "diversity_2021"),
@@ -119,8 +94,9 @@ ui <- dashboardPage(
                                        choices = c("MEDS", "MESM", "PHD"),
                                        selected = "MESM",
                                        inline = TRUE)),
-                 tabPanel("career")
-            
+                 tabPanel("2021 Bren Alumni Career Placements",
+                          DT::dataTableOutput(outputId = "careerP_tbl_21"))
+                 
           ) # EO tabBox
         ) # EO FR third row
       ), # EO curr yr tabItem
@@ -128,73 +104,52 @@ ui <- dashboardPage(
       
       # tabs career ----
       tabItem(
-        tabName = "hidden_career",
+        tabName = "career_db",
         h2("Career Placement Home Content"),
         fluidRow(
-          ## valueBox stats ----
+          # * valueBox stats ----
           valueBox(paste0(88, "%"), 
                    "LANDED THAT DREAM JOB",
                    icon = icon("star")
-                   ), # EO valueBox 88% stat
+          ), # EO valueBox 88% stat
           valueBox(paste0("$", 70, ",", 730),
-                  "AVERAGE STARTING SALARY",
-                  icon = icon("usd"),
-                  color = "green"
-                  ), # EO valueBox starting salary stat
+                   "AVERAGE STARTING SALARY",
+                   icon = icon("usd"),
+                   color = "green"
+          ), # EO valueBox starting salary stat
           valueBox(paste0(76, "%"),
                    "STAY CONNECTED",
                    icon = icon("globe"),
                    color = "blue"
-                   ) # EO valueBox stay connected stat
+          ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
-          ## home page map ----
-          box(width = 12, 
-              solidHeader = TRUE,
-              status = "primary",
+          # * career map ----
+          box(width = 6, 
+              # solidHeader = TRUE,
+              # status = "primary",
               title = "Bren Alumni Solve Environmental Problems in Every Sector", 
               "box 1 content",
               leafletOutput(outputId = "car_sectorMap")
-              ) # EO box career home
+          ), # EO box career map
+          
+          # * career second plot ----
+          tabBox(width = 6,
+                 title = "Title 2",
+                 tabPanel("Title", "content in box",
+                          plotOutput(outputId = "curr_mesm_source")
+                 ), # EO tabPanel 1 in box 2
+                 tabPanel("Placement Status", "What kind of jobs are MESM graduates obtaining 6 months after graduation?",
+                          plotOutput(outputId = "curr_mesm_status")
+                 ) # EO tabPanel 2 in box 2
+          ) # EO tabBox career second plot
         ) # EO FR second row
       ), # EO career home tabItem
-      ## curr car page ----
-      tabItem(
-        tabName = "curr_career",
-        h3("Current Career Content"),
-        fluidRow(
-          box(width = 6, title = "Title 1", "box 1 content"),
-          box(width = 6, title = "Title 2", "box 2 content")
-        ), # EO FR first row
-        fluidRow(
-          tabBox(width = 12, title = "Title 3",
-                 tabPanel("Source", "Where are MESM graduates learning about jobs?",
-                          plotOutput(outputId = "curr_mesm_source")
-                          ), # EO curr mesm source tabPanel
-                 tabPanel("Placement Status", "What kind of jobs are MESM graduates obtaining 6 months after graduation?",
-                          plotOutput(outputId = "curr_mesm_status"))
-                 ) # EO curr mesm place status tabPanel
-        ) # EO FR second row
-      ), # EO sub curr career tabItem
-      ## 5 yr car page ----
-      tabItem(
-        tabName = "career_5yr",
-        h3("5 yr Career Content"),
-        fluidRow(
-          box(width = 6, title = "Title 1", "box 1 content"),
-          box(width = 6, title = "Title 2", "box 2 content")
-        ), # EO FR first row
-        fluidRow(
-          tabBox(width = 12, title = "Title 3",
-                 tabPanel("Tab1", "First tab content"),
-                 tabPanel("Tab2", "Tab content 2"))
-        ) # EO FR second row
-      ), # EO sub 5 yr career tabItem
       
       
       # tabs demo ----
       tabItem(
-        tabName = "hidden_demo",
+        tabName = "demo_db",
         h2("Student Demographics Home Content"),
         fluidRow(
           valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
@@ -204,35 +159,9 @@ ui <- dashboardPage(
         fluidRow(
           box(width = 12, title = "Title 1", "box 1 content")
         ) # EO FR second row
-      ), # EO demo home tabItem
-      tabItem(
-        tabName = "curr_demo",
-        h3("Current Student Demographics Content"),
-        fluidRow(
-          box(width = 6, title = "Title 1", "box 1 content"),
-          box(width = 6, title = "Title 2", "box 2 content")
-        ), # EO FR first row
-        fluidRow(
-          tabBox(width = 12, title = "Title 3",
-                 tabPanel("Tab1", "First tab content"),
-                 tabPanel("Tab2", "Tab content 2"))
-        ) # EO FR second row
-      ), # EO curr student demo tabItem
-      tabItem(
-        tabName = "demo_5yr",
-        h3("5 yr Student Demographics Content"),
-        fluidRow(
-          box(width = 6, title = "Title 1", "box 1 content"),
-          box(width = 6, title = "Title 2", "box 2 content")
-        ), # EO FR first row
-        fluidRow(
-          tabBox(width = 12, title = "Title 3",
-                 tabPanel("Tab1", "First tab content"),
-                 tabPanel("Tab2", "Tab content 2"))
-        ) # EO FR second row
-      ) # EO 5 yr demo tabItem
-  
+      ) # EO demo home tabItem
+      
     ) # EO tabItems
-    
+
   ) # EO dashboardBody
 ) # EO dashboardPage
