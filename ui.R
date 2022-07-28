@@ -112,7 +112,13 @@ ui <- dashboardPage(
                           ), # EO tabPanel previous admissions
           ), # EO tabBox
           tabBox(width = 6,
-                 tabPanel("demographics"),
+                 tabPanel("2021 Demographics",
+                          plotly::plotlyOutput(outputId = "diversity_2021"),
+                          radioButtons(inputId = "diversity_stats_all",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD"),
+                                       selected = "MESM",
+                                       inline = TRUE)),
                  tabPanel("career")
             
           ) # EO tabBox
