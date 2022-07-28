@@ -128,9 +128,13 @@ ui <- dashboardPage(
           box(width = 6, 
               # solidHeader = TRUE,
               # status = "primary",
-              title = "Bren Alumni Solve Environmental Problems in Every Sector", 
-              "box 1 content",
-              leafletOutput(outputId = "car_sectorMap")
+              title = "Bren Alumni Solve Environmental Problems Nationwide",
+              leafletOutput(outputId = "car_alumniMap"),
+              checkboxGroupInput(inputId = "alumniMap_check",
+                                 label = NULL,
+                                 choices = c(2019, 2020, 2021),
+                                 selected = 2021,
+                                 inline = TRUE)
           ), # EO box career map
           
           # * career second plot ----

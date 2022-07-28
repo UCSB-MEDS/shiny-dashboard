@@ -388,114 +388,130 @@ server <- function(input, output, session){
   
   # CAREER HOME DB ----
   
-  ## SO sector map ----
-  output$car_sectorMap <- renderLeaflet({
+  ## SO alumni map ----
+  ## DATA WRANGLING ##
+  # ca / out of state / international
+  us_names <- c("USA", "US", "Usa")
+  ca_names <- c("Ca", "CALIFORNIA")
+  
+  mesmP_map <- mesmP %>% 
+    select(c(
+      employer_account_name,
+      work_location_city,
+      mesm_class_year,
+      work_location_state,
+      work_location_country
+    )) %>% 
+    # standardize state values
+    mutate(work_location_state = case_when(
+      work_location_state %in% ca_names ~ "CA",
+      work_location_state == "Maryland" ~ "MD",
+      work_location_state == "Washington" ~ "WA",
+      work_location_state == "District of Columbia" ~ "DC",
+      # Note(HD): Don't need this because we replace with Seoul below
+      #work_location_state == "N/A" ~ NA_character_, 
+      work_location_state == "michoacan" ~ "Michoacan",
+      # reassign NA values to correct state values
+      work_location_city == "Washington DC" ~ "DC",
+      work_location_city == "Oxnard" ~ "CA",
+      work_location_city == "Santa Cruz" ~ "CA",
+      work_location_city == "Fort Collins" ~ "CO",
+      work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
+      work_location_city == "Amsterdam" ~ "North Holland",
+      work_location_city == "Seoul" ~ "Seoul",
+      TRUE ~ work_location_state
+    )) %>% 
+    # standardize united states values
+    mutate(work_location_country = case_when(
+      work_location_country %in% us_names ~ "United States",
+      # reassign NA values to correct country values
+      work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
+      work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
+      employer_account_name == "Cruz Foam" ~ "United States",
+      employer_account_name == "United Water Conservation District" ~ "United States",
+      TRUE ~ work_location_country
+    )) %>% 
+    # add latitude
+    mutate(lat = case_when(
+      work_location_state == "Ontario" ~ 51.2538,
+      work_location_state == "Galapagos" ~ -0.9538,
+      work_location_state == "Tahiti" ~ -17.6509,
+      work_location_state == "Michoacan" ~ 19.5665,
+      work_location_state == "North Holland" ~ 52.5206,
+      work_location_state == "Seoul" ~ 37.532600,
+      TRUE ~ NA_real_
+    )) %>% 
+    # add longitude
+    mutate(long = case_when(
+      work_location_state == "Ontario" ~ -85.3232,
+      work_location_state == "Galapagos" ~ -90.9656,
+      work_location_state == "Tahiti" ~ -149.4260,
+      work_location_state == "Michoacan" ~ -101.7068,
+      work_location_state == "North Holland" ~ 4.7885,
+      work_location_state == "Seoul" ~ 127.024612,
+      TRUE ~ NA_real_
+    ))
+  
+  # get state geometries using tigris
+  df_state_geometries_us <- tigris::states(year = 2018) %>%
+    select(GEOID, STUSPS, NAME, geometry) %>% 
+    rename(fips = GEOID,
+           state_abbrev = STUSPS,
+           state = NAME) %>% 
+    rmapshaper::ms_simplify(keep = 0.005, keep_shapes = TRUE)
+  
+  # domestic map polygons
+  mesmP_domestic <- mesmP_map %>% 
+    filter(work_location_country == "United States") %>% 
+    select(-c(lat, long)) %>% 
+    left_join(df_state_geometries_us, by = c("work_location_state" = "state_abbrev")) %>% 
+    select(-c(fips, state)) %>% 
+    st_as_sf() %>% 
+    st_transform(crs = 4326)
+  
+  # domestic map polygons
+  mesmP_domestic_stats <- reactive({
     
-    # ca / out of state / international
-    us_names <- c("USA", "US", "Usa")
-    ca_names <- c("Ca", "CALIFORNIA")
+    validate(
+      need(input$alumniMap_check != "",
+           "Please select at least one year.")
+    ) # EO validate
     
-    mesmP_map <- mesmP %>% 
-      select(c(
-        employer_account_name,
-        work_location_city,
-        mesm_class_year,
-        work_location_state,
-        work_location_country
-      )) %>% 
-      # standardize state values
-      mutate(work_location_state = case_when(
-        work_location_state %in% ca_names ~ "CA",
-        work_location_state == "Maryland" ~ "MD",
-        work_location_state == "Washington" ~ "WA",
-        work_location_state == "District of Columbia" ~ "DC",
-        # Note(HD): Don't need this because we replace with Seoul below
-        #work_location_state == "N/A" ~ NA_character_, 
-        work_location_state == "michoacan" ~ "Michoacan",
-        # reassign NA values to correct state values
-        work_location_city == "Washington DC" ~ "DC",
-        work_location_city == "Oxnard" ~ "CA",
-        work_location_city == "Santa Cruz" ~ "CA",
-        work_location_city == "Fort Collins" ~ "CO",
-        work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
-        work_location_city == "Amsterdam" ~ "North Holland",
-        work_location_city == "Seoul" ~ "Seoul",
-        TRUE ~ work_location_state
-      )) %>% 
-      # standardize united states values
-      mutate(work_location_country = case_when(
-        work_location_country %in% us_names ~ "United States",
-        # reassign NA values to correct country values
-        work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
-        work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
-        employer_account_name == "Cruz Foam" ~ "United States",
-        employer_account_name == "United Water Conservation District" ~ "United States",
-        TRUE ~ work_location_country
-      )) %>% 
-      # add latitude
-      mutate(lat = case_when(
-        work_location_state == "Ontario" ~ 51.2538,
-        work_location_state == "Galapagos" ~ -0.9538,
-        work_location_state == "Tahiti" ~ -17.6509,
-        work_location_state == "Michoacan" ~ 19.5665,
-        work_location_state == "North Holland" ~ 52.5206,
-        work_location_state == "Seoul" ~ 37.532600,
-        TRUE ~ NA_real_
-      )) %>% 
-      # add longitude
-      mutate(long = case_when(
-        work_location_state == "Ontario" ~ -85.3232,
-        work_location_state == "Galapagos" ~ -90.9656,
-        work_location_state == "Tahiti" ~ -149.4260,
-        work_location_state == "Michoacan" ~ -101.7068,
-        work_location_state == "North Holland" ~ 4.7885,
-        work_location_state == "Seoul" ~ 127.024612,
-        TRUE ~ NA_real_
-      ))
-    
-    # df international placements
-    mesmP_international <- mesmP_map %>% 
-      filter(work_location_country != "United States") %>% 
-      st_as_sf(coords = c("long", "lat"),
-               crs = 4326)
-    
-    # get state geometries using tigris
-    df_state_geometries_us <- tigris::states(year = 2018) %>%
-      select(GEOID, STUSPS, NAME, geometry) %>% 
-      rename(fips = GEOID,
-             state_abbrev = STUSPS,
-             state = NAME) %>% 
-      rmapshaper::ms_simplify(keep = 0.005, keep_shapes = TRUE)
-    
-    # join with mesmP_map
-    mesmP_domestic <- mesmP_map %>% 
-      filter(work_location_country == "United States") %>% 
-      select(-c(lat, long)) %>% 
-      left_join(df_state_geometries_us, by = c("work_location_state" = "state_abbrev")) %>% 
-      select(-c(fips, state)) %>% 
-      st_as_sf() %>% 
-      st_transform(crs = 4326) %>% 
-      # Note(HD): create center point from multipolygon 
-      st_centroid()
-    
-    # rbind dfs
-    mesmP_map_all <- rbind(mesmP_international, mesmP_domestic) 
-    
-    mesmP_map_stats <- mesmP_map_all %>% 
+    mesmP_domestic %>%
+      filter(mesm_class_year %in% input$alumniMap_check) %>% 
       group_by(work_location_state) %>% 
       summarize(count = n())
+  })
+  
+  ## PLOTTING MAP ##
+  output$car_alumniMap <- renderLeaflet({ 
     
-    # full map
-    # 2019 - 2021
-    popup <- paste0("Location: ", mesmP_map_stats$work_location_state, 
-                    "<br>", 
-                    "Count: ", mesmP_map_stats$count)
+    bins <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 140)
+    pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
+                    domain = mesmP_domestic_stats()$count, 
+                    bins = bins)
     
-    leaflet(mesmP_map_stats) %>% 
+    labels <- sprintf(
+      "<strong>%s</strong><br/>%g",
+      mesmP_domestic_stats()$work_location_state, mesmP_domestic_stats()$count
+    ) %>% lapply(htmltools::HTML)
+    
+    leaflet(mesmP_domestic_stats()) %>% 
       addTiles() %>% 
-      addCircleMarkers(radius = ~count,
-                       popup = popup)
-  }) # EO sector map
+      addPolygons(
+        fillColor = ~pal(count),
+        weight = 2,
+        opacity = 1,
+        color = "#e5f5e0",
+        fillOpacity = 0.9,  
+        label = labels,
+        labelOptions = labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "15px",
+          direction = "auto")
+      ) %>% 
+      setView(lat = 37, lng = -118, zoom = 2.5)
+  }) # EO alumni map
   
   # SO CURR CAREER DB ----
   
