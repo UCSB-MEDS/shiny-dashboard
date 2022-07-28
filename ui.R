@@ -105,7 +105,7 @@ ui <- dashboardPage(
       # tabs career ----
       tabItem(
         tabName = "career_db",
-        h2("Career Placement Home Content"),
+        h2("Career Placement Content"),
         fluidRow(
           # * valueBox stats ----
           valueBox(paste0(88, "%"), 
@@ -124,6 +124,17 @@ ui <- dashboardPage(
           ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
+          box(title = "Learn more about where and what jobs alumni are getting",
+              width = 12,
+              solidHeader = TRUE,
+              status = "navy",
+              "Here is some text explaining important information so
+              a user can interpret these visuals accurately. Maybe some
+              additional resources are listed here."
+              ) # EO info box
+        ), # EO FR second row
+        
+        fluidRow(
           # * career map ----
           box(width = 6, 
               # solidHeader = TRUE,
@@ -139,15 +150,28 @@ ui <- dashboardPage(
           
           # * career second plot ----
           tabBox(width = 6,
-                 title = "Title 2",
-                 tabPanel("Title", "content in box",
+                 tabPanel("Sector",
+                          d3treeR::d3tree2Output(outputId = "sector_tree"),
+                          checkboxGroupInput(inputId = "sector_tree_check",
+                                             label = NULL,
+                                             choices = c(2019, 2020, 2021),
+                                             selected = 2021,
+                                             inline = TRUE)
+                          ), # EO tabPanel 1 in box 2 
+                 tabPanel("Satisfaction",
+                          plotOutput(outputId = "satisfaction")
+                 ), # EO tabPanel placement satisfaction in box 2
+                 tabPanel("Average Compensation",
+                          plotlyOutput(outputId = "compensation")
+                 ), # EO tabPanel avg comp in box 2
+                 tabPanel("Source",
                           plotOutput(outputId = "curr_mesm_source")
-                 ), # EO tabPanel 1 in box 2
-                 tabPanel("Placement Status", "What kind of jobs are MESM graduates obtaining 6 months after graduation?",
+                 ), # EO tabPanel placement source in box 2
+                 tabPanel("Status",
                           plotOutput(outputId = "curr_mesm_status")
-                 ) # EO tabPanel 2 in box 2
+                 ) # EO tabPanel placement status in box 2
           ) # EO tabBox career second plot
-        ) # EO FR second row
+        ) # EO FR third row
       ), # EO career home tabItem
       
       

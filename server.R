@@ -386,7 +386,7 @@ server <- function(input, output, session){
   }) # EO renderDataTable
   
   
-  # CAREER HOME DB ----
+  # CAREER DB ----
   
   ## SO alumni map ----
   ## DATA WRANGLING ##
@@ -513,7 +513,6 @@ server <- function(input, output, session){
       setView(lat = 37, lng = -118, zoom = 2.5)
   }) # EO alumni map
   
-  # SO CURR CAREER DB ----
   
   ## SO job source ----
   output$curr_mesm_source <- renderPlot({
@@ -573,6 +572,109 @@ server <- function(input, output, session){
                 size = 4) 
   }) # EO placement status 
   
+  
+  ## SO placement sector ----
+  ## DATA WRANGLING ##
+  sector_simple <- reactive({
+    
+    validate(
+      need(input$sector_tree_check != "",
+           "Please select at least one year.")
+    ) # EO validate
+    
+    mesmP %>% 
+      select(c(mesm_class_year,
+               employer_sector)) %>% 
+      mutate(sector_simple = case_when(
+        employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+        employer_sector %in% c("Federal Government", "Local Government", "State Government") ~ "Government",
+        employer_sector %in% c("Non-Profit", "Research/Education") ~ "Nonprofit / Public",
+        employer_sector == "Foreign Government" ~ "International",
+        employer_sector == "Other" ~ "Other"
+      )) %>% 
+      mutate(sector_simple = factor(sector_simple, levels = c("Government",
+                                                              "Private",
+                                                              "Nonprofit / Public",
+                                                              "International",
+                                                              "Other"))) %>% 
+      filter(mesm_class_year %in% input$sector_tree_check) %>% 
+      group_by(employer_sector,
+               sector_simple) %>% 
+      summarize(count = n())
+  }) # EO reactive placement sector df
 
+  ## PLOTTING TREE MAP ##
+  output$sector_tree <- d3treeR::renderD3tree2({
+    # treemap 
+    sector_tree <- treemap::treemap(dtf = sector_simple(),
+                                    index = c("sector_simple", 
+                                              "employer_sector"),
+                                    vSize = "count",
+                                    type = "index"
+                                    )
+    
+    # interactive treemap
+    # rootname = title of map
+    d3treeR::d3tree2(sector_tree, rootname = "2021 MESM Placement Sectors")
+    
+    
+  }) # EO placement sector
+  
+  
+  ## SO placement satisfaction ----
+  ## DATA WRANGLING ##
+  mesmP_satisfy <- mesmP %>% 
+    select(c(mesm_class_year,
+             placement_satisfaction)) %>% 
+    group_by(mesm_class_year,
+             placement_satisfaction) %>% 
+    summarize(satisfy_count = n())
+  
+  ## PLOTTING ##
+  output$satisfaction <- renderPlot({
+    # 2021
+    # 3 NAs
+    ggplot(data = mesmP_satisfy %>% filter(mesm_class_year == 2021) %>% drop_na,
+           aes(x = reorder(placement_satisfaction, satisfy_count),
+               y = satisfy_count)) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      labs(title = "MESM satisfaction at initial job placement (2021)",
+           x = NULL,
+           y = "Number of students") +
+      theme_minimal() +
+      geom_text(aes(label = satisfy_count),
+                hjust = -0.3)
+    
+  }) # EO placement satisfaction
+  
+  
+  
+  ## SO placement avg compensation ----
+  ## DATA WRANGLING ##
+  mesm_salary <- mesmP %>% 
+    select(c(mesm_class_year,
+             estimated_annual_compensation_us)) %>% 
+    drop_na() %>% 
+    group_by(mesm_class_year) %>% 
+    summarize(avg_salary = mean(estimated_annual_compensation_us))
+  
+  ## PLOTTING ##
+  output$compensation <- renderPlotly({
+    avg_salary <- ggplot(data = mesm_salary,
+                         aes(x = mesm_class_year,
+                             y = avg_salary)) +
+      geom_line() +
+      geom_point(aes(text = paste0("$", round(avg_salary)))) +
+      scale_x_continuous(breaks = seq(min(mesm_salary$mesm_class_year),
+                                      max(mesm_salary$mesm_class_year))) +
+      theme_minimal() +
+      labs(title = "MESM Average compensation",
+           x = NULL,
+           y = "US Dollars ($)")
+    
+    plotly::ggplotly(avg_salary, tooltip = "text")
+    
+  })
   
 } # EO server

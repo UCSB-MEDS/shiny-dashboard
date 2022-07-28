@@ -10,6 +10,8 @@ library(lubridate)
 library(leaflet)
 library(sf)
 library(plotly)
+library(treemap)
+library(d3treeR)
 
 # IMPORT DATA ----
 apps_clean <- readRDS("data/apps_all_clean.rds")
