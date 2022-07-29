@@ -31,3 +31,14 @@ prog_cohort_tot_all <- bren_apps %>%
            "dob")) %>%
   group_by(objective1, ay_year) %>%
   summarize(cohort_tot = n())
+
+# get state geometries using tigris
+df_state_geometries_us <- tigris::states(year = 2018) %>%
+  select(GEOID, STUSPS, NAME, geometry) %>% 
+  rename(fips = GEOID,
+         state_abbrev = STUSPS,
+         state = NAME) %>% 
+  rmapshaper::ms_simplify(keep = 0.005, keep_shapes = TRUE)
+
+# get international country geometries
+world <- st_read(system.file("shapes/world.gpkg", package="spData"))
