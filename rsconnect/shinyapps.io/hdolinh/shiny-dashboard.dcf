@@ -1,0 +1,11 @@
+name: shiny-dashboard
+title:
+username:
+account: hdolinh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6710053
+bundleId: 6143903
+url: https://hdolinh.shinyapps.io/shiny-dashboard/
+when: 1659054037.96551
+lastSyncTime: 1659054037.96551
