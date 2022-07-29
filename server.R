@@ -802,7 +802,7 @@ server <- function(input, output, session){
   }) # EO age plotly
   
   
-  # SO CA res/ non res/ international ----
+  ## SO CA res/ non res/ international ----
   ## DATA WRANGLING ##
   # 2021
   origin_program <- bren_apps %>% 
@@ -885,29 +885,39 @@ server <- function(input, output, session){
                                          "International")))
   
   ## PLOTTING ##
-  residency_all <- ggplot(data = residency_stats_all,
-                          aes(x = ay_year,
-                              y = residency_percent,
-                              fill = reorder(residency, residency_percent),
-                              text = paste0("Residency: ", residency, "\n",
-                                            "Percent: ", residency_percent, "%"))) +
-    geom_bar(position = "dodge",
-             stat = "identity") +
-    scale_x_continuous(breaks = seq(min(residency_stats_all$ay_year),
-                                    max(residency_stats_all$ay_year))) +
-    scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-    theme_minimal() +
-    theme(panel.grid.minor = element_blank()) +
-    labs(title = "Residency distribution trends by degree program",
-         x = NULL,
-         y = NULL,
-         fill = NULL) +
-    scale_fill_manual(values = c("CA Resident" = "#9cbebe",
-                                 "Nonresident" = "#003660",
-                                 "International" = "#dcd6cc"),) +
-    facet_wrap(~objective1, ncol = 1)
-  
-  plotly::ggplotly(residency_all, tooltip = "text")
+  output$residency_all <- renderPlotly({
+    residency_all <- ggplot(data = residency_stats_all,
+                            aes(x = ay_year,
+                                y = residency_percent,
+                                fill = reorder(residency, residency_percent),
+                                text = paste0("Residency: ", residency, "\n",
+                                              "Percent: ", residency_percent, "%"))) +
+      geom_bar(position = "dodge",
+               stat = "identity") +
+      scale_x_continuous(breaks = seq(min(residency_stats_all$ay_year),
+                                      max(residency_stats_all$ay_year))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "Residency distribution trends by degree program",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("CA Resident" = "#9cbebe",
+                                   "Nonresident" = "#003660",
+                                   "International" = "#dcd6cc"),) +
+      facet_wrap(~objective1, ncol = 1)
+    
+    plotly::ggplotly(residency_all, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+  }) # EO residency plotly
+
   
   
 } # EO server

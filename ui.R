@@ -192,9 +192,9 @@ ui <- dashboardPage(
         
         fluidRow(
           ## * valueBoxes ----
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card")),
-          valueBox(10 * 2, "New Orders", icon = icon("credit-card"))
+          valueBox(2, "Undocumented students in 2020 programs", icon = icon("users")),
+          valueBox(3, "Military students in 2021 programs", icon = icon("flag")),
+          valueBox(11, "First generation students in 2021 programs", icon = icon("users"))
         ), # EO FR second row
         
         ## * plots ----
@@ -208,7 +208,8 @@ ui <- dashboardPage(
                  tabPanel("Age",
                           plotly::plotlyOutput(outputId = "age_all")),
                  tabPanel("Race & Ethnicity"),
-                 tabPanel("Residency")
+                 tabPanel("Residency",
+                          plotly::plotlyOutput(outputId = "residency_all"))
                  ), # EO demographics over time tabBox
           
         ) # EO FR third row

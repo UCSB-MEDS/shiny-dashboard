@@ -21,3 +21,12 @@ mesmS <- readRDS("data/mesmS_all_clean.rds")
 diversity <- readRDS("data/diversity_all.rds")
 
 # SOURCE FUNCTIONS ----
+
+# REUSABLE DFS
+prog_cohort_tot_all <- bren_apps %>% 
+  select(c("ay_year",
+           "application_id",
+           "objective1",
+           "dob")) %>%
+  group_by(objective1, ay_year) %>%
+  summarize(cohort_tot = n())
