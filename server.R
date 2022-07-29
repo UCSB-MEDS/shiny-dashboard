@@ -452,13 +452,6 @@ server <- function(input, output, session){
       TRUE ~ NA_real_
     ))
   
-  # get state geometries using tigris
-  df_state_geometries_us <- tigris::states(year = 2018) %>%
-    select(GEOID, STUSPS, NAME, geometry) %>% 
-    rename(fips = GEOID,
-           state_abbrev = STUSPS,
-           state = NAME) %>% 
-    rmapshaper::ms_simplify(keep = 0.005, keep_shapes = TRUE)
   
   # domestic map polygons
   mesmP_domestic <- mesmP_map %>% 
@@ -917,6 +910,104 @@ server <- function(input, output, session){
                                            "hoverCompareCartesian"))
     
   }) # EO residency plotly
+  
+  ## SO origins map ----
+  ## DATA WRANGLING ##
+  # create df
+  origins <- bren_apps %>% 
+    select(c(ay_year,
+             objective1,
+             ug1_location)) %>% 
+    mutate(ug1_location = str_remove(ug1_location, "US - "))
+  
+  # get fips + join state geoms with admissions data
+  origins_sf <- origins %>% 
+    mutate(ug1_location = case_when(
+      ug1_location == "District Of Columbia" ~ "District of Columbia",
+      TRUE ~ ug1_location
+    )) %>% 
+    left_join(df_state_geometries_us, by = c("ug1_location" = "state"))
+  
+  # domestic 
+  origins_domestic <- origins %>% 
+    mutate(ug1_location = case_when(
+      ug1_location == "District Of Columbia" ~ "District of Columbia",
+      TRUE ~ ug1_location
+    )) %>% 
+    left_join(df_state_geometries_us, by = c("ug1_location" = "state")) %>% 
+    filter(!is.na(fips)) %>% 
+    select(-c(fips, state_abbrev))
+  
+  # international
+  origins_intl <- origins_sf %>% 
+    filter(is.na(fips)) %>% 
+    select(-c(fips, state_abbrev, geometry)) %>% 
+    mutate(ug1_location = case_when(
+      ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "Republic of Korea",
+      ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
+      TRUE ~ ug1_location
+    )) %>% 
+    left_join(world, by = c("ug1_location" = "name_long")) %>% 
+    select(c(ay_year,
+             objective1,
+             ug1_location,
+             geom)) %>% 
+    rename(geometry = geom)
+  
+  # rbind domestic and intl dfs
+  origins_df <- rbind(origins_domestic, origins_intl) %>%
+      st_as_sf() %>%
+      st_transform(crs = 4326) %>%
+      filter(ay_year == 2021) %>%
+      group_by(objective1,
+               ug1_location) %>%
+      summarize(count = n())
+  # Note(HD): Need to figure out how to make this reactive w/out breaking
+  # don't forget to add () to df
+  # don't forget to add input$origins_map_check and %in%
+  # origins_df <- reactive({
+  #   rbind(origins_domestic, origins_intl) %>% 
+  #     st_as_sf() %>% 
+  #     st_transform(crs = 4326) %>% 
+  #     filter(ay_year %in% input$origins_map_check) %>% 
+  #     group_by(objective1,
+  #              ug1_location) %>% 
+  #     summarize(count = n())
+  #   
+  # }) # EO reactive origins map
+  
+  
+  ## PLOTTING ##
+  output$origins_map <- leaflet::renderLeaflet({
+    
+    bins <- c(0, 1, 5, 10, 15, 20, 25, 260)
+    pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
+                    domain = origins_df$count, 
+                    bins = bins)
+    
+    labels <- sprintf(
+      "<strong>%s</strong><br/>%g",
+      origins_df$ug1_location, origins_df$count
+    ) %>% lapply(htmltools::HTML)
+    
+    # create map
+    leaflet(origins_df) %>% 
+      addTiles() %>% 
+      addPolygons(
+        fillColor = ~pal(count),
+        weight = 2,
+        opacity = 1,
+        color = "#e5f5e0",
+        fillOpacity = 0.9,  
+        label = labels,
+        labelOptions = labelOptions(
+          style = list("font-weight" = "normal", padding = "3px 8px"),
+          textsize = "15px",
+          direction = "auto")
+      ) %>% 
+      setView(lat = 37, lng = 0, zoom = 1.49)
+    
+  }) # EO origins map
 
   
   

@@ -119,7 +119,7 @@ ui <- dashboardPage(
           ), # EO valueBox 88% stat
           valueBox(paste0("$", 70, ",", 730),
                    "AVERAGE STARTING SALARY",
-                   icon = icon("usd"),
+                   icon = icon("dollar-sign"),
                    color = "green"
           ), # EO valueBox starting salary stat
           valueBox(paste0(76, "%"),
@@ -145,7 +145,7 @@ ui <- dashboardPage(
               # solidHeader = TRUE,
               # status = "primary",
               title = "Bren Alumni Solve Environmental Problems Nationwide",
-              leafletOutput(outputId = "car_alumniMap") %>%
+              leaflet::leafletOutput(outputId = "car_alumniMap") %>%
                 withSpinner(color = "#003660", type = 1),
               checkboxGroupInput(inputId = "alumniMap_check",
                                  label = NULL,
@@ -210,7 +210,14 @@ ui <- dashboardPage(
         ## * plots ----
         fluidRow(
           box(width = 6,
-              title = "Where students are coming from"
+              title = "Where students are coming from",
+              leaflet::leafletOutput(outputId = "origins_map") %>%
+                withSpinner(color = "#003660", type = 1),
+              checkboxGroupInput(inputId = "origins_map_check",
+                                 label = "Input is not active yet (only 2021 data)",
+                                 choices = c(2016, 2017, 2018, 2019, 2020, 2021),
+                                 selected = 2021,
+                                 inline = TRUE)
               ), # EO map box  
           tabBox(width = 6,
                  tabPanel("Gender",
