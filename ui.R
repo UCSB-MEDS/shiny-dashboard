@@ -75,9 +75,12 @@ ui <- dashboardPage(
         fluidRow(
           tabBox(width = 6,
                  tabPanel("2021 Admissions",
-                          plotly::plotlyOutput(outputId = "admit_2021")),
+                          plotly::plotlyOutput(outputId = "admit_2021") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ), # EO tab panel curr admissions
                  tabPanel("Previous Admissions",
-                          plotly::plotlyOutput(outputId = "admit_stats_all"),
+                          plotly::plotlyOutput(outputId = "admit_stats_all") %>%
+                            withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "admit_stats_all",
                                        label = NULL,
                                        choices = c("MEDS", "MESM", "PHD"),
@@ -88,14 +91,16 @@ ui <- dashboardPage(
           # * demo and car plots ----
           tabBox(width = 6,
                  tabPanel("2021 Demographics",
-                          plotly::plotlyOutput(outputId = "diversity_2021"),
+                          plotly::plotlyOutput(outputId = "diversity_2021") %>%
+                            withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "diversity_stats_all",
                                        label = NULL,
                                        choices = c("MEDS", "MESM", "PHD"),
                                        selected = "MESM",
                                        inline = TRUE)),
                  tabPanel("2021 Bren Alumni Career Placements",
-                          DT::dataTableOutput(outputId = "careerP_tbl_21"))
+                          DT::dataTableOutput(outputId = "careerP_tbl_21") %>%
+                            withSpinner(color = "#003660", type = 1))
                  
           ) # EO tabBox
         ) # EO FR third row
@@ -140,7 +145,8 @@ ui <- dashboardPage(
               # solidHeader = TRUE,
               # status = "primary",
               title = "Bren Alumni Solve Environmental Problems Nationwide",
-              leafletOutput(outputId = "car_alumniMap"),
+              leafletOutput(outputId = "car_alumniMap") %>%
+                withSpinner(color = "#003660", type = 1),
               checkboxGroupInput(inputId = "alumniMap_check",
                                  label = NULL,
                                  choices = c(2019, 2020, 2021),
@@ -151,7 +157,8 @@ ui <- dashboardPage(
           # * career second plot ----
           tabBox(width = 6,
                  tabPanel("Sector",
-                          d3treeR::d3tree2Output(outputId = "sector_tree"),
+                          d3treeR::d3tree2Output(outputId = "sector_tree") %>%
+                            withSpinner(color = "#003660", type = 1),
                           checkboxGroupInput(inputId = "sector_tree_check",
                                              label = NULL,
                                              choices = c(2019, 2020, 2021),
@@ -159,16 +166,19 @@ ui <- dashboardPage(
                                              inline = TRUE)
                           ), # EO tabPanel 1 in box 2 
                  tabPanel("Satisfaction",
-                          plotOutput(outputId = "satisfaction")
+                          plotOutput(outputId = "satisfaction") %>%
+                            withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel placement satisfaction in box 2
                  tabPanel("Average Compensation",
                           plotlyOutput(outputId = "compensation")
                  ), # EO tabPanel avg comp in box 2
                  tabPanel("Source",
-                          plotOutput(outputId = "curr_mesm_source")
+                          plotOutput(outputId = "curr_mesm_source") %>%
+                            withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel placement source in box 2
                  tabPanel("Status",
-                          plotOutput(outputId = "curr_mesm_status")
+                          plotOutput(outputId = "curr_mesm_status") %>%
+                            withSpinner(color = "#003660", type = 1)
                  ) # EO tabPanel placement status in box 2
           ) # EO tabBox career second plot
         ) # EO FR third row
@@ -204,12 +214,18 @@ ui <- dashboardPage(
               ), # EO map box  
           tabBox(width = 6,
                  tabPanel("Gender",
-                          plotly::plotlyOutput(outputId = "gender_all")),
+                          plotly::plotlyOutput(outputId = "gender_all") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ), # EO gender tabPanel
                  tabPanel("Age",
-                          plotly::plotlyOutput(outputId = "age_all")),
+                          plotly::plotlyOutput(outputId = "age_all") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ), # EO age tabPanel
                  tabPanel("Race & Ethnicity"),
                  tabPanel("Residency",
-                          plotly::plotlyOutput(outputId = "residency_all"))
+                          plotly::plotlyOutput(outputId = "residency_all") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ) # EO resdiency tabPanel
                  ), # EO demographics over time tabBox
           
         ) # EO FR third row

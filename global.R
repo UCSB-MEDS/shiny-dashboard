@@ -11,7 +11,8 @@ library(leaflet)
 library(sf)
 library(plotly)
 library(treemap)
-library(d3treeR)
+library(d3treeR) # interactive tree map
+library(shinycssloaders) # loading icon
 
 # IMPORT DATA ----
 apps_clean <- readRDS("data/apps_all_clean.rds")
