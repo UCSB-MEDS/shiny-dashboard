@@ -47,69 +47,7 @@ server <- function(input, output, session){
   ## SO 2021 admit stats  ----
   output$admit_2021 <- renderPlotly({
     ## DATA WRANGLING ##
-    # app id 57928 submitted 2015-03-26
-    # app id 163517 submitted 2021-07-26
-    ay_year_df <- apps_clean %>%
-      # convert UNIX timestamp to datetime
-      mutate(submitted_date = as.numeric(unlist(submitted_date)),
-             submitted_date = anytime::anydate(submitted_date)) %>%
-      # add year col
-      mutate(ay_year = case_when(
-        # 2016 apps: 2015-09-01 to 2016-03-31
-        year(submitted_date) == 2015 & month(submitted_date) >= 3 ~ 2016,
-        year(submitted_date) == 2016 & month(submitted_date) <= 3 ~ 2016,
-        # 2017 apps: 2016-09-01 to 2017-03-31
-        year(submitted_date) == 2016 & month(submitted_date) >= 9 ~ 2017,
-        year(submitted_date) == 2017 & month(submitted_date) <= 3 ~ 2017,
-        # 2018 apps: 2017-09-01 to 2018-03-31
-        year(submitted_date) == 2017 & month(submitted_date) >= 9 ~ 2018,
-        year(submitted_date) == 2018 & month(submitted_date) <= 3 ~ 2018,
-        # 2019 apps: 2018-09-01 to 2019-03-31
-        year(submitted_date) == 2018 & month(submitted_date) >= 9 ~ 2019,
-        year(submitted_date) == 2019 & month(submitted_date) <= 3 ~ 2019,
-        # 2020 apps: 2019-09-01 to 2020-03-31
-        year(submitted_date) == 2019 & month(submitted_date) >= 9 ~ 2020,
-        year(submitted_date) == 2020 & month(submitted_date) <= 3 ~ 2020,
-        # 2021 apps: 2020-09-01 to 2021-03-31
-        year(submitted_date) == 2020 & month(submitted_date) >= 9 ~ 2021,
-        year(submitted_date) == 2021 & month(submitted_date) <= 7 ~ 2021)) 
-    
-    # total number of applicants per yr by program
-    apps_tot <- ay_year_df %>% 
-      group_by(ay_year,
-               objective1) %>% 
-      summarize(Applied = n())
-    
-    # total number of admitted applicants per yr by program
-    admit_tot <- ay_year_df %>% 
-      mutate(decision = case_when(
-        decision %in% c("Provisionally Admitted","Unconditionally Admitted") ~ "Admitted",
-        TRUE ~ decision
-      )) %>% 
-      group_by(ay_year,
-               objective1,
-               decision) %>% 
-      summarize(Admitted = n())
-    
-    # total number of YES SIR submissions per year by program
-    sir_yes_tot <- ay_year_df %>% 
-      group_by(ay_year,
-               objective1,
-               sir) %>% 
-      summarize(Take = n())
-    
-    # full df
-    admissions <- left_join(sir_yes_tot,
-                            apps_tot,
-                            by = c("ay_year", "objective1")) %>% 
-      left_join(admit_tot, by = c("ay_year", "objective1")) %>% 
-      filter(decision == "Admitted",
-             sir == "Yes") %>% 
-      mutate(admit_rate = (Admitted / Applied),
-             take_rate = (Take / Admitted))
-    
     # stacked df 2021
-    
     input$admit_stats_all
     
     admissions_stacked <- admissions %>% 
@@ -174,67 +112,6 @@ server <- function(input, output, session){
   
   ## SO 2019-2021 admit stats ----
   ## DATA WRANGLING ##
-  # app id 57928 submitted 2015-03-26
-  # app id 163517 submitted 2021-07-26
-  ay_year_df <- apps_clean %>%
-    # convert UNIX timestamp to datetime
-    mutate(submitted_date = as.numeric(unlist(submitted_date)),
-           submitted_date = anytime::anydate(submitted_date)) %>%
-    # add year col
-    mutate(ay_year = case_when(
-      # 2016 apps: 2015-09-01 to 2016-03-31
-      year(submitted_date) == 2015 & month(submitted_date) >= 3 ~ 2016,
-      year(submitted_date) == 2016 & month(submitted_date) <= 3 ~ 2016,
-      # 2017 apps: 2016-09-01 to 2017-03-31
-      year(submitted_date) == 2016 & month(submitted_date) >= 9 ~ 2017,
-      year(submitted_date) == 2017 & month(submitted_date) <= 3 ~ 2017,
-      # 2018 apps: 2017-09-01 to 2018-03-31
-      year(submitted_date) == 2017 & month(submitted_date) >= 9 ~ 2018,
-      year(submitted_date) == 2018 & month(submitted_date) <= 3 ~ 2018,
-      # 2019 apps: 2018-09-01 to 2019-03-31
-      year(submitted_date) == 2018 & month(submitted_date) >= 9 ~ 2019,
-      year(submitted_date) == 2019 & month(submitted_date) <= 3 ~ 2019,
-      # 2020 apps: 2019-09-01 to 2020-03-31
-      year(submitted_date) == 2019 & month(submitted_date) >= 9 ~ 2020,
-      year(submitted_date) == 2020 & month(submitted_date) <= 3 ~ 2020,
-      # 2021 apps: 2020-09-01 to 2021-03-31
-      year(submitted_date) == 2020 & month(submitted_date) >= 9 ~ 2021,
-      year(submitted_date) == 2021 & month(submitted_date) <= 7 ~ 2021)) 
-  
-  # total number of applicants per yr by program
-  apps_tot <- ay_year_df %>% 
-    group_by(ay_year,
-             objective1) %>% 
-    summarize(Applied = n())
-  
-  # total number of admitted applicants per yr by program
-  admit_tot <- ay_year_df %>% 
-    mutate(decision = case_when(
-      decision %in% c("Provisionally Admitted","Unconditionally Admitted") ~ "Admitted",
-      TRUE ~ decision
-    )) %>% 
-    group_by(ay_year,
-             objective1,
-             decision) %>% 
-    summarize(Admitted = n())
-  
-  # total number of YES SIR submissions per year by program
-  sir_yes_tot <- ay_year_df %>% 
-    group_by(ay_year,
-             objective1,
-             sir) %>% 
-    summarize(Take = n())
-  
-  # full df
-  admissions <- left_join(sir_yes_tot,
-                          apps_tot,
-                          by = c("ay_year", "objective1")) %>% 
-    left_join(admit_tot, by = c("ay_year", "objective1")) %>% 
-    filter(decision == "Admitted",
-           sir == "Yes") %>% 
-    mutate(admit_rate = (Admitted / Applied),
-           take_rate = (Take / Admitted))
-  
   # reactive stacked df 2019 - 2021
   admissions_stacked_all <- reactive({
     admissions %>% 
@@ -913,68 +790,22 @@ server <- function(input, output, session){
   
   ## SO origins map ----
   ## DATA WRANGLING ##
-  # create df
-  origins <- bren_apps %>% 
-    select(c(ay_year,
-             objective1,
-             ug1_location)) %>% 
-    mutate(ug1_location = str_remove(ug1_location, "US - "))
-  
-  # get fips + join state geoms with admissions data
-  origins_sf <- origins %>% 
-    mutate(ug1_location = case_when(
-      ug1_location == "District Of Columbia" ~ "District of Columbia",
-      TRUE ~ ug1_location
-    )) %>% 
-    left_join(df_state_geometries_us, by = c("ug1_location" = "state"))
-  
-  # domestic 
-  origins_domestic <- origins %>% 
-    mutate(ug1_location = case_when(
-      ug1_location == "District Of Columbia" ~ "District of Columbia",
-      TRUE ~ ug1_location
-    )) %>% 
-    left_join(df_state_geometries_us, by = c("ug1_location" = "state")) %>% 
-    filter(!is.na(fips)) %>% 
-    select(-c(fips, state_abbrev))
-  
-  # international
-  origins_intl <- origins_sf %>% 
-    filter(is.na(fips)) %>% 
-    select(-c(fips, state_abbrev, geometry)) %>% 
-    mutate(ug1_location = case_when(
-      ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "Republic of Korea",
-      ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
-      TRUE ~ ug1_location
-    )) %>% 
-    left_join(world, by = c("ug1_location" = "name_long")) %>% 
-    select(c(ay_year,
-             objective1,
-             ug1_location,
-             geom)) %>% 
-    rename(geometry = geom)
-  
-  # rbind domestic and intl dfs
-  origins_df <- rbind(origins_domestic, origins_intl) %>%
-      st_as_sf() %>%
-      st_transform(crs = 4326) %>%
+  origins_df <- origins_df %>%
       filter(ay_year == 2021) %>%
       group_by(objective1,
                ug1_location) %>%
       summarize(count = n())
+
   # Note(HD): Need to figure out how to make this reactive w/out breaking
   # don't forget to add () to df
   # don't forget to add input$origins_map_check and %in%
-  # origins_df <- reactive({
-  #   rbind(origins_domestic, origins_intl) %>% 
-  #     st_as_sf() %>% 
-  #     st_transform(crs = 4326) %>% 
-  #     filter(ay_year %in% input$origins_map_check) %>% 
+  # origins_rdf <- reactive({
+  #   origins_df %>% 
+  #     filter(ay_year %in% input$origins_map_check) %>%
   #     group_by(objective1,
-  #              ug1_location) %>% 
+  #              ug1_location) %>%
   #     summarize(count = n())
-  #   
-  # }) # EO reactive origins map
+  # }) 
   
   
   ## PLOTTING ##
@@ -1005,7 +836,7 @@ server <- function(input, output, session){
           textsize = "15px",
           direction = "auto")
       ) %>% 
-      setView(lat = 37, lng = 0, zoom = 1.49)
+      setView(lat = 37, lng = -20, zoom = 1.5)
     
   }) # EO origins map
 
