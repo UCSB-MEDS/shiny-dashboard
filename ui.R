@@ -228,7 +228,10 @@ ui <- dashboardPage(
                           plotly::plotlyOutput(outputId = "age_all") %>%
                             withSpinner(color = "#003660", type = 1)
                           ), # EO age tabPanel
-                 tabPanel("Race & Ethnicity"),
+                 tabPanel("Race & Ethnicity",
+                          "NOTE: need to style tree map",
+                          d3treeR::d3tree2Output(outputId = "race_ethn_mesm") %>%
+                            withSpinner(color = "#003660", type = 1)),
                  tabPanel("Residency",
                           plotly::plotlyOutput(outputId = "residency_all") %>%
                             withSpinner(color = "#003660", type = 1)
