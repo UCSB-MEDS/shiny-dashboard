@@ -11,3 +11,15 @@
 .small-box.bg-green {
   background-color: #6d7d33 !important;
 }
+
+/* styling sector tree map on career db*/
+/* title styling*/
+#sector_tree {
+  font-size: 25px;
+}
+
+#sector_tree text {
+  font-size: 18px;
+  fill: black !important;
+}
+
