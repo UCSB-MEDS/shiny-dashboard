@@ -167,7 +167,12 @@ ui <- dashboardPage(
                           ), # EO tabPanel 1 in box 2 
                  tabPanel("Satisfaction",
                           plotOutput(outputId = "satisfaction") %>%
-                            withSpinner(color = "#003660", type = 1)
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "satisfy_all",
+                                       label = NULL,
+                                       choices = c("2019", "2020", "2021"),
+                                       selected = "2021",
+                                       inline = TRUE)
                  ), # EO tabPanel placement satisfaction in box 2
                  tabPanel("Average Compensation",
                           plotlyOutput(outputId = "compensation")
