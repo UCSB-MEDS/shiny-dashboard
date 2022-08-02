@@ -509,34 +509,17 @@ server <- function(input, output, session){
   output$satisfaction <- renderPlot({
     # 2021
     # 3 NAs
-    # ggplot(data = mesmP_satisfy %>% filter(mesm_class_year == 2021) %>% drop_na,
-    #        aes(x = reorder(placement_satisfaction, satisfy_count),
-    #            y = satisfy_count)) +
-    #   geom_bar(stat = "identity") +
-    #   coord_flip() +
-    #   labs(title = "MESM satisfaction at initial job placement (2021)",
-    #        x = NULL,
-    #        y = "Number of students") +
-    #   theme_minimal() +
-    #   geom_text(aes(label = satisfy_count),
-    #             hjust = -0.3)
-    # waffle plot
-    ggplot(data = mesmP_satisfy(), 
-           aes(fill = placement_satisfaction, values = satisfy_count)) +
-      waffle::geom_waffle(n_rows = 7, size = 0.33, colour = "white") +
-      scale_fill_manual(name = NULL,
-                        values = c("Very Satisfied" = "#018571",
-                                   "Satisfied" = "#80cdc1",
-                                   "Somewhat Satisfied" = "#dfc27d",
-                                   "Unsatisfied" = "#a6611a")) +
-      coord_equal() +
-      theme_void() +
-      theme(legend.position = "top",
-            # NOTE(HD): This is not working, makes legend elements more spread out
-            #legend.title=element_text(size=50)
-            ) +
-      labs(title = paste0("MESM ", input$satisfy_all, " Job Satisfaction", 
-                          " (one box = one student)"))
+    ggplot(data = mesmP_satisfy() %>% drop_na,
+           aes(x = reorder(placement_satisfaction, satisfy_count),
+               y = satisfy_count)) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      labs(title = paste0("MESM ", input$satisfy_all, " satisfaction at job placement"),
+           x = NULL,
+           y = "Number of students") +
+      theme_minimal() +
+      geom_text(aes(label = satisfy_count),
+                hjust = -0.3)
     
   }) # EO placement satisfaction
   
