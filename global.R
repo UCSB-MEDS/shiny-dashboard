@@ -13,6 +13,7 @@ library(plotly)
 library(treemap)
 library(d3treeR) # interactive tree map
 library(shinycssloaders) # loading icon
+library(waffle)
 
 # IMPORT DATA ----
 admissions <- readRDS("data/admissions.rds")
