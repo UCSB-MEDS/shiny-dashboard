@@ -372,7 +372,7 @@ server <- function(input, output, session){
         fillColor = ~pal(count),
         weight = 2,
         opacity = 1,
-        color = "#e5f5e0",
+        color = "#003660",
         fillOpacity = 0.9,  
         label = labels,
         labelOptions = labelOptions(
@@ -833,7 +833,7 @@ server <- function(input, output, session){
         fillColor = ~pal(count),
         weight = 2,
         opacity = 1,
-        color = "#e5f5e0",
+        color = "#003660",
         fillOpacity = 0.9,  
         label = labels,
         labelOptions = labelOptions(
