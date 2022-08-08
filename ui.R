@@ -111,37 +111,53 @@ ui <- dashboardPage(
       # tabs career ----
       tabItem(
         tabName = "career_db",
-        h2("Career Placement Content"),
         fluidRow(
-          # * valueBox stats ----
-          valueBox(paste0("TBD", "%"), 
-                   "NEW STAT HERE",
-                   icon = icon("star")
-          ), # EO valueBox 88% stat
-          valueBox(paste0("TBD"),
-                   "NEW STAT HERE",
-                   icon = icon("dollar-sign"),
-                   color = "green"
-          ), # EO valueBox starting salary stat
-          valueBox(paste0("TBD"),
-                   "NEW STAT HERE",
-                   icon = icon("globe"),
-                   color = "blue"
-          ) # EO valueBox stay connected stat
+          
+          column(4,
+                 # * intro box ----
+                 fluidRow(
+                   box(
+                     width = 12,
+                     title = "Explore jobs Bren graduates are securing!",
+                     solidHeader = TRUE,
+                     status = "success",
+                     includeMarkdown("text/career_about.md")
+                   ) # EO intro box
+                 ),
+    
+                 # * valueBox stats ----
+                 valueBox(paste0("TBD", "%"), 
+                          "NEW STAT HERE",
+                          icon = icon("star"),
+                          width = NULL
+                 ), # EO valueBox 88% stat
+                 valueBox(paste0("TBD"),
+                          "NEW STAT HERE",
+                          icon = icon("dollar-sign"),
+                          color = "green",
+                          width = NULL
+                 ), # EO valueBox starting salary stat
+                 valueBox(paste0("TBD"),
+                          "NEW STAT HERE",
+                          icon = icon("globe"),
+                          color = "blue",
+                          width = NULL
+                 ) # EO valueBox stay connected stat
+          ), # EO column 1
+          
+          column(8,
+                 # * info box ----
+                 box(
+                   title = "Bren MESM Alumni Employers and Sectors since 2019",
+                   width = 12,
+                   solidHeader = TRUE,
+                   status = "navy",
+                   DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
+                     withSpinner(color = "#003660", type = 1)
+                 ) # EO employers and sectors box
+          ) # EO column 2
+          
         ), # EO FR first row
-        fluidRow(
-          # * info box ----
-          box(
-            title = "Explore the data below to learn about the jobs Bren
-            graduates are securing!",
-            width = 12,
-            solidHeader = TRUE,
-            status = "navy",
-            includeMarkdown("text/career_about.md"),
-            DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
-                       withSpinner(color = "#003660", type = 1)
-            ) # EO additional info box
-          ), # EO FR second row
         
         fluidRow(
           # * career map ----
@@ -150,12 +166,7 @@ ui <- dashboardPage(
               # status = "primary",
               title = "Bren Alumni Solve Environmental Problems Nationwide",
               leaflet::leafletOutput(outputId = "car_alumniMap") %>%
-                withSpinner(color = "#003660", type = 1),
-              checkboxGroupInput(inputId = "alumniMap_check",
-                                 label = NULL,
-                                 choices = c(2019, 2020, 2021),
-                                 selected = 2021,
-                                 inline = TRUE)
+                withSpinner(color = "#003660", type = 1)
           ), # EO box career map
           
           # * career second plot ----
@@ -191,7 +202,7 @@ ui <- dashboardPage(
                  ) # EO tabPanel placement status in box 2
           ) # EO tabBox career second plot
         
-        ), # EO FR third row
+        ), # EO FR second row
       
         ), # EO tabItem career_db
       

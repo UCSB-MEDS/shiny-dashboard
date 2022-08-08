@@ -247,12 +247,12 @@ server <- function(input, output, session){
     DT::datatable(
       employer,
       colnames = c("Employer", "Sector", "# of alumni"),
-      caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
-                                        htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
+      # caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
+      #                                   htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
       class = "cell-border stripe",
       rownames = FALSE,
       options = list(
-        pageLength = 8,
+        pageLength = 9,
         dom = 'Bftipr'
       ) # EO options
       
@@ -339,13 +339,7 @@ server <- function(input, output, session){
   # domestic map polygons
   mesmP_domestic_stats <- reactive({
     
-    validate(
-      need(input$alumniMap_check != "",
-           "Please select at least one year.")
-    ) # EO validate
-    
     mesmP_domestic %>%
-      filter(mesm_class_year %in% input$alumniMap_check) %>% 
       group_by(work_location_state) %>% 
       summarize(count = n())
   })
