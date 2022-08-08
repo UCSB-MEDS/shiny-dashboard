@@ -237,21 +237,18 @@ server <- function(input, output, session){
   ## SO career placements table  ----
   ## DATA WRANGLING ##
   employer <- mesmP %>% 
-    select(c(mesm_class_year,
-             employer_account_name,
-             employer_sector)) %>% 
-    filter(mesm_class_year == 2021) %>% 
-    select(-mesm_class_year) %>% 
+    select(c(employer_account_name,
+             employer_sector)) %>%
     group_by(employer_account_name,
              employer_sector) %>% 
     summarize(freq = n())
   ## TABLE ##
-  output$careerP_tbl_21 <- DT::renderDataTable({
+  output$career_employ_sector_tbl <- DT::renderDataTable({
     DT::datatable(
       employer,
       colnames = c("Employer", "Sector", "# of alumni"),
-      # caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
-      #                                   htmltools::em("Employers of 2021 MESM graduates")),
+      caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
+                                        htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
       class = "cell-border stripe",
       rownames = FALSE,
       options = list(

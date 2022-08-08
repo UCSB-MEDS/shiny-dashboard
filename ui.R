@@ -46,7 +46,7 @@ ui <- dashboardPage(
                 href = "styles.css")
     ), # EO tags$head
     
-    # Note(HD): initally added to use hidden()
+    # Note(HD): initially added to use hidden()
     useShinyjs(),
     
     
@@ -57,6 +57,7 @@ ui <- dashboardPage(
       tabItem(
         tabName = "curr_yr",
         h2("2021 Dashboard Content"),
+        
         # * intro text ----
         fluidRow(
           box(title = "Get to know our students",
@@ -66,6 +67,7 @@ ui <- dashboardPage(
               "Here is some text explaining the dashboard, 
               why it's important, and what a user can do with it")
         ), # EO FR first row
+        
         # * valueBoxes ----
         fluidRow(
           valueBoxOutput(outputId = "meds_curr_size"), 
@@ -89,6 +91,7 @@ ui <- dashboardPage(
                                        inline = TRUE)
                  ), # EO tabPanel previous admissions
           ), # EO tabBox
+          
           # * demo and car plots ----
           tabBox(width = 6,
                  tabPanel("2021 Demographics",
@@ -98,14 +101,11 @@ ui <- dashboardPage(
                                        label = NULL,
                                        choices = c("MEDS", "MESM", "PHD"),
                                        selected = "MESM",
-                                       inline = TRUE)),
-                 tabPanel("2021 Bren Alumni Career Placements",
-                          DT::dataTableOutput(outputId = "careerP_tbl_21") %>%
-                            withSpinner(color = "#003660", type = 1))
-                 
+                                       inline = TRUE)
+                 ) # EO 2021 demographics tabPanel
           ) # EO tabBox
-        ) # EO FR third row
-      ), # EO curr yr tabItem
+          ), # EO FR third row
+        ), # EO curr yr tabItem
       
       
       # tabs career ----
@@ -130,15 +130,18 @@ ui <- dashboardPage(
           ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
+          # * info box ----
           box(
             title = "Explore the data below to learn about the jobs Bren
             graduates are securing!",
             width = 12,
             solidHeader = TRUE,
             status = "navy",
-            includeMarkdown("text/career_about.md")
-          ) # EO additional info box
-        ), # EO FR second row
+            includeMarkdown("text/career_about.md"),
+            DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
+                       withSpinner(color = "#003660", type = 1)
+            ) # EO additional info box
+          ), # EO FR second row
         
         fluidRow(
           # * career map ----
@@ -165,7 +168,7 @@ ui <- dashboardPage(
                                              choices = c(2019, 2020, 2021),
                                              selected = 2021,
                                              inline = TRUE)
-                          ), # EO tabPanel 1 in box 2 
+                 ), # EO tabPanel 1 in box 2 
                  tabPanel("Satisfaction",
                           plotOutput(outputId = "satisfaction") %>%
                             withSpinner(color = "#003660", type = 1),
@@ -187,10 +190,12 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1)
                  ) # EO tabPanel placement status in box 2
           ) # EO tabBox career second plot
-        ) # EO FR third row
-      ), # EO career home tabItem
+        
+        ), # EO FR third row
       
+        ), # EO tabItem career_db
       
+
       # tabs demographics ----
       tabItem(
         tabName = "demo_db",
@@ -247,7 +252,8 @@ ui <- dashboardPage(
         ) # EO FR third row
       ) # EO demo home tabItem
       
-    ) # EO tabItems
+      ) # EO tabItems
+      
+    ) # EO dashboardBody
 
-  ) # EO dashboardBody
-) # EO dashboardPage
+  ) # EO dashboardPage
