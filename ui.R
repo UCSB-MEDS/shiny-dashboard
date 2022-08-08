@@ -15,7 +15,8 @@ ui <- dashboardPage(
       menuItem(
         tabName = "curr_yr",
         text = "2021 Data",
-        icon = icon("star", lib = "glyphicon")
+        icon = icon("star", lib = "glyphicon"),
+        badgeColor = "green"
       ), # EO curr yr menuItem
       
       # career ----

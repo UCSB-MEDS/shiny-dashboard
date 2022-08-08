@@ -23,3 +23,7 @@
   fill: black !important;
 }
 
+/* change background color of menuItems when selected */
+.skin-blue .sidebar-menu>li.active>a {
+  background-color: #3c8dbc;
+}
