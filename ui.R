@@ -22,7 +22,7 @@ ui <- dashboardPage(
       # career ----
       menuItem(
         tabName = "career_db",
-        text = "Career Placements",
+        text = "MESM Career Placement",
         icon = icon("road", lib = "glyphicon")
       ), # EO career menuItem
       
@@ -115,29 +115,39 @@ ui <- dashboardPage(
         fluidRow(
           # * valueBox stats ----
           valueBox(paste0(88, "%"), 
-                   "LANDED THAT DREAM JOB",
+                   paste0("LANDED THAT DREAM JOB - MESM Class of 2021 were 
+                          satisfied or very satisfied with their job hunt"),
                    icon = icon("star")
           ), # EO valueBox 88% stat
           valueBox(paste0("$", 70, ",", 730),
-                   "AVERAGE STARTING SALARY",
+                   "AVG STARTING SALARY - MESM Class of 2021 for Full Time 
+                   Career Positions in 6 months of graduation",
                    icon = icon("dollar-sign"),
                    color = "green"
           ), # EO valueBox starting salary stat
           valueBox(paste0(76, "%"),
-                   "STAY CONNECTED",
+                   "STAY CONNECTED - Bren alumni are on BrenConnect, our
+                   exclusive networking platform",
                    icon = icon("globe"),
                    color = "blue"
           ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
-          box(title = "Learn more about where and what jobs alumni are getting",
-              width = 12,
-              solidHeader = TRUE,
-              status = "navy",
-              "Here is some text explaining important information so
-              a user can interpret these visuals accurately. Maybe some
-              additional resources are listed here."
-              ) # EO info box
+          # * valueBox stats ----
+          valueBox(paste0(88, "%"), 
+                   "ADDITIONAL STAT",
+                   icon = icon("star")
+          ), # EO valueBox 88% stat
+          valueBox(paste0("$", 70, ",", 730),
+                   "ADDITIONAL STAT",
+                   icon = icon("dollar-sign"),
+                   color = "green"
+          ), # EO valueBox starting salary stat
+          valueBox(paste0(76, "%"),
+                   "ADDITIONAL STAT",
+                   icon = icon("globe"),
+                   color = "blue"
+          ) # EO valueBox stay connected stat
         ), # EO FR second row
         
         fluidRow(
