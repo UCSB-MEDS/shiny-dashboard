@@ -1,0 +1,1 @@
+Bren alumni secure initial placements in a variety of sectors, organizations, and locations. Learn more below, and learn more about Bren Career Services [here](https://bren.ucsb.edu/career-services).

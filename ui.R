@@ -114,40 +114,30 @@ ui <- dashboardPage(
         h2("Career Placement Content"),
         fluidRow(
           # * valueBox stats ----
-          valueBox(paste0(88, "%"), 
-                   paste0("LANDED THAT DREAM JOB - MESM Class of 2021 were 
-                          satisfied or very satisfied with their job hunt"),
+          valueBox(paste0("TBD", "%"), 
+                   "NEW STAT HERE",
                    icon = icon("star")
           ), # EO valueBox 88% stat
-          valueBox(paste0("$", 70, ",", 730),
-                   "AVG STARTING SALARY - MESM Class of 2021 for Full Time 
-                   Career Positions in 6 months of graduation",
+          valueBox(paste0("TBD"),
+                   "NEW STAT HERE",
                    icon = icon("dollar-sign"),
                    color = "green"
           ), # EO valueBox starting salary stat
-          valueBox(paste0(76, "%"),
-                   "STAY CONNECTED - Bren alumni are on BrenConnect, our
-                   exclusive networking platform",
+          valueBox(paste0("TBD"),
+                   "NEW STAT HERE",
                    icon = icon("globe"),
                    color = "blue"
           ) # EO valueBox stay connected stat
         ), # EO FR first row
         fluidRow(
-          # * valueBox stats ----
-          valueBox(paste0(88, "%"), 
-                   "ADDITIONAL STAT",
-                   icon = icon("star")
-          ), # EO valueBox 88% stat
-          valueBox(paste0("$", 70, ",", 730),
-                   "ADDITIONAL STAT",
-                   icon = icon("dollar-sign"),
-                   color = "green"
-          ), # EO valueBox starting salary stat
-          valueBox(paste0(76, "%"),
-                   "ADDITIONAL STAT",
-                   icon = icon("globe"),
-                   color = "blue"
-          ) # EO valueBox stay connected stat
+          box(
+            title = "Explore the data below to learn about the jobs Bren
+            graduates are securing!",
+            width = 12,
+            solidHeader = TRUE,
+            status = "navy",
+            includeMarkdown("text/career_about.md")
+          ) # EO additional info box
         ), # EO FR second row
         
         fluidRow(
