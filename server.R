@@ -614,58 +614,38 @@ server <- function(input, output, session){
     
   }) # EO gender plotly
   
+  
   ## SO age ----
-  ## DATA WRANGLING ##
-  # 2016-2021
-  age_program_all <- bren_apps %>% 
-    select(c("ay_year",
-             "application_id",
-             "objective1",
-             "dob")) %>%
-    # calculate age
-    mutate(dob_year = year(dob)) %>% 
-    mutate(age = ay_year - dob_year) %>% 
-    # students older than 50 will be grouped and marked as 50
-    mutate(age = case_when(age >= 50 ~ 50,
-                           TRUE ~ age))
+  # empty vars
+  color <- NULL
+  year_str <- NULL
   
-  # Note(HD:) used median bc data isn't normal and there's lots of outliers
-  age_program_stats <- age_program_all %>% 
-    group_by(ay_year, objective1) %>% 
-    summarize(mean_age = mean(age),
-              median_age = median(age))
-  
-  ## PLOTTING ##
+  # render plotly
   output$age_all <- renderPlotly({
-    # 5 year median line plot
-    age_all <- ggplot(data = age_program_stats,
-                      aes(x = ay_year,
-                          y = median_age,
-                          color = objective1)) +
-      geom_line() +
-      geom_point(aes(text = paste0("Program: ", objective1, "\n",
-                                   "Median Age: ", median_age, "\n",
-                                   "Year: ", ay_year))) +
-      theme_minimal() +
-      scale_color_manual(
-        values = c(
-          "MEDS" = "#047C91",
-          "MESM" = "#6D7D33",
-          "PHD" = "#005AA3"
-        )) +
-      labs(title = "Median age distribution trends by degree program",
-           y = "Median age",
-           x = NULL,
-           color = NULL)
+    if (input$age_prog == "MESM") {
+      color <- mesm_color
+      year_str <- "2016-2021"
+    } # EO if MESM age plot
+
+    else if (input$age_prog == "MEDS") {
+      color <- meds_color
+      year_str <- "2021"
+    } # EO else if MEDS age plot
+
+    else if (input$age_prog == "PHD") {
+      color <- phd_color
+      year_str <- "2016-2021"
+    } # EO else if PHD age plot
     
-    plotly::ggplotly(age_all, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian"))
-  }) # EO age plotly
+    # age plot function
+    age_plot(
+      df = bren_apps,
+      color = color,
+      year_str = year_str,
+      prog_input = input$age_prog
+    )
+  }) # EO age plot
+
   
   
   ## SO CA res/ non res/ international ----
