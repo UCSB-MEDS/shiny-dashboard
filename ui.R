@@ -248,7 +248,12 @@ ui <- dashboardPage(
                           ), # EO gender tabPanel
                  tabPanel("Age",
                           plotly::plotlyOutput(outputId = "age_all") %>%
-                            withSpinner(color = "#003660", type = 1)
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "age_prog",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD"),
+                                       selected = "MESM",
+                                       inline = TRUE)
                           ), # EO age tabPanel
                  tabPanel("Race & Ethnicity",
                           "NOTE: need to style tree map",
