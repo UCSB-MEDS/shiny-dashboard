@@ -255,17 +255,25 @@ ui <- dashboardPage(
                                        selected = "MESM",
                                        inline = TRUE)
                           ), # EO age tabPanel
-                 tabPanel("Race & Ethnicity",
-                          "NOTE: need to style tree map",
-                          d3treeR::d3tree2Output(outputId = "race_ethn_mesm") %>%
-                            withSpinner(color = "#003660", type = 1)),
                  tabPanel("Residency",
                           plotly::plotlyOutput(outputId = "residency_all") %>%
                             withSpinner(color = "#003660", type = 1)
-                          ) # EO resdiency tabPanel
+                          ) # EO residency tabPanel
                  ), # EO demographics over time tabBox
-          
-        ) # EO FR third row
+        ), # EO FR third row
+        
+        # race & ethnicity plots
+        fluidRow(
+          # race / category
+          box(
+            width = 6
+            
+          ),
+          # ethnicity / background
+          box(
+            width = 6
+          )
+        ) # EO FR fourth row
       ) # EO demo home tabItem
       
       ) # EO tabItems

@@ -818,37 +818,8 @@ server <- function(input, output, session){
   
   ## SO race & ethnicity ----
   ## DATA WRANGLING
-  # race and ethnicity test
-  race_ethnicity <- bren_apps %>% 
-    select(ay_year,
-           objective1,
-           background,
-           category,
-           hispanic_latino) %>%
-    group_by(ay_year,
-             objective1,
-             background,
-             category) %>% 
-    summarize(count = n()) %>% 
-    mutate(background = case_when(is.na(background) == TRUE ~ "Unknown race and ethnicity",
-                                  TRUE ~ background),
-           category = case_when(is.na(category) == TRUE ~ "Unknown race and ethnicity",
-                                TRUE ~ category)) %>% 
-    filter(ay_year == 2021)
+  
+  ## PLOTTING
 
-  
-  ## PLOTTING ##
-  output$race_ethn_mesm <- d3treeR::renderD3tree2({
-    race_eth_tree <- treemap::treemap(dtf = race_ethnicity %>% filter(objective1 == "MESM"),
-                                      index = c("category", "background"),
-                                      vSize = "count",
-                                      type = "index"
-                                      )
-    
-    # interactive treemap
-    d3treeR::d3tree2(race_eth_tree, rootname = "2021 MESM Race and Ethnicity")
-    
-  })
-  
   
 } # EO server
