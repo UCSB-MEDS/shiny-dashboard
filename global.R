@@ -25,6 +25,7 @@ df_state_geometries_us <- readRDS("data/df_state_geometries_us.rds")
 
 # SOURCE FUNCTIONS ----
 source("r/age_plot.R")
+source("r/race_plot.R")
 
 # STYLING ----
 mesm_color <- "#6D7D33"
