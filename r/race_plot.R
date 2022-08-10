@@ -1,4 +1,4 @@
-race_plot <- function(df, color, year_str, prog_input){
+race_plot <- function(df, year_str, prog_input){
   # df = data frame to be to create age_program_groups (i.e. bren_apps)
   # color = program color to be used to fill bar plots (i.e. mesm_color)
   # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
@@ -26,6 +26,14 @@ race_plot <- function(df, color, year_str, prog_input){
       hispanic_latino == TRUE ~ "Hispanic or Latino",
       is.na(category) == TRUE ~ "Unknown race and ethnicity"
     )) %>% 
+    mutate(category_ipeds = factor(category_ipeds, levels = c("American Indian or Alaska Native",
+                                                              "Asian",
+                                                              "Black or African American",
+                                                              "Hispanic or Latino",
+                                                              "Native Hawaiian or Other Pacific Islander",
+                                                              "White",
+                                                              "Two or more races",
+                                                              "Unknown race and ethnicity"))) %>% 
     group_by(objective1,
              category_ipeds) %>% 
     summarize(count = n())
@@ -42,17 +50,32 @@ race_plot <- function(df, color, year_str, prog_input){
   ## PLOTTING ##
   # ggplot
   ipeds_gg <- ggplot(data = category_ipeds_stats(),
-                          aes(x = count,
-                              y = reorder(category_ipeds, count),
+                          aes(x = category_ipeds,
+                              y = count,
+                              fill = category_ipeds,
                               text = paste0("Category: ", category_ipeds, "\n",
                                             "Percent: ", percent, "%", "\n",
                                             "Sample Size: ", tot))
   ) +
-    geom_bar(stat = "identity",
-             fill = color) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
     theme_minimal() +
     theme(
-      panel.grid.minor = element_blank()
+      panel.grid.minor = element_blank(),
+      legend.position = "none"
+    ) +
+    scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds))) +
+    scale_fill_manual(
+      values = c(
+        "American Indian or Alaska Native" = "#09847a",
+        "Asian" = "#09847a",
+        "Black or African American" = "#09847a",
+        "Hispanic or Latino" = "#09847a",
+        "Native Hawaiian or Other Pacific Islander" = "#09847a",
+        "White" = "#09847a",
+        "Two or more races" = "#09847a",
+        "Unknown race and ethnicity" = "#09847a"
+      )
     ) +
     labs(
       title = paste0("IPEDS Categories and Distribution of ", prog_input, " program",

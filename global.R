@@ -19,7 +19,7 @@ admissions <- readRDS("data/admissions.rds")
 bren_apps <- readRDS("data/bren_apps.rds")
 mesmP <- readRDS("data/mesmP_all_clean.rds")
 mesmS <- readRDS("data/mesmS_all_clean.rds")
-diversity <- readRDS("data/diversity_all.rds")
+diversity <- readRDS("data/diversity_all.rds") # 2016-2021
 origins_df <- readRDS("data/origins_df.rds")
 df_state_geometries_us <- readRDS("data/df_state_geometries_us.rds")
 

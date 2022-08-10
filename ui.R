@@ -220,7 +220,7 @@ ui <- dashboardPage(
                                  inline = TRUE)
               ), # EO map box  
           tabBox(width = 6,
-                 tabPanel("2021 Demographics",
+                 tabPanel("2021 Diversity Demographics",
                                  plotly::plotlyOutput(outputId = "diversity_2021") %>%
                                    withSpinner(color = "#003660", type = 1),
                                  radioButtons(inputId = "diversity_stats_all",

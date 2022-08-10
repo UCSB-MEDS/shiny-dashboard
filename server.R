@@ -178,62 +178,10 @@ server <- function(input, output, session){
 
   }) # EO 2019-2021 admit stats
   
-  ## SO 2021 diversity demographics overall ----
-  # reactive diversity df 2021
-  diversity_all_21 <- reactive({
-    diversity %>% 
-      filter(ay_year == 2021) %>% 
-      filter(objective1 == input$diversity_stats_all)
-  }) # EO reactive diversity df 2021
   
-  ## PLOTTING ##
-  output$diversity_2021 <- renderPlotly({
-    demo_21 <- ggplot(data = diversity_all_21(),
-                      aes(x = demographic,
-                          y = count,
-                          fill = demographic,
-                          text = paste0(demographic, "\n", "Count: ", count))) +
-      geom_bar(stat = "identity") +
-      coord_flip() +
-      scale_x_discrete(limits = rev(levels(diversity_all_21()$demographic))) +
-      scale_y_continuous(breaks = seq(0, 70, 10)) +
-      scale_fill_manual(
-        values = c(
-          "California Resident" = "#047c91",
-          "Nonresident" = "#047c91",
-          "International" = "#047c91",
-          "Female" = "#9cbebe",
-          "Age 25+" = "#9cbebe",
-          "Military" = "#9cbebe",
-          "Undocumented" = "#09847a",
-          "African American or Black" = "#09847a",
-          "American Indian or Alaska Native" = "#09847a",
-          "Asian or Asian American" = "#09847a",
-          "Hispanic or Latinx" = "#09847a",
-          "Native Hawaiian / other Pacific Islander" = "#09847a",
-          "White" = "#09847a",
-          "Two or more races" = "#09847a",
-          "Unknown race and ethnicity" = "#09847a"
-        )
-      ) +
-      theme_minimal() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank()) +
-      labs(title = paste0("2021 ", input$diversity_stats_all, " Demographics"),
-           x = NULL,
-           y = "Number of students")
-    
-    # plotly 2021
-    plotly::ggplotly(demo_21, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian"))
-    
-  })
   
+  
+  # CAREER DB ----
   ## SO career placements table  ----
   ## DATA WRANGLING ##
   employer <- mesmP %>% 
@@ -258,9 +206,6 @@ server <- function(input, output, session){
       
     ) # EO datatable
   }) # EO renderDataTable
-  
-  
-  # CAREER DB ----
   
   ## SO alumni map ----
   ## DATA WRANGLING ##
@@ -545,6 +490,61 @@ server <- function(input, output, session){
   
   
   # DEMOGRAPHICS DB ----
+  ## SO 2021 diversity demographics overall ----
+  # reactive diversity df 2021
+  diversity_all_21 <- reactive({
+    diversity %>% 
+      filter(ay_year == 2021) %>% 
+      filter(objective1 == input$diversity_stats_all)
+  }) # EO reactive diversity df 2021
+  
+  ## PLOTTING ##
+  output$diversity_2021 <- renderPlotly({
+    demo_21 <- ggplot(data = diversity_all_21(),
+                      aes(x = demographic,
+                          y = count,
+                          fill = demographic,
+                          text = paste0(demographic, "\n", "Count: ", count))) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      scale_x_discrete(limits = rev(levels(diversity_all_21()$demographic))) +
+      scale_y_continuous(breaks = seq(0, 70, 10)) +
+      scale_fill_manual(
+        values = c(
+          "California Resident" = "#047c91",
+          "Nonresident" = "#047c91",
+          "International" = "#047c91",
+          "Female" = "#9cbebe",
+          "Age 25+" = "#9cbebe",
+          "Military" = "#9cbebe",
+          "Undocumented" = "#09847a",
+          "African American or Black" = "#09847a",
+          "American Indian or Alaska Native" = "#09847a",
+          "Asian or Asian American" = "#09847a",
+          "Hispanic or Latinx" = "#09847a",
+          "Native Hawaiian / other Pacific Islander" = "#09847a",
+          "White" = "#09847a",
+          "Two or more races" = "#09847a",
+          "Unknown race and ethnicity" = "#09847a"
+        )
+      ) +
+      theme_minimal() +
+      theme(legend.position = "none",
+            panel.grid.minor = element_blank()) +
+      labs(title = paste0("2021 ", input$diversity_stats_all, " Diversity Demographics"),
+           x = NULL,
+           y = "Number of students")
+    
+    # plotly 2021
+    plotly::ggplotly(demo_21, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+  }) # EO 2021 diversity demo
   
   ## SO gender ----
   ## DATA WRANGLING ##
@@ -822,29 +822,24 @@ server <- function(input, output, session){
   
   output$race_pltly <- plotly::renderPlotly({
     # empty vars
-    color <- NULL
     year_str <- NULL
     
     # plotly conditions
     if (input$race == "MESM") {
-      color <- mesm_color
       year_str <- "2016-2021"
     } # EO if MESM race plot
     
     else if (input$race == "MEDS") {
-      color <- meds_color
       year_str <- "2021"
     } # EO else if MEDS race plot
     
     else if (input$race == "PHD") {
-      color <- phd_color
       year_str <- "2016-2021"
     } # EO else if PHD race plot
     
     # race plot function
     race_plot(
       df = bren_apps,
-      color = color,
       year_str = year_str,
       prog_input = input$race
     ) # EO race plot function
