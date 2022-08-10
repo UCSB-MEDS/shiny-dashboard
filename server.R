@@ -616,12 +616,12 @@ server <- function(input, output, session){
   
   
   ## SO age ----
-  # empty vars
-  color <- NULL
-  year_str <- NULL
-  
   # render plotly
   output$age_all <- renderPlotly({
+    # empty vars
+    color <- NULL
+    year_str <- NULL
+    
     if (input$age_prog == "MESM") {
       color <- mesm_color
       year_str <- "2016-2021"
@@ -816,8 +816,44 @@ server <- function(input, output, session){
     
   }) # EO origins map
   
-  ## SO race & ethnicity ----
+  ## SO race / category ----
+  ## PLOTTING
+  #race_plot <- function(df, color, year_str, prog_input)
+  
+  output$race_pltly <- plotly::renderPlotly({
+    # empty vars
+    color <- NULL
+    year_str <- NULL
+    
+    # plotly conditions
+    if (input$race == "MESM") {
+      color <- mesm_color
+      year_str <- "2016-2021"
+    } # EO if MESM race plot
+    
+    else if (input$race == "MEDS") {
+      color <- meds_color
+      year_str <- "2021"
+    } # EO else if MEDS race plot
+    
+    else if (input$race == "PHD") {
+      color <- phd_color
+      year_str <- "2016-2021"
+    } # EO else if PHD race plot
+    
+    # race plot function
+    race_plot(
+      df = bren_apps,
+      color = color,
+      year_str = year_str,
+      prog_input = input$race
+    ) # EO race plot function
+    
+  }) # EO race plotly
+  
+  ## SO ethnicity / background ----
   ## DATA WRANGLING
+  
   
   ## PLOTTING
 
