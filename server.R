@@ -831,10 +831,531 @@ server <- function(input, output, session){
   }) # EO race plotly
   
   ## SO ethnicity / background ----
+  
+  ## * american indian or alaska native ethnicity ----
   ## DATA WRANGLING
+  # breakdown of american indian or alaska native ethnicities by program
+  amIn_alNat_background <- background_ipeds %>% 
+    filter(category_ipeds == "American Indian or Alaska Native") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  amIn_alNat_background_stats <- reactive({
+    
+    left_join(amIn_alNat_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$amIn_alNat_eth)
+    
+  }) # EO rdf
+  
+  # validate(
+  #   need(nrow(amIn_alNat_background_stats()) > 0,
+  #        "There are no data for American Indian or Alaska Native category."
+  #   )
+  # ) # EO validate
   
   
   ## PLOTTING
+  output$amIn_alNat_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = amIn_alNat_background_stats(),
+                       aes(x = background,
+                           y = count,
+                           text = paste0("Program: ", objective1, "\n",
+                                         "Background: ", background, "\n",
+                                         "Percent: ", percent, "%", "\n",
+                                         "Sample size: ", tot
+                           ))) +
+      geom_bar(stat = "identity",
+               fill = "#003660") +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of American Indian or Alaska Native Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO american indian or alaska native ethnicity
+  
+  
+  
+  ## * asian ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of asian ethnicities by program
+  asian_background <- background_ipeds %>% 
+    filter(category_ipeds == "Asian") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  asian_background_stats <- reactive({
+    left_join(asian_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$white_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$asian_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = asian_background_stats(),
+                       aes(x = background,
+                           y = count,
+                           text = paste0("Program: ", objective1, "\n",
+                                         "Background: ", background, "\n",
+                                         "Percent: ", percent, "%", "\n",
+                                         "Sample size: ", tot
+                           ))) +
+      geom_bar(stat = "identity",
+               fill = "#047c91") +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Asian Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO asian ethnicity
+  
+  
+  
+  ## * black ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of white ethnicities by program
+  black_background <- background_ipeds %>% 
+    filter(category_ipeds == "Black or African American") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  black_background_stats <- reactive({
+    left_join(black_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$black_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$black_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = black_background_stats(),
+                     aes(x = background,
+                         y = count,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Background: ", background, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample size: ", tot
+                         ))) +
+      geom_bar(stat = "identity",
+               fill = "#dcd6cc") +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Black Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO black ethnicity
+  
+  
+  
+  ## * hispanic / latino ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of white ethnicities by program
+  hisp_lat_background <- background_ipeds %>% 
+    filter(category_ipeds == "Hispanic or Latino") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  hisp_lat_background_stats <- reactive({
+    left_join(hisp_lat_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$hisp_lat_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$hisp_lat_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = hisp_lat_background_stats(),
+                     aes(x = background,
+                         y = count,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Background: ", background, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample size: ", tot
+                         ))) +
+      geom_bar(stat = "identity",
+               fill = "#6d7d33") +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Hispanic or Latino Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO hispanic / latino ethnicity
+  
+  
+  
+  
+  ## * native hawaiian or other pacific islander ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of native hawaiian or other pacific islander by program
+  natHi_pi_eth_background <- background_ipeds %>% 
+    filter(category_ipeds == "Native Hawaiian or Other Pacific Islander") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  natHi_pi_eth_background_stats <- reactive({
+    left_join(natHi_pi_eth_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$natHi_pi_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$natHi_pi_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = natHi_pi_eth_background_stats(),
+                     aes(x = background,
+                         y = count,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Background: ", background, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample size: ", tot
+                         ))) +
+      geom_bar(stat = "identity",
+               fill = "#9cbebe") +
+      coord_flip() +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Native Hawaiian or Other Pacific Islander", "\n",
+                          "Ethnicity Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO native hawaiian or other pacific islander ethnicity
+  
+  
+  
+  ## * white ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of white ethnicities by program
+  white_background <- background_ipeds %>% 
+    filter(category_ipeds == "White") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  white_background_stats <- reactive({
+    left_join(white_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$white_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$white_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = white_background_stats(),
+                           aes(x = background,
+                               y = count,
+                               text = paste0("Program: ", objective1, "\n",
+                                             "Background: ", background, "\n",
+                                             "Percent: ", percent, "%", "\n",
+                                             "Sample size: ", tot
+                               ))) +
+      geom_bar(stat = "identity",
+               fill = "#dce1e5") +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of White Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO white ethnicity
+  
+  
+  ## * two or more races ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of two or more races ethnicities by program
+  two_more_eth_background <- background_ipeds %>% 
+    filter(category_ipeds == "Two or more races") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  two_more_eth_background_stats <- reactive({
+    left_join(two_more_eth_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$two_more_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$two_more_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = two_more_eth_background_stats(),
+                     aes(x = background,
+                         y = count,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Background: ", background, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample size: ", tot
+                         ))) +
+      geom_bar(stat = "identity",
+               fill = "#79a540") +
+      coord_flip() +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Two or More Races Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO two or more races ethnicity
+  
+  
+  
+  ## * unknown race or ethnicity ----
+  ## DATA WRANGLING
+  # breakdown of unknown race or ethnicity by program
+  unk_eth_background <- background_ipeds %>% 
+    filter(category_ipeds == "Unknown race and ethnicity") %>% 
+    mutate(background = case_when(
+      is.na(background) == TRUE ~ "Unknown race and ethnicity",
+      TRUE ~ background
+    )) %>%
+    mutate(background = str_split(background, "; ")) %>% 
+    unnest(background) %>% 
+    group_by(objective1,
+             background) %>% 
+    summarize(count = n())
+  
+  # reactive
+  unk_eth_background_stats <- reactive({
+    left_join(unk_eth_background, tot_5yr, by = "objective1") %>% 
+      mutate(percent = round((count / tot) * 100, 1)) %>% 
+      filter(objective1 %in% input$unk_eth)
+  }) 
+  
+  
+  ## PLOTTING
+  output$unk_eth_pltly <- plotly::renderPlotly({
+    eth_gg <- ggplot(data = unk_eth_background_stats(),
+                     aes(x = background,
+                         y = count,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Background: ", background, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample size: ", tot
+                         ))) +
+      geom_bar(stat = "identity",
+               fill = "#09847a") +
+      coord_flip() +
+      theme_minimal() +
+      theme(
+        legend.position = "none"
+      ) +
+      labs(title = paste0("Backgrounds of Unknown Race and", "\n",
+                          "Ethnicity Category"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(eth_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16)))%>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO unknown race or ethnicity
+  
 
   
 } # EO server
