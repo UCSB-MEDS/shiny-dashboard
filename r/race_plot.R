@@ -69,14 +69,14 @@ race_plot <- function(df, year_str, prog_input){
                        str_wrap(x, width = 35)) +
     scale_fill_manual(
       values = c(
-        "American Indian or Alaska Native" = "#09847a",
-        "Asian" = "#09847a",
-        "Black or African American" = "#09847a",
-        "Hispanic or Latino" = "#09847a",
-        "Native Hawaiian or Other Pacific Islander" = "#09847a",
-        "White" = "#09847a",
-        "Two or more races" = "#09847a",
-        "Unknown race and ethnicity" = "#09847a"
+        "American Indian or Alaska Native" = "#003660", # ucsb navy
+        "Asian" = "#047c91", # ucsb aqua
+        "Black or African American" = "#dcd6cc", # ucsb clay
+        "Hispanic or Latino" = "#6d7d33", # ucsb moss
+        "Native Hawaiian or Other Pacific Islander" = "#9cbebe", # ucsb mist
+        "White" = "#dce1e5", # ucsb light grey
+        "Two or more races" = "#79a540", # bren leaf green
+        "Unknown race and ethnicity" = "#09847a" # ucsb sea green
       )
     ) +
     labs(
