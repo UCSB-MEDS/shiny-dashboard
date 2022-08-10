@@ -91,8 +91,10 @@ race_plot <- function(df, prog_input){
     layout(title = list(text = paste0("IPEDS Categories and Distribution",
                                       "<br>",
                                       "<i>",
-                                      "MEDS data is limited since program began in 2021", "</i>"),
-                        font = list(size = 16))) %>% 
+                                      "<sup>",
+                                      "MEDS data is limited since program began in 2021", "</i>", "</sup>"),
+                        font = list(size = 15),
+                        x = 0.75)) %>% 
     config(
       modeBarButtonsToRemove = list(
         "pan",
