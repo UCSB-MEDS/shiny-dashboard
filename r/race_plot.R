@@ -64,7 +64,9 @@ race_plot <- function(df, year_str, prog_input){
       panel.grid.minor = element_blank(),
       legend.position = "none"
     ) +
-    scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds))) +
+    scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds)),
+                     labels = function(x)
+                       str_wrap(x, width = 35)) +
     scale_fill_manual(
       values = c(
         "American Indian or Alaska Native" = "#09847a",
