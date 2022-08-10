@@ -266,13 +266,23 @@ ui <- dashboardPage(
         fluidRow(
           # race / category
           box(
-            width = 6
-            
-          ),
+            width = 6,
+            title = "Race / Category",
+            plotly::plotlyOutput(outputId = "race_pltly") %>% 
+              withSpinner(color = "#003660", type = 1),
+            radioButtons(inputId = "race",
+                         label = NULL,
+                         choices = c("MEDS", "MESM", "PHD"),
+                         selected = "MESM",
+                         inline = TRUE)
+          ), # EO race plotly box
           # ethnicity / background
           box(
-            width = 6
-          )
+            width = 6,
+            title = "Ethnicity / Background",
+            plotly::plotlyOutput(outputId = "ethnicity_pltly") #%>% 
+              #withSpinner(color = "#003660", type = 1)
+          ) # EO ethnicity plotly box
         ) # EO FR fourth row
       ) # EO demo home tabItem
       
