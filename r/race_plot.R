@@ -1,4 +1,4 @@
-race_plot <- function(df, year_str, prog_input){
+race_plot <- function(df, prog_input){
   # df = data frame to be to create age_program_groups (i.e. bren_apps)
   # color = program color to be used to fill bar plots (i.e. mesm_color)
   # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
@@ -43,26 +43,28 @@ race_plot <- function(df, year_str, prog_input){
   category_ipeds_stats <- reactive({
     left_join(category_ipeds, tot_5yr, by = "objective1") %>% 
       mutate(percent = round((count / tot) * 100, 1)) %>% 
-      filter(objective1 == prog_input)
+      filter(objective1 %in% prog_input)
   }) # EO reactive category_ipeds_stats df
   
   
   ## PLOTTING ##
   # ggplot
   ipeds_gg <- ggplot(data = category_ipeds_stats(),
-                          aes(x = category_ipeds,
-                              y = count,
-                              fill = category_ipeds,
-                              text = paste0("Category: ", category_ipeds, "\n",
-                                            "Percent: ", percent, "%", "\n",
-                                            "Sample Size: ", tot))
+                     aes(x = category_ipeds,
+                         y = count,
+                         fill = category_ipeds,
+                         text = paste0("Program: ", objective1, "\n",
+                                       "Category: ", category_ipeds, "\n",
+                                       "Percent: ", percent, "%", "\n",
+                                       "Sample Size: ", tot))
   ) +
     geom_bar(stat = "identity") +
     coord_flip() +
     theme_minimal() +
     theme(
       panel.grid.minor = element_blank(),
-      legend.position = "none"
+      legend.position = "none",
+      plot.subtitle = element_text(face = "italic")
     ) +
     scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds)),
                      labels = function(x)
@@ -80,16 +82,17 @@ race_plot <- function(df, year_str, prog_input){
       )
     ) +
     labs(
-      title = paste0("IPEDS Categories and Distribution of ", prog_input, " program",
-                     "\n",
-                     "(", year_str, ")"),
       x = NULL,
       y = NULL
     )
   
   # plotly
   plotly::ggplotly(ipeds_gg, tooltip = "text") %>% 
-    layout(title = list(font = list(size = 17))) %>% 
+    layout(title = list(text = paste0("IPEDS Categories and Distribution",
+                                      "<br>",
+                                      "<i>",
+                                      "MEDS data is limited since program began in 2021", "</i>"),
+                        font = list(size = 16))) %>% 
     config(
       modeBarButtonsToRemove = list(
         "pan",
@@ -100,6 +103,6 @@ race_plot <- function(df, year_str, prog_input){
         "hoverCompareCartesian"
       )
     )
-
+  
   
 } # EO age plot function

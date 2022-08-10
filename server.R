@@ -821,26 +821,10 @@ server <- function(input, output, session){
   #race_plot <- function(df, color, year_str, prog_input)
   
   output$race_pltly <- plotly::renderPlotly({
-    # empty vars
-    year_str <- NULL
-    
-    # plotly conditions
-    if (input$race == "MESM") {
-      year_str <- "2016-2021"
-    } # EO if MESM race plot
-    
-    else if (input$race == "MEDS") {
-      year_str <- "2021"
-    } # EO else if MEDS race plot
-    
-    else if (input$race == "PHD") {
-      year_str <- "2016-2021"
-    } # EO else if PHD race plot
     
     # race plot function
     race_plot(
       df = bren_apps,
-      year_str = year_str,
       prog_input = input$race
     ) # EO race plot function
     
