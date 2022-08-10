@@ -90,20 +90,8 @@ ui <- dashboardPage(
                                        selected = "MESM",
                                        inline = TRUE)
                  ), # EO tabPanel previous admissions
-          ), # EO tabBox
-          
-          # * demo and car plots ----
-          tabBox(width = 6,
-                 tabPanel("2021 Demographics",
-                          plotly::plotlyOutput(outputId = "diversity_2021") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          radioButtons(inputId = "diversity_stats_all",
-                                       label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD"),
-                                       selected = "MESM",
-                                       inline = TRUE)
-                 ) # EO 2021 demographics tabPanel
           ) # EO tabBox
+          # * demo and car plots ----
           ), # EO FR third row
         ), # EO curr yr tabItem
       
@@ -211,23 +199,13 @@ ui <- dashboardPage(
       tabItem(
         tabName = "demo_db",
         h2("Student Demographics Home Content"),
-        fluidRow(
-          ## * definitions ----
-          box(title = "IPEDS and UC Demographics Definitions",
-              width = 12,
-              solidHeader = TRUE,
-              status = "navy",
-              "Here is some text explaining important information and definitions 
-              so a user can interpret these visuals accurately."
-          ) # EO info box
-        ), # EO FR first row
         
         fluidRow(
           ## * valueBoxes ----
           valueBox(2, "Undocumented students in 2020 programs", icon = icon("users")),
           valueBox(3, "Military students in 2021 programs", icon = icon("flag")),
           valueBox(11, "First generation students in 2021 programs", icon = icon("users"))
-        ), # EO FR second row
+        ), # EO FR first row
         
         ## * plots ----
         fluidRow(
@@ -242,6 +220,15 @@ ui <- dashboardPage(
                                  inline = TRUE)
               ), # EO map box  
           tabBox(width = 6,
+                 tabPanel("2021 Demographics",
+                                 plotly::plotlyOutput(outputId = "diversity_2021") %>%
+                                   withSpinner(color = "#003660", type = 1),
+                                 radioButtons(inputId = "diversity_stats_all",
+                                              label = NULL,
+                                              choices = c("MEDS", "MESM", "PHD"),
+                                              selected = "MESM",
+                                              inline = TRUE)
+                        ), # EO 2021 demographics tabPanel
                  tabPanel("Gender",
                           plotly::plotlyOutput(outputId = "gender_all") %>%
                             withSpinner(color = "#003660", type = 1)
@@ -260,6 +247,17 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1)
                           ) # EO residency tabPanel
                  ), # EO demographics over time tabBox
+        ), # EO FR second row
+        
+        fluidRow(
+          ## * definitions ----
+          box(title = "IPEDS and UC Demographics Definitions",
+              width = 12,
+              solidHeader = TRUE,
+              status = "navy",
+              "Here is some text explaining important information and definitions 
+              so a user can interpret these visuals accurately."
+          ) # EO info box
         ), # EO FR third row
         
         # race & ethnicity plots
