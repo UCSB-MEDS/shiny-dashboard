@@ -45,69 +45,69 @@ server <- function(input, output, session){
   })
   
   ## SO 2021 admit stats  ----
-  output$admit_2021 <- renderPlotly({
-    ## DATA WRANGLING ##
-    # stacked df 2021
-    input$admit_stats_all
-    
-    admissions_stacked <- admissions %>% 
-      select(c(ay_year,
-               objective1,
-               Take,
-               Applied,
-               Admitted)) %>% 
-      filter(ay_year == 2021) %>% 
-      pivot_longer(cols = c(Take,
-                            Applied,
-                            Admitted),
-                   names_to = "admin_tots",
-                   values_to = "counts") %>% 
-      mutate(admin_tots = factor(admin_tots, levels = c("Applied",
-                                                        "Admitted",
-                                                        "Take")))
-    ## PLOTTING ##
-    # ggplot 
-    admissions_stacked_plot <- ggplot(data = admissions_stacked,
-                                      aes(x = ay_year,
-                                          y = counts,
-                                          fill = reorder(admin_tots, counts))) +
-      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Applied"),
-               stat = "identity", 
-               aes(text = paste0("Applied: ", counts))) +
-      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Admitted"),
-               stat = "identity",
-               width = 0.75,
-               aes(text = paste0("Admitted: ", counts))) +
-      geom_bar(data = admissions_stacked %>% filter(admin_tots == "Take"),
-               stat = "identity",
-               width = 0.6,
-               aes(text = paste0("Take: ", counts))) +
-      scale_x_continuous(breaks = seq(min(admissions_stacked$ay_year),
-                                      max(admissions_stacked$ay_year))) +
-      theme_minimal() +
-      scale_fill_manual(
-        values = c(
-          "Applied" = "#dcd6cc",
-          "Admitted" = "#9cbebe",
-          "Take" = "#003660"
-        )
-      ) +
-      labs(title = "2021 Admissions by Degree Program",
-           x = NULL,
-           y = NULL,
-           fill = NULL) +
-      facet_wrap(~objective1, nrow = 1)
-    
-    # plotly
-    plotly::ggplotly(admissions_stacked_plot, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian"))
-    
-  }) # EO 2021 admit stats 
+  # output$admit_2021 <- renderPlotly({
+  #   ## DATA WRANGLING ##
+  #   # stacked df 2021
+  #   input$admit_stats_all
+  #   
+  #   admissions_stacked <- admissions %>% 
+  #     select(c(ay_year,
+  #              objective1,
+  #              Take,
+  #              Applied,
+  #              Admitted)) %>% 
+  #     filter(ay_year == 2021) %>% 
+  #     pivot_longer(cols = c(Take,
+  #                           Applied,
+  #                           Admitted),
+  #                  names_to = "admin_tots",
+  #                  values_to = "counts") %>% 
+  #     mutate(admin_tots = factor(admin_tots, levels = c("Applied",
+  #                                                       "Admitted",
+  #                                                       "Take")))
+  #   ## PLOTTING ##
+  #   # ggplot 
+  #   admissions_stacked_plot <- ggplot(data = admissions_stacked,
+  #                                     aes(x = ay_year,
+  #                                         y = counts,
+  #                                         fill = reorder(admin_tots, counts))) +
+  #     geom_bar(data = admissions_stacked %>% filter(admin_tots == "Applied"),
+  #              stat = "identity", 
+  #              aes(text = paste0("Applied: ", counts))) +
+  #     geom_bar(data = admissions_stacked %>% filter(admin_tots == "Admitted"),
+  #              stat = "identity",
+  #              width = 0.75,
+  #              aes(text = paste0("Admitted: ", counts))) +
+  #     geom_bar(data = admissions_stacked %>% filter(admin_tots == "Take"),
+  #              stat = "identity",
+  #              width = 0.6,
+  #              aes(text = paste0("Take: ", counts))) +
+  #     scale_x_continuous(breaks = seq(min(admissions_stacked$ay_year),
+  #                                     max(admissions_stacked$ay_year))) +
+  #     theme_minimal() +
+  #     scale_fill_manual(
+  #       values = c(
+  #         "Applied" = "#dcd6cc",
+  #         "Admitted" = "#9cbebe",
+  #         "Take" = "#003660"
+  #       )
+  #     ) +
+  #     labs(title = "2021 Admissions by Degree Program",
+  #          x = NULL,
+  #          y = NULL,
+  #          fill = NULL) +
+  #     facet_wrap(~objective1, nrow = 1)
+  #   
+  #   # plotly
+  #   plotly::ggplotly(admissions_stacked_plot, tooltip = "text") %>%
+  #     config(modeBarButtonsToRemove = list("pan", 
+  #                                          "select", 
+  #                                          "lasso2d", 
+  #                                          "autoScale2d", 
+  #                                          "hoverClosestCartesian", 
+  #                                          "hoverCompareCartesian"))
+  #   
+  # }) # EO 2021 admit stats 
 
   
   ## SO 2019-2021 admit stats ----
@@ -767,7 +767,7 @@ server <- function(input, output, session){
   ## SO origins map ----
   ## DATA WRANGLING ##
   origins_df <- origins_df %>%
-      filter(ay_year == 2021) %>%
+      #filter(ay_year == 2021) %>%
       group_by(objective1,
                ug1_location) %>%
       summarize(count = n())
