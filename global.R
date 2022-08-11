@@ -8,6 +8,7 @@ library(shinydashboardPlus)
 library(shinyjs)
 library(lubridate)
 library(leaflet)
+library(tmap)
 library(sf)
 library(plotly)
 library(treemap)
@@ -20,7 +21,8 @@ bren_apps <- readRDS("data/bren_apps.rds")
 mesmP <- readRDS("data/mesmP_all_clean.rds")
 mesmS <- readRDS("data/mesmS_all_clean.rds")
 diversity <- readRDS("data/diversity_all.rds") # 2016-2021
-origins_df <- readRDS("data/origins_df.rds")
+#origins_df <- readRDS("data/origins_df.rds")
+origins_geom <- readRDS("data/origins_geom.rds")
 df_state_geometries_us <- readRDS("data/df_state_geometries_us.rds")
 
 # SOURCE FUNCTIONS ----
