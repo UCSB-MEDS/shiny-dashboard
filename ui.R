@@ -205,10 +205,6 @@ ui <- dashboardPage(
                                               selected = "MESM",
                                               inline = TRUE)
                         ), # EO 2021 demographics tabPanel
-                 # tabPanel("2021 Admissions",
-                 #          plotly::plotlyOutput(outputId = "admit_2021") %>%
-                 #            withSpinner(color = "#003660", type = 1)
-                 # ), # EO tab panel 2021 admissions
                  tabPanel("Admissions",
                           plotly::plotlyOutput(outputId = "admit_stats_all") %>%
                             withSpinner(color = "#003660", type = 1),
