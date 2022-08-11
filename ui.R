@@ -11,10 +11,10 @@ ui <- dashboardPage(
     sidebarMenu(
       id = "sidebarID",
       
-      # curr yr ----
+      # welcome ----
       menuItem(
-        tabName = "curr_yr",
-        text = "2021 Data",
+        tabName = "welcome", # Note(HD): previously curr_yr
+        text = "Welcome",
         icon = icon("star", lib = "glyphicon"),
         badgeColor = "green"
       ), # EO curr yr menuItem
@@ -53,10 +53,10 @@ ui <- dashboardPage(
     tabItems(
       # Note(HD): tabName must match tabName in menuItem
       
-      # tabs curr yr ----
+      # tabs welcome ----
       tabItem(
-        tabName = "curr_yr",
-        h2("2021 Dashboard Content"),
+        tabName = "welcome",
+        h2("Welcome to the Bren Dashboard!"),
         
         # * intro text ----
         fluidRow(
@@ -73,26 +73,7 @@ ui <- dashboardPage(
           valueBoxOutput(outputId = "meds_curr_size"), 
           valueBoxOutput(outputId = "mesm_curr_size"),
           valueBoxOutput(outputId = "phd_curr_size")
-        ), # EO FR second row
-        # * admissions plots ----
-        fluidRow(
-          tabBox(width = 6,
-                 tabPanel("2021 Admissions",
-                          plotly::plotlyOutput(outputId = "admit_2021") %>%
-                            withSpinner(color = "#003660", type = 1)
-                          ), # EO tab panel curr admissions
-                 tabPanel("Previous Admissions",
-                          plotly::plotlyOutput(outputId = "admit_stats_all") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          radioButtons(inputId = "admit_stats_all",
-                                       label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD"),
-                                       selected = "MESM",
-                                       inline = TRUE)
-                 ), # EO tabPanel previous admissions
-          ) # EO tabBox
-          # * demo and car plots ----
-          ), # EO FR third row
+        ) # EO FR second row
         ), # EO curr yr tabItem
       
       
@@ -229,6 +210,19 @@ ui <- dashboardPage(
                                               selected = "MESM",
                                               inline = TRUE)
                         ), # EO 2021 demographics tabPanel
+                 # tabPanel("2021 Admissions",
+                 #          plotly::plotlyOutput(outputId = "admit_2021") %>%
+                 #            withSpinner(color = "#003660", type = 1)
+                 # ), # EO tab panel 2021 admissions
+                 tabPanel("Admissions",
+                          plotly::plotlyOutput(outputId = "admit_stats_all") %>%
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "admit_stats_all",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD"),
+                                       selected = "MESM",
+                                       inline = TRUE)
+                 ), # EO tabPanel previous admissions
                  tabPanel("Gender",
                           plotly::plotlyOutput(outputId = "gender_all") %>%
                             withSpinner(color = "#003660", type = 1)
