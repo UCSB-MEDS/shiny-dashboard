@@ -765,12 +765,26 @@ server <- function(input, output, session){
   }) # EO residency plotly
   
   ## SO origins map ----
+  output$origins_map <- tmap::renderTmap({
+    tmap_mode("view")
+    
+    tm_shape(origins_geom) +
+      tm_fill(
+        col = "total",
+        title = "Number of students",
+        palette = "YlGn",
+        style = "jenks",
+        n = 6,
+        popup.vars = c("Total students" = "total")
+      ) 
+  }) # EO origins map using tmap
+  
   ## DATA WRANGLING ##
-  origins_df <- origins_df %>%
-      #filter(ay_year == 2021) %>%
-      group_by(objective1,
-               ug1_location) %>%
-      summarize(count = n())
+  # origins_df <- origins_df %>%
+  #     filter(ay_year == 2021) %>%
+  #     group_by(objective1,
+  #              ug1_location) %>%
+  #     summarize(count = n())
 
   # Note(HD): Need to figure out how to make this reactive w/out breaking
   # don't forget to add () to df
@@ -785,36 +799,36 @@ server <- function(input, output, session){
   
   
   ## PLOTTING ##
-  output$origins_map <- leaflet::renderLeaflet({
-    
-    bins <- c(0, 1, 5, 10, 15, 20, 25, 260)
-    pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
-                    domain = origins_df$count, 
-                    bins = bins)
-    
-    labels <- sprintf(
-      "<strong>%s</strong><br/>%g",
-      origins_df$ug1_location, origins_df$count
-    ) %>% lapply(htmltools::HTML)
-    
-    # create map
-    leaflet(origins_df) %>% 
-      addTiles() %>% 
-      addPolygons(
-        fillColor = ~pal(count),
-        weight = 2,
-        opacity = 1,
-        color = "#003660",
-        fillOpacity = 0.9,  
-        label = labels,
-        labelOptions = labelOptions(
-          style = list("font-weight" = "normal", padding = "3px 8px"),
-          textsize = "15px",
-          direction = "auto")
-      ) %>% 
-      setView(lat = 37, lng = -20, zoom = 1.5)
-    
-  }) # EO origins map
+  # output$origins_map <- leaflet::renderLeaflet({
+  #   
+  #   bins <- c(0, 1, 5, 10, 15, 20, 25, 260)
+  #   pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
+  #                   domain = origins_df$count, 
+  #                   bins = bins)
+  #   
+  #   labels <- sprintf(
+  #     "<strong>%s</strong><br/>%g",
+  #     origins_df$ug1_location, origins_df$count
+  #   ) %>% lapply(htmltools::HTML)
+  #   
+  #   # create map
+  #   leaflet(origins_df) %>% 
+  #     addTiles() %>% 
+  #     addPolygons(
+  #       fillColor = ~pal(count),
+  #       weight = 2,
+  #       opacity = 1,
+  #       color = "#003660",
+  #       fillOpacity = 0.9,  
+  #       label = labels,
+  #       labelOptions = labelOptions(
+  #         style = list("font-weight" = "normal", padding = "3px 8px"),
+  #         textsize = "15px",
+  #         direction = "auto")
+  #     ) %>% 
+  #     setView(lat = 37, lng = -20, zoom = 1.5)
+  #   
+  # }) # EO origins map
   
   ## SO race / category ----
   ## PLOTTING

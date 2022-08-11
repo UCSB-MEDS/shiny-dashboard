@@ -183,22 +183,17 @@ ui <- dashboardPage(
         
         fluidRow(
           ## * valueBoxes ----
-          valueBox(2, "Undocumented students in 2020 programs", icon = icon("users")),
-          valueBox(3, "Military students in 2021 programs", icon = icon("flag")),
-          valueBox(11, "First generation students in 2021 programs", icon = icon("users"))
+          valueBox(2, "Undocumented students in programs since 2016", icon = icon("users")),
+          valueBox(7, "Military students in programs since 2016", icon = icon("flag")),
+          valueBox(54, "First generation students in programs since 2016", icon = icon("users"))
         ), # EO FR first row
         
         ## * plots ----
         fluidRow(
           box(width = 6,
               title = "Where students are coming from",
-              leaflet::leafletOutput(outputId = "origins_map") %>%
-                withSpinner(color = "#003660", type = 1),
-              checkboxGroupInput(inputId = "origins_map_check",
-                                 label = "Input is not active yet (only 2021 data)",
-                                 choices = c(2016, 2017, 2018, 2019, 2020, 2021),
-                                 selected = 2021,
-                                 inline = TRUE)
+              tmap::tmapOutput(outputId = "origins_map") %>%
+                withSpinner(color = "#003660", type = 1)
               ), # EO map box  
           tabBox(width = 6,
                  tabPanel("2021 Diversity Demographics",
