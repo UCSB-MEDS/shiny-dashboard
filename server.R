@@ -46,32 +46,41 @@ server <- function(input, output, session){
   
 
   
-  ## SO 2019-2021 admit stats ----
+  ## SO 2016-2021 admit stats ----
   ## DATA WRANGLING ##
-  # reactive stacked df 2019 - 2021
+  # reactive stacked df 2016 - 2021
   admissions_stacked_all <- reactive({
     admissions %>% 
       select(c(ay_year,
                objective1,
-               Take,
+               Enrolled,
                Applied,
                Admitted)) %>% 
       filter(objective1 == input$admit_stats_all) %>% 
-      pivot_longer(cols = c(Take,
+      pivot_longer(cols = c(Enrolled,
                             Applied,
                             Admitted),
                    names_to = "admin_tots",
                    values_to = "counts") %>% 
       mutate(admin_tots = factor(admin_tots, levels = c("Applied",
                                                         "Admitted",
-                                                        "Take")))
-  }) # EO reactive stacked df 2019 - 2021
+                                                        "Enrolled")))
+
+  }) # EO reactive stacked df 2016 - 2021
+  
+  # avg acceptance rate
+  admissions_rate <- reactive({
+    admissions %>% 
+      group_by(objective1) %>%
+      summarize(mean = round(mean(admit_rate_pct), 1)) %>% 
+      filter(objective1 == input$admit_stats_all)
+  }) 
   
   output$admit_stats_all <- renderPlotly({
     
     ## PLOTTING ##
-    # 2019 - 2021 admissions stacked
-    admissions_all_plot <- ggplot(data = admissions_stacked_all(),
+    # 2016- 2021 admissions stacked
+    admissions_all_plot <- ggplot(data = admissions_stacked_all() %>% filter(objective1 == "MESM"),
                                   aes(x = ay_year,
                                       y = counts,
                                       fill = reorder(admin_tots, counts))) +
@@ -82,7 +91,7 @@ server <- function(input, output, session){
                stat = "identity",
                width = 0.75,
                aes(text = paste0("Admitted: ", counts))) +
-      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Take"),
+      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Enrolled"),
                stat = "identity",
                width = 0.6,
                aes(text = paste0("Enrolled: ", counts))) +
@@ -94,13 +103,14 @@ server <- function(input, output, session){
         values = c(
           "Applied" = "#dcd6cc",
           "Admitted" = "#9cbebe",
-          "Take" = "#003660"
+          "Enrolled" = "#003660"
         )
       ) +
-      labs(title = paste0(input$admit_stats_all, " Admissions"),
+      labs(title = paste0("MESM Admissions", "\n",
+                          "Average acceptance rate: ", admissions_rate()$mean, "%"),
            x = NULL,
            y = NULL,
-           fill = NULL) 
+           fill = NULL)
     
     # plotly 2019 - 2021 admissions 
     plotly::ggplotly(admissions_all_plot, tooltip = "text") %>%
