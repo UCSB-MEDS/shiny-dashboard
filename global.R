@@ -21,6 +21,7 @@ bren_apps <- readRDS("data/bren_apps.rds")
 mesmP <- readRDS("data/mesmP_all_clean.rds")
 mesmS <- readRDS("data/mesmS_all_clean.rds")
 diversity <- readRDS("data/diversity_all.rds") # 2016-2021
+diversity_stats <- readRDS("data/diversity_all_stats.rds") # NEED TO ADD AGAIN
 #origins_df <- readRDS("data/origins_df.rds")
 origins_geom <- readRDS("data/origins_geom.rds")
 df_state_geometries_us <- readRDS("data/df_state_geometries_us.rds")
