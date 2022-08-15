@@ -66,14 +66,7 @@ ui <- dashboardPage(
               status = "navy",
               "Here is some text explaining the dashboard, 
               why it's important, and what a user can do with it")
-        ), # EO FR first row
-        
-        # * valueBoxes ----
-        fluidRow(
-          valueBoxOutput(outputId = "meds_curr_size"), 
-          valueBoxOutput(outputId = "mesm_curr_size"),
-          valueBoxOutput(outputId = "phd_curr_size")
-        ) # EO FR second row
+        ) # EO FR first row
         ), # EO curr yr tabItem
       
       
@@ -183,15 +176,15 @@ ui <- dashboardPage(
         
         fluidRow(
           ## * valueBoxes ----
-          valueBox(2, "Undocumented students in programs since 2016", icon = icon("users")),
-          valueBox(7, "Military students in programs since 2016", icon = icon("flag")),
-          valueBox(54, "First generation students in programs since 2016", icon = icon("users"))
+          valueBoxOutput(outputId = "meds_curr_size"), 
+          valueBoxOutput(outputId = "mesm_curr_size"),
+          valueBoxOutput(outputId = "phd_curr_size")
         ), # EO FR first row
         
         ## * plots ----
         fluidRow(
           box(width = 6,
-              title = "Where students are coming from",
+              title = "What institutions students are coming from",
               tmap::tmapOutput(outputId = "origins_map") %>%
                 withSpinner(color = "#003660", type = 1)
               ), # EO map box  
