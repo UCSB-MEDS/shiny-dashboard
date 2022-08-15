@@ -2,129 +2,7 @@
 server <- function(input, output, session){
 
   # 2021 DB ----
-  ## SO program sizes valueBox ----
-  # program size df
-  program_size <- bren_apps %>% 
-    select(c(ay_year,
-             objective1)) %>% 
-    filter(ay_year == 2021) %>% 
-    group_by(objective1) %>% 
-    summarize(count = n())
-  
-  meds_size <- program_size %>% filter(objective1 == "MEDS")
-  mesm_size <- program_size %>% filter(objective1 == "MESM")
-  phd_size <- program_size %>% filter(objective1 == "PHD")
-  
-  # MEDS valueBox output
-  output$meds_curr_size <- renderValueBox({
-    shinydashboard::valueBox(
-      "MEDS students in 2021 cohort",
-      value = meds_size$count,
-      icon = icon("users", lib = "font-awesome"),
-      color = "light-blue"
-    )
-  })
-  # MESM valueBox output
-  output$mesm_curr_size <- renderValueBox({
-      valueBox(
-        "MESM students in 2021 cohort",
-        value = mesm_size$count,
-        icon = icon("users", lib = "font-awesome"),
-        color = "blue"
-      )
-             
-  })
-  # PHD valueBox output
-  output$phd_curr_size <- renderValueBox({
-    valueBox(
-      "PhD students in 2021 cohort",
-      value = phd_size$count,
-      icon = icon("users", lib = "font-awesome"),
-      color = "green"
-      )
-  })
-  
 
-  
-  ## SO 2016-2021 admit stats ----
-  ## DATA WRANGLING ##
-  # reactive stacked df 2016 - 2021
-  admissions_stacked_all <- reactive({
-    admissions %>% 
-      select(c(ay_year,
-               objective1,
-               Enrolled,
-               Applied,
-               Admitted)) %>% 
-      filter(objective1 == input$admit_stats_all) %>% 
-      pivot_longer(cols = c(Enrolled,
-                            Applied,
-                            Admitted),
-                   names_to = "admin_tots",
-                   values_to = "counts") %>% 
-      mutate(admin_tots = factor(admin_tots, levels = c("Applied",
-                                                        "Admitted",
-                                                        "Enrolled")))
-
-  }) # EO reactive stacked df 2016 - 2021
-  
-  # avg acceptance rate
-  admissions_rate <- reactive({
-    admissions %>% 
-      group_by(objective1) %>%
-      summarize(mean = round(mean(admit_rate_pct), 1)) %>% 
-      filter(objective1 == input$admit_stats_all)
-  }) 
-  
-  output$admit_stats_all <- renderPlotly({
-    
-    ## PLOTTING ##
-    # 2016- 2021 admissions stacked
-    admissions_all_plot <- ggplot(data = admissions_stacked_all() %>% filter(objective1 == "MESM"),
-                                  aes(x = ay_year,
-                                      y = counts,
-                                      fill = reorder(admin_tots, counts))) +
-      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Applied"),
-               stat = "identity", 
-               aes(text = paste0("Applied: ", counts))) +
-      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Admitted"),
-               stat = "identity",
-               width = 0.75,
-               aes(text = paste0("Admitted: ", counts))) +
-      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Enrolled"),
-               stat = "identity",
-               width = 0.6,
-               aes(text = paste0("Enrolled: ", counts))) +
-      scale_x_continuous(breaks = seq(min(admissions_stacked_all()$ay_year),
-                                      max(admissions_stacked_all()$ay_year))) +
-      theme_minimal() +
-      theme(panel.grid.minor = element_blank()) +
-      scale_fill_manual(
-        values = c(
-          "Applied" = "#dcd6cc",
-          "Admitted" = "#9cbebe",
-          "Enrolled" = "#003660"
-        )
-      ) +
-      labs(title = paste0("MESM Admissions", "\n",
-                          "Average acceptance rate: ", admissions_rate()$mean, "%"),
-           x = NULL,
-           y = NULL,
-           fill = NULL)
-    
-    # plotly 2019 - 2021 admissions 
-    plotly::ggplotly(admissions_all_plot, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian"))
-    
-
-  }) # EO 2019-2021 admit stats
-  
-  
   
   
   # CAREER DB ----
@@ -436,6 +314,135 @@ server <- function(input, output, session){
   
   
   # DEMOGRAPHICS DB ----
+  ## SO program sizes valueBox ----
+  # program size df
+  program_size <- bren_apps %>% 
+    select(c(ay_year,
+             objective1)) %>% 
+    filter(ay_year == 2021) %>% 
+    group_by(objective1) %>% 
+    summarize(count = n())
+  
+  meds_size <- program_size %>% filter(objective1 == "MEDS")
+  mesm_size <- program_size %>% filter(objective1 == "MESM")
+  phd_size <- program_size %>% filter(objective1 == "PHD")
+  
+  # MEDS valueBox output
+  output$meds_curr_size <- renderValueBox({
+    shinydashboard::valueBox(
+      "MEDS students in 2021 cohort",
+      value = meds_size$count,
+      icon = icon("users", lib = "font-awesome"),
+      color = "light-blue"
+    )
+  }) # EO MEDS valueBox prog size
+  
+  # MESM valueBox output
+  output$mesm_curr_size <- renderValueBox({
+    valueBox(
+      "MESM students in 2021 cohort",
+      value = mesm_size$count,
+      icon = icon("users", lib = "font-awesome"),
+      color = "blue"
+    )
+    
+  })# EO MESM valueBox prog size
+  
+  # PHD valueBox output
+  output$phd_curr_size <- renderValueBox({
+    valueBox(
+      "PhD students in 2021 cohort",
+      value = phd_size$count,
+      icon = icon("users", lib = "font-awesome"),
+      color = "green"
+    )
+  }) # EO PHD valueBox prog size
+  
+  
+  
+  ## SO 2016-2021 admit stats ----
+  ## DATA WRANGLING ##
+  # reactive stacked df 2016 - 2021
+  admissions_stacked_all <- reactive({
+    admissions %>% 
+      select(c(ay_year,
+               objective1,
+               Enrolled,
+               Applied,
+               Admitted)) %>% 
+      filter(objective1 == input$admit_stats_all) %>% 
+      pivot_longer(cols = c(Enrolled,
+                            Applied,
+                            Admitted),
+                   names_to = "admin_tots",
+                   values_to = "counts") %>% 
+      mutate(admin_tots = factor(admin_tots, levels = c("Applied",
+                                                        "Admitted",
+                                                        "Enrolled")))
+    
+  }) # EO reactive stacked df 2016 - 2021
+  
+  # avg acceptance rate
+  admissions_rate <- reactive({
+    admissions %>% 
+      group_by(objective1) %>%
+      summarize(mean = round(mean(admit_rate_pct), 1)) %>% 
+      filter(objective1 == input$admit_stats_all)
+  }) 
+  
+  output$admit_stats_all <- renderPlotly({
+    
+    ## PLOTTING ##
+    # 2016- 2021 admissions stacked
+    admissions_all_plot <- ggplot(data = admissions_stacked_all(),
+                                  aes(x = ay_year,
+                                      y = counts,
+                                      fill = reorder(admin_tots, counts))) +
+      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Applied"),
+               stat = "identity", 
+               aes(text = paste0("Applied: ", counts))) +
+      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Admitted"),
+               stat = "identity",
+               width = 0.75,
+               aes(text = paste0("Admitted: ", counts))) +
+      geom_bar(data = admissions_stacked_all() %>% filter(admin_tots == "Enrolled"),
+               stat = "identity",
+               width = 0.6,
+               aes(text = paste0("Enrolled: ", counts))) +
+      scale_x_continuous(breaks = seq(min(admissions_stacked_all()$ay_year),
+                                      max(admissions_stacked_all()$ay_year))) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      scale_fill_manual(
+        values = c(
+          "Applied" = "#dcd6cc",
+          "Admitted" = "#9cbebe",
+          "Enrolled" = "#003660"
+        )
+      ) +
+      labs(title = paste0(input$admit_stats_all, " Admissions", "\n",
+                          "<i>",
+                          "<sup>",
+                          "Average acceptance rate: ", admissions_rate()$mean, "%",
+                          "</i>",
+                          "</sup>"),
+           x = NULL,
+           y = NULL,
+           fill = NULL)
+    
+    # plotly 2016 - 2021 admissions 
+    plotly::ggplotly(admissions_all_plot, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+  }) # EO 2016-2021 admit stats
+  
+  
+  
   ## SO 2021 diversity demographics overall ----
   # reactive diversity df 2021
   diversity_all_21 <- reactive({
