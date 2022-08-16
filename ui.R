@@ -172,24 +172,31 @@ ui <- dashboardPage(
       # tabs demographics ----
       tabItem(
         tabName = "demo_db",
-        h2("Student Demographics Home Content"),
         
         fluidRow(
-          ## * valueBoxes ----
-          valueBoxOutput(outputId = "meds_curr_size"), 
-          valueBoxOutput(outputId = "mesm_curr_size"),
-          valueBoxOutput(outputId = "phd_curr_size")
+          ## * intro box ----
+          box(width = 12,
+              title = "Learn more about students at Bren!",
+              "Some introductory information",
+              solidHeader = TRUE,
+              status = "success"
+              ) # EO intro box
         ), # EO FR first row
         
-        ## * plots ----
         fluidRow(
-          box(width = 6,
-              title = "Where students are coming from based on undergraduate location",
-              tmap::tmapOutput(outputId = "origins_map") %>%
-                withSpinner(color = "#003660", type = 1)
-              ), # EO map box  
-          tabBox(width = 6,
-                 tabPanel("2021 Diversity Demographics",
+          column(4,
+                 ## * valueBoxes ----
+                 valueBoxOutput(outputId = "meds_curr_size",
+                                width = NULL), 
+                 valueBoxOutput(outputId = "mesm_curr_size",
+                                width = NULL),
+                 valueBoxOutput(outputId = "phd_curr_size",
+                                width = NULL)
+          ), # EO column 1 valueBoxes
+          
+          column(8,
+                 tabBox(width = 12,
+                        tabPanel("2021 Diversity Demographics",
                                  plotly::plotlyOutput(outputId = "diversity_2021") %>%
                                    withSpinner(color = "#003660", type = 1),
                                  radioButtons(inputId = "diversity_stats_all",
@@ -198,34 +205,47 @@ ui <- dashboardPage(
                                               selected = "MESM",
                                               inline = TRUE)
                         ), # EO 2021 demographics tabPanel
-                 tabPanel("Admissions",
-                          plotly::plotlyOutput(outputId = "admit_stats_all") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          radioButtons(inputId = "admit_stats_all",
-                                       label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD"),
-                                       selected = "MESM",
-                                       inline = TRUE)
-                 ), # EO tabPanel previous admissions
-                 tabPanel("Gender",
-                          plotly::plotlyOutput(outputId = "gender_all") %>%
-                            withSpinner(color = "#003660", type = 1)
-                          ), # EO gender tabPanel
-                 tabPanel("Age",
-                          plotly::plotlyOutput(outputId = "age_all") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          radioButtons(inputId = "age_prog",
-                                       label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD"),
-                                       selected = "MESM",
-                                       inline = TRUE)
-                          ), # EO age tabPanel
-                 tabPanel("Residency",
-                          plotly::plotlyOutput(outputId = "residency_all") %>%
-                            withSpinner(color = "#003660", type = 1)
-                          ) # EO residency tabPanel
-                 ), # EO demographics over time tabBox
+                        tabPanel("Admissions",
+                                 plotly::plotlyOutput(outputId = "admit_stats_all") %>%
+                                   withSpinner(color = "#003660", type = 1),
+                                 radioButtons(inputId = "admit_stats_all",
+                                              label = NULL,
+                                              choices = c("MEDS", "MESM", "PHD"),
+                                              selected = "MESM",
+                                              inline = TRUE)
+                        ), # EO tabPanel previous admissions
+                        tabPanel("Gender",
+                                 plotly::plotlyOutput(outputId = "gender_all") %>%
+                                   withSpinner(color = "#003660", type = 1)
+                        ), # EO gender tabPanel
+                        tabPanel("Age",
+                                 plotly::plotlyOutput(outputId = "age_all") %>%
+                                   withSpinner(color = "#003660", type = 1),
+                                 radioButtons(inputId = "age_prog",
+                                              label = NULL,
+                                              choices = c("MEDS", "MESM", "PHD"),
+                                              selected = "MESM",
+                                              inline = TRUE)
+                        ), # EO age tabPanel
+                        tabPanel("Residency",
+                                 plotly::plotlyOutput(outputId = "residency_all") %>%
+                                   withSpinner(color = "#003660", type = 1)
+                        ) # EO residency tabPanel
+                 ) # EO demographics tabBox
+                 
+                 ) # EO column 2 tabbox
         ), # EO FR second row
+        
+        ## * plots ----
+        fluidRow(
+          box(width = 12,
+              title = "Where students are coming from based on undergraduate location",
+              solidHeader = TRUE,
+              status = "navy",
+              tmap::tmapOutput(outputId = "origins_map") %>%
+                withSpinner(color = "#003660", type = 1)
+              ) # EO map box  
+        ), # EO FR third row
         
         fluidRow(
           ## * definitions ----
@@ -236,7 +256,7 @@ ui <- dashboardPage(
               "Here is some text explaining important information and definitions 
               so a user can interpret these visuals accurately."
           ) # EO info box
-        ), # EO FR third row
+        ), # EO FR fourth row
         
         ## * race & ethnicity plots ----
         fluidRow(
@@ -327,7 +347,7 @@ ui <- dashboardPage(
                                              inline = TRUE)
                           ) # EO unknown eth
           ) # EO ethnicity tabBox
-        ) # EO FR fourth row
+        ) # EO FR fifth row
       ) # EO demo home tabItem
       
       ) # EO tabItems
