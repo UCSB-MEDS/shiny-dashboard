@@ -85,7 +85,7 @@ ui <- dashboardPage(
                      status = "success",
                      includeMarkdown("text/career_about.md")
                    ) # EO intro box
-                 ),
+                 ), # EO FR
     
                  # * valueBox stats ----
                  valueBox(paste0("TBD", "%"), 
@@ -174,17 +174,16 @@ ui <- dashboardPage(
         tabName = "demo_db",
         
         fluidRow(
-          ## * intro box ----
-          box(width = 12,
-              title = "Learn more about students at Bren!",
-              "Some introductory information",
-              solidHeader = TRUE,
-              status = "success"
-              ) # EO intro box
-        ), # EO FR first row
-        
-        fluidRow(
           column(4,
+                 ## * intro box ----
+                 fluidRow(
+                 box(width = 12,
+                     title = "Learn more about students at Bren!",
+                     "Some introductory information",
+                     solidHeader = TRUE,
+                     status = "success"
+                 ) # EO intro box
+                 ), # EO FR
                  ## * valueBoxes ----
                  valueBoxOutput(outputId = "meds_curr_size",
                                 width = NULL), 
