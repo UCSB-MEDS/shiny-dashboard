@@ -274,15 +274,15 @@ ui <- dashboardPage(
           ), # EO race plotly box
           # ethnicity / background
           tabBox(width = 6,
-                 tabPanel("American Indian or Alaska Native",
-                          plotly::plotlyOutput(outputId = "amIn_alNat_eth_pltly") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "amIn_alNat_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
-                          ), # EO american indian or alaksa native eth
+                 # tabPanel("American Indian or Alaska Native",
+                 #          plotly::plotlyOutput(outputId = "amIn_alNat_eth_pltly") %>%
+                 #            withSpinner(color = "#003660", type = 1),
+                 #          checkboxGroupInput(inputId = "amIn_alNat_eth",
+                 #                             label = NULL,
+                 #                             choices = c("MEDS", "MESM", "PHD"),
+                 #                             selected = c("MEDS", "MESM", "PHD"),
+                 #                             inline = TRUE)
+                 #          ), # EO american indian or alaksa native eth
                  tabPanel("Asian",
                           plotly::plotlyOutput(outputId = "asian_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
@@ -310,15 +310,15 @@ ui <- dashboardPage(
                                              selected = c("MEDS", "MESM", "PHD"),
                                              inline = TRUE)
                           ), # EO hispanic or latino eth
-                 tabPanel("Native Hawaiian or Other Pacific Islander",
-                          plotly::plotlyOutput(outputId = "natHi_pi_eth_pltly") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "natHi_pi_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
-                          ), # EO native hawaiian or other pacific islander eth
+                 # tabPanel("Native Hawaiian or Other Pacific Islander",
+                 #          plotly::plotlyOutput(outputId = "natHi_pi_eth_pltly") %>%
+                 #            withSpinner(color = "#003660", type = 1),
+                 #          checkboxGroupInput(inputId = "natHi_pi_eth",
+                 #                             label = NULL,
+                 #                             choices = c("MEDS", "MESM", "PHD"),
+                 #                             selected = c("MEDS", "MESM", "PHD"),
+                 #                             inline = TRUE)
+                 #          ), # EO native hawaiian or other pacific islander eth
                  tabPanel("White",
                           plotly::plotlyOutput(outputId = "white_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
