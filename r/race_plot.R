@@ -1,12 +1,12 @@
 race_plot <- function(df, prog_input){
-  # df = data frame to be to create age_program_groups (i.e. enrolled)
+  # df = data frame used to create category_ipeds (i.e. enrolled)
   # color = program color to be used to fill bar plots (i.e. mesm_color)
   # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
   # prog_input = input selected (i.e. input$age_prog)
   
   ## DATA WRANGLING ##
   # 2016-2021
-  category_ipeds <- enrolled %>% 
+  category_ipeds <- df %>% 
     select(ay_year,
            objective1,
            background,
@@ -51,7 +51,7 @@ race_plot <- function(df, prog_input){
   # ggplot
   ipeds_gg <- ggplot(data = category_ipeds_stats(),
                      aes(x = category_ipeds,
-                         y = count,
+                         y = percent,
                          fill = category_ipeds,
                          text = paste0("Program: ", objective1, "\n",
                                        "Category: ", category_ipeds, "\n",
@@ -69,6 +69,7 @@ race_plot <- function(df, prog_input){
     scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds)),
                      labels = function(x)
                        str_wrap(x, width = 35)) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
     scale_fill_manual(
       values = c(
         "American Indian or Alaska Native" = "#003660", # ucsb navy
