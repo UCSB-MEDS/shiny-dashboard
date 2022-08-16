@@ -316,22 +316,17 @@ server <- function(input, output, session){
   # DEMOGRAPHICS DB ----
   ## SO program sizes valueBox ----
   # program size df
-  program_size <- enrolled %>% 
-    select(c(ay_year,
-             objective1)) %>% 
-    filter(ay_year == 2021) %>% 
-    group_by(objective1) %>% 
-    summarize(count = n())
+  program_size_21 <- program_size %>% filter(ay_year == 2021)
   
-  meds_size <- program_size %>% filter(objective1 == "MEDS")
-  mesm_size <- program_size %>% filter(objective1 == "MESM")
-  phd_size <- program_size %>% filter(objective1 == "PHD")
+  meds_size <- program_size_21 %>% filter(objective1 == "MEDS")
+  mesm_size <- program_size_21 %>% filter(objective1 == "MESM")
+  phd_size <- program_size_21 %>% filter(objective1 == "PHD")
   
   # MEDS valueBox output
   output$meds_curr_size <- renderValueBox({
     shinydashboard::valueBox(
       "MEDS students in 2021 cohort",
-      value = meds_size$count,
+      value = meds_size$program_size,
       icon = icon("users", lib = "font-awesome"),
       color = "light-blue"
     )
@@ -341,7 +336,7 @@ server <- function(input, output, session){
   output$mesm_curr_size <- renderValueBox({
     valueBox(
       "MESM students in 2021 cohort",
-      value = mesm_size$count,
+      value = mesm_size$program_size,
       icon = icon("users", lib = "font-awesome"),
       color = "blue"
     )
@@ -352,7 +347,7 @@ server <- function(input, output, session){
   output$phd_curr_size <- renderValueBox({
     valueBox(
       "PhD students in 2021 cohort",
-      value = phd_size$count,
+      value = phd_size$program_size,
       icon = icon("users", lib = "font-awesome"),
       color = "green"
     )
@@ -605,45 +600,11 @@ server <- function(input, output, session){
 
   
   
-  ## SO CA res/ non res/ international ----
+  ## SO residency ----
   ## DATA WRANGLING ##
-  # 2021
-  origin_program <- enrolled %>% 
-    select(c("ay_year",
-             "application_id",
-             "objective1",
-             "citizenship_country",
-             "residency_country",
-             "birth_country",
-             "california_resident",
-             "ca_high_school",
-             "visa")) %>% 
-    # filter for just current yr
-    filter(ay_year == 2021) %>% 
-    mutate(california_resident = unlist(california_resident)) %>% 
-    # residency status
-    mutate(residency = case_when(
-      # ca residency
-      california_resident == TRUE & visa %in% c(NA,
-                                                "DACA/AB540",
-                                                "Permanent Resident",
-                                                "Permanent Residency Pending (Work Permit)",
-                                                "Undocumented Status") ~ "ca resident",
-      # non ca resident
-      california_resident == FALSE & visa %in% c(NA,
-                                                 "Permanent Resident",
-                                                 "Permanent Residency Pending (Work Permit)",
-                                                 "Undocumented Status") ~ "non ca resident",
-      # international
-      visa %in% c("F-1 Student",
-                  "J-1",
-                  "Family of H,H1,H2,H3") ~ "international"
-    )) %>% 
-    group_by(ay_year, objective1, residency) %>% 
-    summarize(residency_count = n())
   
   # 2016-2021
-  origin_program_all <- enrolled %>% 
+  residency_stats <- enrolled %>% 
     select(c("ay_year",
              "application_id",
              "objective1",
@@ -656,7 +617,7 @@ server <- function(input, output, session){
     mutate(california_resident = unlist(california_resident)) %>% 
     # residency status
     mutate(residency = case_when(
-      # ca residency
+      # ca resident
       california_resident == TRUE & visa %in% c(NA,
                                                 "DACA/AB540",
                                                 "Permanent Resident",
@@ -666,22 +627,22 @@ server <- function(input, output, session){
       california_resident == FALSE & visa %in% c(NA,
                                                  "Permanent Resident",
                                                  "Permanent Residency Pending (Work Permit)",
-                                                 "Undocumented Status") ~ "non ca resident",
+                                                 "Undocumented Status") ~ "non resident",
       # international
       visa %in% c("F-1 Student",
                   "J-1",
                   "Family of H,H1,H2,H3") ~ "international"
     )) %>% 
-    group_by(ay_year, objective1, residency) %>% 
-    summarize(residency_count = n())
-  
-  residency_stats_all <- left_join(origin_program_all,
-                                   prog_cohort_tot_all, 
-                                   by = c("ay_year",
-                                          "objective1")) %>% 
-    mutate(residency_percent = round((residency_count / cohort_tot) * 100)) %>% 
+    group_by(ay_year,
+             objective1,
+             residency) %>% 
+    summarize(residency_count = n()) %>%
+    left_join(program_size,
+              by = c("ay_year",
+                     "objective1")) %>% 
+    mutate(percent = round((residency_count / program_size) * 100)) %>% 
     mutate(residency = factor(residency, levels = c("ca resident",
-                                                    "non ca resident",
+                                                    "non resident",
                                                     "international"),
                               labels = c("CA Resident",
                                          "Nonresident",
@@ -689,16 +650,16 @@ server <- function(input, output, session){
   
   ## PLOTTING ##
   output$residency_all <- renderPlotly({
-    residency_all <- ggplot(data = residency_stats_all,
+    residency_all <- ggplot(data = residency_stats,
                             aes(x = ay_year,
-                                y = residency_percent,
-                                fill = reorder(residency, residency_percent),
+                                y = percent,
+                                fill = reorder(residency, percent),
                                 text = paste0("Residency: ", residency, "\n",
-                                              "Percent: ", residency_percent, "%"))) +
+                                              "Percent: ", percent, "%"))) +
       geom_bar(position = "dodge",
                stat = "identity") +
-      scale_x_continuous(breaks = seq(min(residency_stats_all$ay_year),
-                                      max(residency_stats_all$ay_year))) +
+      scale_x_continuous(breaks = seq(min(residency_stats$ay_year),
+                                      max(residency_stats$ay_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
@@ -736,60 +697,10 @@ server <- function(input, output, session){
       ) 
   }) # EO origins map using tmap
   
-  ## DATA WRANGLING ##
-  # origins_df <- origins_df %>%
-  #     filter(ay_year == 2021) %>%
-  #     group_by(objective1,
-  #              ug1_location) %>%
-  #     summarize(count = n())
-
-  # Note(HD): Need to figure out how to make this reactive w/out breaking
-  # don't forget to add () to df
-  # don't forget to add input$origins_map_check and %in%
-  # origins_rdf <- reactive({
-  #   origins_df %>% 
-  #     filter(ay_year %in% input$origins_map_check) %>%
-  #     group_by(objective1,
-  #              ug1_location) %>%
-  #     summarize(count = n())
-  # }) 
   
-  
-  ## PLOTTING ##
-  # output$origins_map <- leaflet::renderLeaflet({
-  #   
-  #   bins <- c(0, 1, 5, 10, 15, 20, 25, 260)
-  #   pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
-  #                   domain = origins_df$count, 
-  #                   bins = bins)
-  #   
-  #   labels <- sprintf(
-  #     "<strong>%s</strong><br/>%g",
-  #     origins_df$ug1_location, origins_df$count
-  #   ) %>% lapply(htmltools::HTML)
-  #   
-  #   # create map
-  #   leaflet(origins_df) %>% 
-  #     addTiles() %>% 
-  #     addPolygons(
-  #       fillColor = ~pal(count),
-  #       weight = 2,
-  #       opacity = 1,
-  #       color = "#003660",
-  #       fillOpacity = 0.9,  
-  #       label = labels,
-  #       labelOptions = labelOptions(
-  #         style = list("font-weight" = "normal", padding = "3px 8px"),
-  #         textsize = "15px",
-  #         direction = "auto")
-  #     ) %>% 
-  #     setView(lat = 37, lng = -20, zoom = 1.5)
-  #   
-  # }) # EO origins map
   
   ## SO race / category ----
   ## PLOTTING
-  #race_plot <- function(df, color, year_str, prog_input)
   
   output$race_pltly <- plotly::renderPlotly({
     
@@ -826,12 +737,6 @@ server <- function(input, output, session){
       filter(objective1 %in% input$amIn_alNat_eth)
     
   }) # EO rdf
-  
-  # validate(
-  #   need(nrow(amIn_alNat_background_stats()) > 0,
-  #        "There are no data for American Indian or Alaska Native category."
-  #   )
-  # ) # EO validate
   
   
   ## PLOTTING
@@ -904,7 +809,7 @@ server <- function(input, output, session){
   output$asian_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = asian_background_stats(),
                        aes(x = background,
-                           y = count,
+                           y = percent,
                            text = paste0("Program: ", objective1, "\n",
                                          "Background: ", background, "\n",
                                          "Percent: ", percent, "%", "\n",
@@ -917,6 +822,7 @@ server <- function(input, output, session){
         labels = function(x)
           str_wrap(x, width = 35)
       ) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"
@@ -970,7 +876,7 @@ server <- function(input, output, session){
   output$black_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = black_background_stats(),
                      aes(x = background,
-                         y = count,
+                         y = percent,
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
@@ -983,6 +889,7 @@ server <- function(input, output, session){
         labels = function(x)
           str_wrap(x, width = 35)
       ) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"
@@ -1036,7 +943,7 @@ server <- function(input, output, session){
   output$hisp_lat_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = hisp_lat_background_stats(),
                      aes(x = background,
-                         y = count,
+                         y = percent,
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
@@ -1049,6 +956,7 @@ server <- function(input, output, session){
         labels = function(x)
           str_wrap(x, width = 35)
       ) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"
@@ -1166,7 +1074,7 @@ server <- function(input, output, session){
   output$white_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = white_background_stats(),
                            aes(x = background,
-                               y = count,
+                               y = percent,
                                text = paste0("Program: ", objective1, "\n",
                                              "Background: ", background, "\n",
                                              "Percent: ", percent, "%", "\n",
@@ -1179,6 +1087,7 @@ server <- function(input, output, session){
         labels = function(x)
           str_wrap(x, width = 35)
       ) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"
@@ -1231,7 +1140,7 @@ server <- function(input, output, session){
   output$two_more_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = two_more_eth_background_stats(),
                      aes(x = background,
-                         y = count,
+                         y = percent,
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
@@ -1240,6 +1149,7 @@ server <- function(input, output, session){
       geom_bar(stat = "identity",
                fill = "#79a540") +
       coord_flip() +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"
@@ -1293,7 +1203,7 @@ server <- function(input, output, session){
   output$unk_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = unk_eth_background_stats(),
                      aes(x = background,
-                         y = count,
+                         y = percent,
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
@@ -1302,6 +1212,7 @@ server <- function(input, output, session){
       geom_bar(stat = "identity",
                fill = "#09847a") +
       coord_flip() +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(
         legend.position = "none"

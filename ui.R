@@ -274,6 +274,7 @@ ui <- dashboardPage(
           ), # EO race plotly box
           # ethnicity / background
           tabBox(width = 6,
+                 # NOTE(HD): commented out for now bc there are no data
                  # tabPanel("American Indian or Alaska Native",
                  #          plotly::plotlyOutput(outputId = "amIn_alNat_eth_pltly") %>%
                  #            withSpinner(color = "#003660", type = 1),
@@ -310,6 +311,7 @@ ui <- dashboardPage(
                                              selected = c("MEDS", "MESM", "PHD"),
                                              inline = TRUE)
                           ), # EO hispanic or latino eth
+                 # NOTE(HD): commented out for now bc there are no data
                  # tabPanel("Native Hawaiian or Other Pacific Islander",
                  #          plotly::plotlyOutput(outputId = "natHi_pi_eth_pltly") %>%
                  #            withSpinner(color = "#003660", type = 1),
