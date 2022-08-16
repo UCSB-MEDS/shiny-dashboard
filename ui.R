@@ -184,7 +184,7 @@ ui <- dashboardPage(
         ## * plots ----
         fluidRow(
           box(width = 6,
-              title = "What institutions students are coming from",
+              title = "Where students are coming from based on undergraduate location",
               tmap::tmapOutput(outputId = "origins_map") %>%
                 withSpinner(color = "#003660", type = 1)
               ), # EO map box  

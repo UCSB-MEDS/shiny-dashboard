@@ -100,7 +100,7 @@ server <- function(input, output, session){
   mesmP_domestic <- mesmP_map %>% 
     filter(work_location_country == "United States") %>% 
     select(-c(lat, long)) %>% 
-    left_join(df_state_geometries_us, by = c("work_location_state" = "state_abbrev")) %>% 
+    left_join(us_state_geoms, by = c("work_location_state" = "state_abbrev")) %>% 
     select(-c(fips, state)) %>% 
     st_as_sf() %>% 
     st_transform(crs = 4326)
@@ -316,7 +316,7 @@ server <- function(input, output, session){
   # DEMOGRAPHICS DB ----
   ## SO program sizes valueBox ----
   # program size df
-  program_size <- bren_apps %>% 
+  program_size <- enrolled %>% 
     select(c(ay_year,
              objective1)) %>% 
     filter(ay_year == 2021) %>% 
@@ -501,7 +501,7 @@ server <- function(input, output, session){
   
   ## SO gender ----
   ## DATA WRANGLING ##
-  gender_program_time <- bren_apps %>% 
+  gender_program_time <- enrolled %>% 
     select(c("ay_year",
              "application_id",
              "gender",
@@ -511,7 +511,7 @@ server <- function(input, output, session){
              gender) %>% 
     summarize(gender_count = n())
   
-  gender_cohort_tot_all <- bren_apps %>% 
+  gender_cohort_tot_all <- enrolled %>% 
     select(c(
       "ay_year",
       "application_id",
@@ -592,7 +592,7 @@ server <- function(input, output, session){
     
     # age plot function
     age_plot(
-      df = bren_apps,
+      df = enrolled,
       color = color,
       year_str = year_str,
       prog_input = input$age_prog
@@ -604,7 +604,7 @@ server <- function(input, output, session){
   ## SO CA res/ non res/ international ----
   ## DATA WRANGLING ##
   # 2021
-  origin_program <- bren_apps %>% 
+  origin_program <- enrolled %>% 
     select(c("ay_year",
              "application_id",
              "objective1",
@@ -639,7 +639,7 @@ server <- function(input, output, session){
     summarize(residency_count = n())
   
   # 2016-2021
-  origin_program_all <- bren_apps %>% 
+  origin_program_all <- enrolled %>% 
     select(c("ay_year",
              "application_id",
              "objective1",
@@ -721,7 +721,7 @@ server <- function(input, output, session){
   output$origins_map <- tmap::renderTmap({
     tmap_mode("view")
     
-    tm_shape(origins_geom) +
+    tm_shape(ug_geoms) +
       tm_fill(
         col = "total",
         title = "Number of students",
@@ -791,7 +791,7 @@ server <- function(input, output, session){
     
     # race plot function
     race_plot(
-      df = bren_apps,
+      df = enrolled,
       prog_input = input$race
     ) # EO race plot function
     
@@ -802,7 +802,7 @@ server <- function(input, output, session){
   ## * american indian or alaska native ethnicity ----
   ## DATA WRANGLING
   # breakdown of american indian or alaska native ethnicities by program
-  amIn_alNat_background <- background_ipeds %>% 
+  amIn_alNat_background <- ipeds %>% 
     filter(category_ipeds == "American Indian or Alaska Native") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -876,7 +876,7 @@ server <- function(input, output, session){
   ## * asian ethnicity ----
   ## DATA WRANGLING
   # breakdown of asian ethnicities by program
-  asian_background <- background_ipeds %>% 
+  asian_background <- ipeds %>% 
     filter(category_ipeds == "Asian") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -942,7 +942,7 @@ server <- function(input, output, session){
   ## * black ethnicity ----
   ## DATA WRANGLING
   # breakdown of white ethnicities by program
-  black_background <- background_ipeds %>% 
+  black_background <- ipeds %>% 
     filter(category_ipeds == "Black or African American") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -1008,7 +1008,7 @@ server <- function(input, output, session){
   ## * hispanic / latino ethnicity ----
   ## DATA WRANGLING
   # breakdown of white ethnicities by program
-  hisp_lat_background <- background_ipeds %>% 
+  hisp_lat_background <- ipeds %>% 
     filter(category_ipeds == "Hispanic or Latino") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -1075,7 +1075,7 @@ server <- function(input, output, session){
   ## * native hawaiian or other pacific islander ethnicity ----
   ## DATA WRANGLING
   # breakdown of native hawaiian or other pacific islander by program
-  natHi_pi_eth_background <- background_ipeds %>% 
+  natHi_pi_eth_background <- ipeds %>% 
     filter(category_ipeds == "Native Hawaiian or Other Pacific Islander") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -1138,7 +1138,7 @@ server <- function(input, output, session){
   ## * white ethnicity ----
   ## DATA WRANGLING
   # breakdown of white ethnicities by program
-  white_background <- background_ipeds %>% 
+  white_background <- ipeds %>% 
     filter(category_ipeds == "White") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -1203,7 +1203,7 @@ server <- function(input, output, session){
   ## * two or more races ethnicity ----
   ## DATA WRANGLING
   # breakdown of two or more races ethnicities by program
-  two_more_eth_background <- background_ipeds %>% 
+  two_more_eth_background <- ipeds %>% 
     filter(category_ipeds == "Two or more races") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",
@@ -1265,7 +1265,7 @@ server <- function(input, output, session){
   ## * unknown race or ethnicity ----
   ## DATA WRANGLING
   # breakdown of unknown race or ethnicity by program
-  unk_eth_background <- background_ipeds %>% 
+  unk_eth_background <- ipeds %>% 
     filter(category_ipeds == "Unknown race and ethnicity") %>% 
     mutate(background = case_when(
       is.na(background) == TRUE ~ "Unknown race and ethnicity",

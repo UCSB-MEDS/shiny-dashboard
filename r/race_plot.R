@@ -1,12 +1,12 @@
 race_plot <- function(df, prog_input){
-  # df = data frame to be to create age_program_groups (i.e. bren_apps)
+  # df = data frame to be to create age_program_groups (i.e. enrolled)
   # color = program color to be used to fill bar plots (i.e. mesm_color)
   # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
   # prog_input = input selected (i.e. input$age_prog)
   
   ## DATA WRANGLING ##
   # 2016-2021
-  category_ipeds <- bren_apps %>% 
+  category_ipeds <- enrolled %>% 
     select(ay_year,
            objective1,
            background,
