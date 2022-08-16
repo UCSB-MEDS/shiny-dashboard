@@ -123,13 +123,16 @@ ui <- dashboardPage(
         
         fluidRow(
           # * career map ----
-          box(width = 6, 
-              # solidHeader = TRUE,
-              # status = "primary",
-              title = "Bren Alumni Solve Environmental Problems Nationwide",
-              leaflet::leafletOutput(outputId = "car_alumniMap") %>%
-                withSpinner(color = "#003660", type = 1)
-          ), # EO box career map
+          tabBox(width = 6,
+                 tabPanel("Solving Environmental Problems Nationwide",
+                          tmap::tmapOutput(outputId = "car_alumniMap") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ), # EO tabPanel leaflet map
+                 tabPanel("Location of MESM Alumni",
+                          plotly::plotlyOutput(outputId = "mesm_location") %>%
+                            withSpinner(color = "#003660", type = 1)
+                 ) # EO
+          ), # EO tabBox employers map / info
           
           # * career second plot ----
           tabBox(width = 6,

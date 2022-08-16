@@ -8,7 +8,7 @@ server <- function(input, output, session){
   # CAREER DB ----
   ## SO career placements table  ----
   ## DATA WRANGLING ##
-  employer <- mesmP %>% 
+  employer <- mesm_placement %>% 
     select(c(employer_account_name,
              employer_sector)) %>%
     group_by(employer_account_name,
@@ -31,13 +31,13 @@ server <- function(input, output, session){
     ) # EO datatable
   }) # EO renderDataTable
   
-  ## SO alumni map ----
+  ## SO mesm location ----
   ## DATA WRANGLING ##
   # ca / out of state / international
   us_names <- c("USA", "US", "Usa")
   ca_names <- c("Ca", "CALIFORNIA")
   
-  mesmP_map <- mesmP %>% 
+  placement_location <- mesm_placement %>% 
     select(c(
       employer_account_name,
       work_location_city,
@@ -45,109 +45,125 @@ server <- function(input, output, session){
       work_location_state,
       work_location_country
     )) %>% 
-    # standardize state values
+    # standardize state abbreviation values
     mutate(work_location_state = case_when(
       work_location_state %in% ca_names ~ "CA",
       work_location_state == "Maryland" ~ "MD",
       work_location_state == "Washington" ~ "WA",
       work_location_state == "District of Columbia" ~ "DC",
-      # Note(HD): Don't need this because we replace with Seoul below
-      #work_location_state == "N/A" ~ NA_character_, 
+      work_location_state == "N/A" ~ NA_character_, 
       work_location_state == "michoacan" ~ "Michoacan",
-      # reassign NA values to correct state values
+      # specifically assign correct work location state
       work_location_city == "Washington DC" ~ "DC",
       work_location_city == "Oxnard" ~ "CA",
       work_location_city == "Santa Cruz" ~ "CA",
       work_location_city == "Fort Collins" ~ "CO",
       work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
-      work_location_city == "Amsterdam" ~ "North Holland",
-      work_location_city == "Seoul" ~ "Seoul",
       TRUE ~ work_location_state
     )) %>% 
     # standardize united states values
     mutate(work_location_country = case_when(
       work_location_country %in% us_names ~ "United States",
-      # reassign NA values to correct country values
+      # specificallly assign correct country values
       work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
       work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
-      employer_account_name == "Cruz Foam" ~ "United States",
-      employer_account_name == "United Water Conservation District" ~ "United States",
       TRUE ~ work_location_country
     )) %>% 
-    # add latitude
-    mutate(lat = case_when(
-      work_location_state == "Ontario" ~ 51.2538,
-      work_location_state == "Galapagos" ~ -0.9538,
-      work_location_state == "Tahiti" ~ -17.6509,
-      work_location_state == "Michoacan" ~ 19.5665,
-      work_location_state == "North Holland" ~ 52.5206,
-      work_location_state == "Seoul" ~ 37.532600,
-      TRUE ~ NA_real_
+    # assign ca / out of state / international
+    mutate(location = case_when(
+      work_location_state == "CA" ~ "California",
+      work_location_state != "CA" & work_location_country == "United States" ~ "Out of State",
+      work_location_country != "United States" ~ "International"
     )) %>% 
-    # add longitude
-    mutate(long = case_when(
-      work_location_state == "Ontario" ~ -85.3232,
-      work_location_state == "Galapagos" ~ -90.9656,
-      work_location_state == "Tahiti" ~ -149.4260,
-      work_location_state == "Michoacan" ~ -101.7068,
-      work_location_state == "North Holland" ~ 4.7885,
-      work_location_state == "Seoul" ~ 127.024612,
-      TRUE ~ NA_real_
-    ))
+    group_by(mesm_class_year,
+             location) %>%
+    summarize(location_count = n())
   
+  # calculating percentages
+  # QUESTION: Do we want to calculate based on number of responses received 
+  # OR the size of the cohort?
+  placement_location_stats <- placement_location %>% 
+    left_join(placement_size, by = "mesm_class_year") %>%
+    mutate(percent = round((location_count / program_size) * 100, 1))
   
+  ## PLOTTING ##
+  output$mesm_location <- plotly::renderPlotly({
+    # ggplot
+    location_gg <- ggplot(data = placement_location_stats,
+                          aes(x = mesm_class_year,
+                              y = percent,
+                              fill = reorder(location, percent),
+                              text = paste0("Location: ", location, "\n",
+                                            "Percent: ", percent, "%"))) +
+      geom_bar(position = "dodge",
+               stat = "identity") +
+      scale_x_continuous(breaks = seq(min(placement_location_stats$mesm_class_year),
+                                      max(placement_location_stats$mesm_class_year))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1),
+                         breaks = seq(0, 50, 10)) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "Where MESM alumni are working 6 months after graduating",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("California" = "#9cbebe",
+                                   "Out of State" = "#003660",
+                                   "International" = "#dcd6cc"))
+    
+    # plotly
+    plotly::ggplotly(location_gg, tooltip = "text") %>%
+      layout(legend = list(orientation = "h",
+                           x = 0.1),
+             title = list(font = list(size = 15.5))) %>% 
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select",
+                                           "lasso2d",
+                                           "autoScale2d",
+                                           "hoverClosestCartesian",
+                                           "hoverCompareCartesian"))
+    
+  }) # EO mesm location
+  
+  ## SO mesm map ----
+  ## DATA WRANGLING ##
   # domestic map polygons
-  mesmP_domestic <- mesmP_map %>% 
+  mesm_domestic <- mesm_map %>% 
     filter(work_location_country == "United States") %>% 
     select(-c(lat, long)) %>% 
     left_join(us_state_geoms, by = c("work_location_state" = "state_abbrev")) %>% 
-    select(-c(fips, state)) %>% 
+    select(-c(fips, work_location_state)) %>% 
     st_as_sf() %>% 
     st_transform(crs = 4326)
   
-  # domestic map polygons
-  mesmP_domestic_stats <- reactive({
-    
-    mesmP_domestic %>%
-      group_by(work_location_state) %>% 
-      summarize(count = n())
-  })
+  mesm_domestic_stats <- mesm_domestic %>% 
+    group_by(state) %>% 
+    summarize(count = n())
   
   ## PLOTTING MAP ##
-  output$car_alumniMap <- renderLeaflet({ 
+  output$car_alumniMap <- tmap::renderTmap({ 
     
-    bins <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 140)
-    pal <- colorBin(palette = c("#e5f5e0", "#a1d99b", "#31a354"),
-                    domain = mesmP_domestic_stats()$count, 
-                    bins = bins)
+    tmap_mode("view")
     
-    labels <- sprintf(
-      "<strong>%s</strong><br/>%g",
-      mesmP_domestic_stats()$work_location_state, mesmP_domestic_stats()$count
-    ) %>% lapply(htmltools::HTML)
+    tm_shape(mesm_domestic_stats) +
+      tm_tiles(leaflet::providers$CartoDB.PositronNoLabels) +
+      tm_polygons(
+        col = "count",
+        style = "jenks",
+        n = 4,
+        palette = "YlGn",
+        popup.vars = c("Number of alumni: " = "count"),
+        legend.show = FALSE
+      ) +
+      tm_view(set.view = c(-117, 37, 3)) # long, lat, zoom
     
-    leaflet(mesmP_domestic_stats()) %>% 
-      addTiles() %>% 
-      addPolygons(
-        fillColor = ~pal(count),
-        weight = 2,
-        opacity = 1,
-        color = "#003660",
-        fillOpacity = 0.9,  
-        label = labels,
-        labelOptions = labelOptions(
-          style = list("font-weight" = "normal", padding = "3px 8px"),
-          textsize = "15px",
-          direction = "auto")
-      ) %>% 
-      setView(lat = 37, lng = -118, zoom = 2.5)
   }) # EO alumni map
   
   
   ## SO job source ----
   output$curr_mesm_source <- renderPlot({
     
-    mesmP_source <- mesmP %>% 
+    mesmP_source <- mesm_placement %>% 
       select(c(mesm_class_year,
                job_source)) %>% 
       group_by(mesm_class_year, 
@@ -178,7 +194,7 @@ server <- function(input, output, session){
   
   ## SO placement status ----
   output$curr_mesm_status <- renderPlot({
-    mesm_status <- mesmS %>% 
+    mesm_status <- mesm_status %>% 
       group_by(mesm_class_year,
                member_status) %>% 
       summarize(count = n())
@@ -212,7 +228,7 @@ server <- function(input, output, session){
            "Please select at least one year.")
     ) # EO validate
     
-    mesmP %>% 
+    mesm_placement %>% 
       select(c(mesm_class_year,
                employer_sector)) %>% 
       mutate(sector_simple = case_when(
@@ -255,7 +271,7 @@ server <- function(input, output, session){
   ## DATA WRANGLING ##
   mesmP_satisfy <- reactive({
     
-    mesmP %>%
+    mesm_placement %>%
       select(c(mesm_class_year,
              placement_satisfaction)) %>% 
       group_by(mesm_class_year,
@@ -287,7 +303,7 @@ server <- function(input, output, session){
   
   ## SO placement avg compensation ----
   ## DATA WRANGLING ##
-  mesm_salary <- mesmP %>% 
+  mesm_salary <- mesm_placement %>% 
     select(c(mesm_class_year,
              estimated_annual_compensation_us)) %>% 
     drop_na() %>% 
@@ -693,7 +709,7 @@ server <- function(input, output, session){
         palette = "YlGn",
         style = "jenks",
         n = 6,
-        popup.vars = c("Total students" = "total")
+        popup.vars = c("Total students: " = "total")
       ) 
   }) # EO origins map using tmap
   
