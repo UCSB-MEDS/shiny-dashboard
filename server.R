@@ -446,7 +446,7 @@ server <- function(input, output, session){
   ## SO 2021 diversity demographics overall ----
   # reactive diversity df 2021
   diversity_all_21 <- reactive({
-    diversity %>% 
+    diversity_stats %>% 
       filter(ay_year == 2021) %>% 
       filter(objective1 == input$diversity_stats_all)
   }) # EO reactive diversity df 2021
@@ -455,13 +455,16 @@ server <- function(input, output, session){
   output$diversity_2021 <- renderPlotly({
     demo_21 <- ggplot(data = diversity_all_21(),
                       aes(x = demographic,
-                          y = count,
+                          y = percent,
                           fill = demographic,
-                          text = paste0(demographic, "\n", "Count: ", count))) +
+                          text = paste0(demographic, "\n", 
+                                        "Percentage: ", percent, "%", "\n",
+                                        "Sample size: ", program_size)
+                          )) +
       geom_bar(stat = "identity") +
       coord_flip() +
       scale_x_discrete(limits = rev(levels(diversity_all_21()$demographic))) +
-      scale_y_continuous(breaks = seq(0, 70, 10)) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       scale_fill_manual(
         values = c(
           "California Resident" = "#047c91",
@@ -470,12 +473,13 @@ server <- function(input, output, session){
           "Female" = "#9cbebe",
           "Age 25+" = "#9cbebe",
           "Military" = "#9cbebe",
-          "Undocumented" = "#09847a",
-          "African American or Black" = "#09847a",
+          "First generation" = "#9cbebe",
+          "Undocumented" = "#9cbebe",
           "American Indian or Alaska Native" = "#09847a",
-          "Asian or Asian American" = "#09847a",
-          "Hispanic or Latinx" = "#09847a",
-          "Native Hawaiian / other Pacific Islander" = "#09847a",
+          "Asian" = "#09847a",
+          "Black or African American" = "#09847a",
+          "Hispanic or Latino" = "#09847a",
+          "Native Hawaiian or Other Pacific Islander" = "#09847a",
           "White" = "#09847a",
           "Two or more races" = "#09847a",
           "Unknown race and ethnicity" = "#09847a"
@@ -486,7 +490,7 @@ server <- function(input, output, session){
             panel.grid.minor = element_blank()) +
       labs(title = paste0("2021 ", input$diversity_stats_all, " Diversity Demographics"),
            x = NULL,
-           y = "Number of students")
+           y = NULL)
     
     # plotly 2021
     plotly::ggplotly(demo_21, tooltip = "text") %>%
