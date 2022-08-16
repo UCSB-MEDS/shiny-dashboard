@@ -124,14 +124,18 @@ ui <- dashboardPage(
         fluidRow(
           # * career map ----
           tabBox(width = 6,
-                 tabPanel("Solving Environmental Problems Nationwide",
+                 tabPanel("Domestic Placements",
                           tmap::tmapOutput(outputId = "car_alumniMap") %>%
                             withSpinner(color = "#003660", type = 1)
                           ), # EO tabPanel leaflet map
                  tabPanel("Location of MESM Alumni",
                           plotly::plotlyOutput(outputId = "mesm_location") %>%
                             withSpinner(color = "#003660", type = 1)
-                 ) # EO
+                 ), # EO tabPanel bar plot location of MESM alumni
+                 tabPanel("International Placements",
+                          DT::dataTableOutput(outputId = "international_place") %>%
+                            withSpinner(color = "#003660", type = 1)
+                          ) # EO tabPanel international placements
           ), # EO tabBox employers map / info
           
           # * career second plot ----

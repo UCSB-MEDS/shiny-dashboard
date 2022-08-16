@@ -160,6 +160,33 @@ server <- function(input, output, session){
   }) # EO alumni map
   
   
+  ## SO international placements table ----
+  ## DATA WRANGLING ##
+  international_tbl <- mesm_placement %>% 
+    filter(!work_location_country %in% c("US", "Usa", "USA", "United States"),
+           !is.na(work_location_country)) %>% 
+    group_by(employer_account_name,
+             employer_sector,
+             work_location_country) %>% 
+    summarize(count = n())
+  
+  ## TABLE ##
+  output$international_place <- DT::renderDataTable({
+    DT::datatable(
+      international_tbl,
+      colnames = c("Employer", "Sector", "Location", "# of alumni"),
+      # caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
+      #                                   htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
+      class = "cell-border stripe",
+      rownames = FALSE,
+      options = list(
+        pageLength = 9,
+        dom = 'Btipr'
+      ) # EO options
+    ) # EO datatable
+  
+  }) # EO renderDataTable
+  
   ## SO job source ----
   output$curr_mesm_source <- renderPlot({
     
