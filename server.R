@@ -361,51 +361,86 @@ server <- function(input, output, session){
   
   ## SO placement sector ----
   ## DATA WRANGLING ##
-  sector_simple <- reactive({
-    
-    validate(
-      need(input$sector_tree_check != "",
-           "Please select at least one year.")
-    ) # EO validate
-    
-    mesm_placement %>% 
-      select(c(mesm_class_year,
-               employer_sector)) %>% 
-      mutate(sector_simple = case_when(
-        employer_sector %in% c("Consulting", "Corporate") ~ "Private",
-        employer_sector %in% c("Federal Government", "Local Government", "State Government") ~ "Government",
-        employer_sector %in% c("Non-Profit", "Research/Education") ~ "Nonprofit / Public",
-        employer_sector == "Foreign Government" ~ "International",
-        employer_sector == "Other" ~ "Other"
-      )) %>% 
-      mutate(sector_simple = factor(sector_simple, levels = c("Government",
-                                                              "Private",
-                                                              "Nonprofit / Public",
-                                                              "International",
-                                                              "Other"))) %>% 
-      filter(mesm_class_year %in% input$sector_tree_check) %>% 
-      group_by(employer_sector,
-               sector_simple) %>% 
-      summarize(count = n())
-  }) # EO reactive placement sector df
+  sector_wc <- mesm_placement %>%
+    group_by(employer_sector) %>% 
+    summarize(sector_count = n())
 
   ## PLOTTING TREE MAP ##
-  output$sector_tree <- d3treeR::renderD3tree2({
-    # treemap 
-    sector_tree <- treemap::treemap(dtf = sector_simple(),
-                                    index = c("sector_simple", 
-                                              "employer_sector"),
-                                    vSize = "count",
-                                    type = "index"
-                                    )
+  output$sector_wc <- renderPlot({
+    # gg wordcloud
+    ggplot(sector_wc, 
+           aes(label = employer_sector, 
+               size = sector_count, 
+               color = employer_sector)) +
+      ggwordcloud::geom_text_wordcloud() +
+      scale_size_area(max_size = 10) +
+      theme(plot.title = element_text(size = 25),
+            panel.background = element_rect(fill = "white"))
     
-    # interactive treemap
-    # rootname = title of map
-    d3treeR::d3tree2(sector_tree, rootname = "2021 MESM Placement Sectors")
-    
-    
-  }) # EO placement sector
+  }) # EO placement sector wc
   
+  
+  ## SO sector trends ----
+  ## DATA WRANGLING ##
+  sector <- mesm_placement %>% 
+    select(c(mesm_class_year,
+             employer_sector)) %>% 
+    mutate(sector_type = case_when(
+      employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+      employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
+      employer_sector %in% c("Foreign Government", "Other") ~ "Other",
+      TRUE ~ employer_sector
+    )) %>% 
+    mutate(sector_type = factor(sector_type, levels = c("Private",
+                                                        "Public",
+                                                        "Non-Profit",
+                                                        "Other"))) %>%
+    group_by(mesm_class_year, sector_type) %>% 
+    summarize(count = n())
+  
+  sector_time <- sector %>% 
+    left_join(placement_size, by = "mesm_class_year") %>% 
+    mutate(percent = round((count / mesm_responses) * 100, 1))
+  
+  ## PLOTTING ##
+  # ggplot
+  output$sector_trends <- plotly::renderPlotly({
+    
+    sector_time_gg <- ggplot(data = sector_time,
+                             aes(x = mesm_class_year,
+                                 y = percent,
+                                 fill = sector_type,
+                                 text = paste0(sector_type, "\n",
+                                               "Percent: ", percent, "%", "\n",
+                                               "Sample size: ", mesm_responses, "\n",
+                                               "Cohort size: ", program_size))) +
+      geom_bar(stat = "identity",
+               position = "dodge") +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "MESM Alumni Placement by Sector",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("Private" = "#003660", # ucsb navy
+                                   "Public" = "#047c91", # ucsb aqua
+                                   "Non-Profit" = "#dcd6cc", # uscb clay
+                                   "Other" = "#9cbebe") # ucsb mist
+      )
+    
+    # plotly
+    plotly::ggplotly(sector_time_gg, tooltip = "text") %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
+    
+  }) # EO sector time plotly
+
+ 
   
   ## SO placement sector satisfaction ----
   ## DATA WRANGLING ##

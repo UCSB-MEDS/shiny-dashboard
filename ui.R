@@ -138,14 +138,13 @@ ui <- dashboardPage(
           # * career plots ----
           tabBox(width = 6,
                  tabPanel("Sector",
-                          d3treeR::d3tree2Output(outputId = "sector_tree") %>%
-                            withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "sector_tree_check",
-                                             label = NULL,
-                                             choices = c(2019, 2020, 2021),
-                                             selected = 2021,
-                                             inline = TRUE)
+                          plotOutput(outputId = "sector_wc") %>%
+                            withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel 1 in box 2 
+                 tabPanel("Sector Trends",
+                          plotly::plotlyOutput(outputId = "sector_trends") %>% 
+                            withSpinner(color = "#003660", type = 1)
+                 ), # EO tabPanel sector over time
                  tabPanel("Sector Satisfaction",
                           plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
                             withSpinner(color = "#003660", type = 1),
