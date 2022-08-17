@@ -93,12 +93,9 @@ ui <- dashboardPage(
                           icon = icon("heart"),
                           width = NULL
                  ), # EO valueBox 88% stat
-                 valueBox(paste0("TBD"),
-                          "NEW STAT HERE",
-                          icon = icon("dollar-sign"),
-                          color = "green",
-                          width = NULL
-                 ), # EO valueBox starting salary stat
+                 # placement stat
+                 valueBoxOutput(outputId = "placement_stat",
+                                width = NULL),
                  valueBox(paste0("TBD"),
                           "NEW STAT HERE",
                           icon = icon("globe"),

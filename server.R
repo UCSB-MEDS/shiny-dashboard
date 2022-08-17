@@ -6,6 +6,57 @@ server <- function(input, output, session){
   
   
   # CAREER DB ----
+  
+  ## SO career valuebox stats ----
+  ## * placement status stat ----
+  ## DATA WRANGLING ##
+  # status df for valuebox stat
+  status_stat <- mesm_status %>% 
+    select(mesm_class_year,
+           member_status) %>% 
+    # assign placement status label
+    mutate(status = case_when(
+      member_status %in% c("FT Career",
+                           "FT Temporary Career",
+                           "PT Temporary Career",
+                           "FT Career-Sponsored",
+                           "PT Career",
+                           "FT Career-Sponsored") ~ "Career",
+      member_status %in% c("Time Off",
+                           "Searching") ~ "Searching or Time Off",
+      member_status %in% c("FT New Business",
+                           "FT Eco-E") ~ "New Business",
+      member_status %in% c("Internship/Fellowship",
+                           "Continuing Internship",
+                           "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+      TRUE ~ member_status
+    )) %>% 
+    # assign placed vs not placed
+    mutate(placed = case_when(
+      status == "Searching or Time Off" ~ "Not Placed",
+      TRUE ~ "Placed"
+    )) %>% 
+    # calculate totals
+    group_by(placed) %>% 
+    summarize(count = n()) %>% 
+    # calculate percentage
+    # used tot mesm_responses (79+74+82)
+    mutate(percent = round((count / 235) * 100, 1)) %>% 
+    filter(placed == "Placed")
+  
+  # MEDS valueBox output
+  output$placement_stat <- renderValueBox({
+    
+    shinydashboard::valueBox(
+      "MESM Alumni placed in a career or similar position",
+      value = paste0(status_stat$percent, "%"),
+      icon = icon("home"),
+      color = "green"
+    ) # EO valueBox
+  }) # EO MEDS valueBox prog size
+  
+  
+  
   ## SO career placements table  ----
   ## DATA WRANGLING ##
   employer <- mesm_placement %>% 
