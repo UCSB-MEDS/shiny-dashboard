@@ -478,30 +478,61 @@ server <- function(input, output, session){
   
   
   
-  ## SO placement avg compensation ----
+  ## SO avg compensation ----
   ## DATA WRANGLING ##
-  mesm_salary <- mesm_placement %>% 
-    select(c(mesm_class_year,
-             estimated_annual_compensation_us)) %>% 
-    drop_na() %>% 
-    group_by(mesm_class_year) %>% 
-    summarize(avg_salary = mean(estimated_annual_compensation_us))
+  salary <- mesm_placement %>% 
+    select(mesm_class_year,
+           employment_type,
+           estimated_annual_compensation_us) %>%
+    # did not include Internship or Part-Time Job (~30 obs dropped)
+    # only 1 NA
+    filter(employment_type %in% c("Full-Time Job", "Self-Employed/Freelance (e.g. Eco-E)")) %>% 
+    # remove $0 compensation (5 tot)
+    filter(estimated_annual_compensation_us != 0) %>% 
+    # 3 year average
+    mutate(mean = mean(estimated_annual_compensation_us)) %>%
+    filter(estimated_annual_compensation_us == min(estimated_annual_compensation_us) | estimated_annual_compensation_us == max(estimated_annual_compensation_us)) %>% 
+    pivot_longer(cols = c(estimated_annual_compensation_us,
+                          mean),
+                 names_to = "range",
+                 values_to = "values") %>% 
+    # assign range labels 
+    mutate(range = case_when(
+      values == 4000.00 ~ "Low",
+      values == 109000.00 ~ "High",
+      employment_type == "Full-Time Job" ~ "Average",
+      TRUE ~ "none"
+    )) %>% 
+    filter(range != "none")
   
   ## PLOTTING ##
   output$compensation <- renderPlotly({
-    avg_salary <- ggplot(data = mesm_salary,
-                         aes(x = mesm_class_year,
-                             y = avg_salary)) +
-      geom_line() +
-      geom_point(aes(text = paste0("$", round(avg_salary)))) +
-      scale_x_continuous(breaks = seq(min(mesm_salary$mesm_class_year),
-                                      max(mesm_salary$mesm_class_year))) +
+    salary_gg <- ggplot(data = salary,
+                        aes(x = reorder(range, values),
+                            y = values,
+                            fill = reorder(range, values),
+                            text = paste0(range, ": ", "$", round(values, 2))
+                        )) +
+      geom_bar(stat = "identity",
+               position = "dodge") +
       theme_minimal() +
-      labs(title = "MESM Average compensation",
+      scale_y_continuous(labels = scales::dollar_format()) +
+      scale_fill_manual(values = c("High" = "#9cbebe",
+                                   "Average" = "#003660",
+                                   "Low" = "#dcd6cc")) +
+      labs(title = "MESM Alumni Low, High, and Average Salary Compensation (2019-2021)", 
            x = NULL,
-           y = "US Dollars ($)")
+           y = "Dollars ($)",
+           fill = NULL)
     
-    plotly::ggplotly(avg_salary, tooltip = "text")
+    plotly::ggplotly(salary_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 13))) %>% 
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
     
   }) # EO compensation plot
   
