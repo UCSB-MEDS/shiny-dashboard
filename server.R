@@ -188,35 +188,54 @@ server <- function(input, output, session){
   }) # EO renderDataTable
   
   ## SO job source ----
-  output$curr_mesm_source <- renderPlot({
+  ## DATA WRANGLING ##
+  mesm_source <- mesm_placement %>% 
+    select(c(mesm_class_year,
+             job_source)) %>% 
+    group_by(mesm_class_year, 
+             job_source) %>% 
+    summarize(count = n()) %>% 
+    # 2 NAs 2019; 3 NAs 2021
+    drop_na() %>% 
+    left_join(placement_size, by = "mesm_class_year") %>% 
+    mutate(percent = round((count / program_size) * 100, 1))
+  
+  ## PLOTTING ##
+  output$mesm_job_source <- plotly::renderPlotly({
     
-    mesmP_source <- mesm_placement %>% 
-      select(c(mesm_class_year,
-               job_source)) %>% 
-      group_by(mesm_class_year, 
-               job_source) %>% 
-      summarize(count = n()) %>% 
-      # 2 NAs 2019; 3 NAs 2021
-      drop_na()
-    
-    # 2021
-    ggplot(data = mesmP_source %>% filter(mesm_class_year == 2021),
-           aes(x = reorder(job_source, count),
-               y = count)) +
-      geom_bar(stat = "identity") +
-      coord_flip() +
-      labs(title = "MESM Job Source (2021)",
-           # Note(HD): percentage includes 3 NAs ??
-           subtitle = "Personal/ Professional network + Bren Network = 58%",
-           x = NULL, 
-           y = "Number of students") +
+    # ggplot
+    source_gg <- ggplot(data = mesm_source,
+                        aes(x = mesm_class_year,
+                            y = percent,
+                            fill = reorder(job_source, percent),
+                            text = paste0("Job Source: ", job_source, "\n",
+                                          "Percent: ", percent, "%"))) +
+      geom_bar(position = "dodge",
+               stat = "identity") +
+      scale_x_continuous(breaks = seq(min(mesm_source$mesm_class_year),
+                                      max(mesm_source$mesm_class_year))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
-      theme(plot.subtitle = element_text(size = 9,
-                                         face = "italic")) +
-      geom_text(aes(label = count),
-                fontface = "bold",
-                size = 4,
-                hjust = -0.21)
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "Job Sources MESM alumni are using to secure jobs",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("Bren School Network" = "#003660", # ucsb navy
+                                   "Company website" = "#047c91", # ucsb aqua
+                                   "Internet posting" = "#9cbebe", # ucsb mist
+                                   "Other" = "#6d7d33", # ucsb moss
+                                   "Personal/Professional Contact" = "#79a540") # bren leaf green
+      )
+    # plotly
+    plotly::ggplotly(source_gg, tooltip = "text") %>%
+      layout(legend = list(orientation = "h")) %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select",
+                                           "lasso2d",
+                                           "autoScale2d",
+                                           "hoverClosestCartesian",
+                                           "hoverCompareCartesian"))
   }) # EO job source
   
   ## SO placement status ----
@@ -294,35 +313,72 @@ server <- function(input, output, session){
   }) # EO placement sector
   
   
-  ## SO placement satisfaction ----
+  ## SO placement sector satisfaction ----
   ## DATA WRANGLING ##
-  mesmP_satisfy <- reactive({
-    
-    mesm_placement %>%
-      select(c(mesm_class_year,
-             placement_satisfaction)) %>% 
-      group_by(mesm_class_year,
-             placement_satisfaction) %>%
-      summarize(satisfy_count = n()) %>%
-      filter(mesm_class_year == input$satisfy_all)
+  # total number of alumni in each sector (2019-2021)
+  sector_totals <- mesm_placement %>% 
+    group_by(employer_sector) %>% 
+    summarize(sector_count = n())
+  
+  sector_satisfaction <- reactive({
+    mesm_placement %>% 
+      select(c(employer_sector,
+               placement_satisfaction)) %>%  
+      group_by(employer_sector,
+               placement_satisfaction) %>% 
+      summarize(count = n()) %>% 
+      # consulting (3), corporate (2), local gov (1)
+      drop_na() %>% 
+      left_join(sector_totals, by = "employer_sector") %>% 
+      # calculate percent by satisfaction count / total # of alumni working in that sector
+      mutate(percent = round((count / sector_count) * 100, 1)) %>% 
+      mutate(placement_satisfaction = factor(placement_satisfaction, levels = c("Very Satisfied",
+                                                                                "Satisfied",
+                                                                                "Somewhat Satisfied",
+                                                                                "Unsatisfied"),
+                                             labels = c("Very Satisfied",
+                                                        "Satisfied",
+                                                        "Somewhat Satisfied",
+                                                        "Unsatisfied"))) %>% 
+      filter(employer_sector %in% input$sector_types)
       
-  })
+  }) # EO reactive sector_satisfaction()
   
   ## PLOTTING ##
-  output$satisfaction <- renderPlot({
-    # 2021
-    # 3 NAs
-    ggplot(data = mesmP_satisfy() %>% drop_na,
-           aes(x = reorder(placement_satisfaction, satisfy_count),
-               y = satisfy_count)) +
-      geom_bar(stat = "identity") +
+  output$sector_satisfaction <- plotly::renderPlotly({
+    
+    sector_satisfaction_gg <- ggplot(data = sector_satisfaction(),
+                                     aes(x = placement_satisfaction,
+                                         y = percent,
+                                         fill = reorder(placement_satisfaction, percent),
+                                         text = paste0("Placement Satisfaction: ", placement_satisfaction,
+                                                       "\n",
+                                                       "Percent: ", percent, "%", "\n",
+                                                       "Sample size: ", sector_count)))+
+      geom_bar(position = "dodge",
+               stat = "identity") +
       coord_flip() +
-      labs(title = paste0("MESM ", input$satisfy_all, " satisfaction at job placement"),
-           x = NULL,
-           y = "Number of students") +
+      scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
-      geom_text(aes(label = satisfy_count),
-                hjust = -0.3)
+      theme(panel.grid.minor = element_blank()) +
+      labs(title = "MESM Placement Satisfaction by Sector",
+           x = NULL,
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("Very Satisfied" = "#003660", # ucsb navy
+                                   "Satisfied" = "#047c91", # ucsb aqua
+                                   "Somewhat Satisfied" = "#dcd6cc", # uscb clay
+                                   "Unsatisfied" = "#9cbebe") # ucsb mist
+      )
+    
+    plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") %>% 
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian"))
     
   }) # EO placement satisfaction
   

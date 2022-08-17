@@ -122,7 +122,7 @@ ui <- dashboardPage(
         ), # EO FR first row
         
         fluidRow(
-          # * career map ----
+          # * career maps ----
           tabBox(width = 6,
                  tabPanel("Domestic Placements",
                           tmap::tmapOutput(outputId = "car_alumniMap") %>%
@@ -138,7 +138,7 @@ ui <- dashboardPage(
                           ) # EO tabPanel international placements
           ), # EO tabBox employers map / info
           
-          # * career second plot ----
+          # * career plots ----
           tabBox(width = 6,
                  tabPanel("Sector",
                           d3treeR::d3tree2Output(outputId = "sector_tree") %>%
@@ -149,20 +149,23 @@ ui <- dashboardPage(
                                              selected = 2021,
                                              inline = TRUE)
                  ), # EO tabPanel 1 in box 2 
-                 tabPanel("Satisfaction",
-                          plotOutput(outputId = "satisfaction") %>%
+                 tabPanel("Sector Satisfaction",
+                          plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
                             withSpinner(color = "#003660", type = 1),
-                          radioButtons(inputId = "satisfy_all",
+                          radioButtons(inputId = "sector_types",
                                        label = NULL,
-                                       choices = c("2019", "2020", "2021"),
-                                       selected = "2021",
+                                       choices = c("Consulting", "Corporate", "Federal Government",
+                                                   "Foreign Government", "Local Government",
+                                                   "Non-Profit", "Research/Education",
+                                                   "State Government", "Other"),
+                                       selected = "Consulting",
                                        inline = TRUE)
-                 ), # EO tabPanel placement satisfaction in box 2
+                 ), # EO tabPanel placement sector satisfaction in box 2
                  tabPanel("Average Compensation",
                           plotlyOutput(outputId = "compensation")
                  ), # EO tabPanel avg comp in box 2
-                 tabPanel("Source",
-                          plotOutput(outputId = "curr_mesm_source") %>%
+                 tabPanel("Job Source",
+                          plotly::plotlyOutput(outputId = "mesm_job_source") %>%
                             withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel placement source in box 2
                  tabPanel("Status",
