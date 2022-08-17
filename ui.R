@@ -88,17 +88,17 @@ ui <- dashboardPage(
                  ), # EO FR
     
                  # * valueBox stats ----
-                 valueBox(paste0(104), 
-                          "MESM Alumni are Very Satisfied with their job placement",
+                 valueBox(paste0(44.3, "%"), 
+                          "MESM Alumni are Very Satisfied with job placement",
                           icon = icon("heart"),
                           width = NULL
-                 ), # EO valueBox 88% stat
+                 ), # EO valueBox overall satisfaction stat
                  # placement stat
                  valueBoxOutput(outputId = "placement_stat",
                                 width = NULL),
-                 valueBox(paste0("TBD"),
-                          "NEW STAT HERE",
-                          icon = icon("globe"),
+                 valueBox(paste0(20.4, "%"),
+                          "MESM Alumni are in Consulting",
+                          icon = icon("briefcase"),
                           color = "blue",
                           width = NULL
                  ) # EO valueBox stay connected stat
