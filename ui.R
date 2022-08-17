@@ -168,8 +168,8 @@ ui <- dashboardPage(
                           plotly::plotlyOutput(outputId = "mesm_job_source") %>%
                             withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel placement source in box 2
-                 tabPanel("Status",
-                          plotOutput(outputId = "curr_mesm_status") %>%
+                 tabPanel("Placement Status",
+                          plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
                             withSpinner(color = "#003660", type = 1)
                  ) # EO tabPanel placement status in box 2
           ) # EO tabBox career second plot
