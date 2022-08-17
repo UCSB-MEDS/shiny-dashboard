@@ -88,9 +88,9 @@ ui <- dashboardPage(
                  ), # EO FR
     
                  # * valueBox stats ----
-                 valueBox(paste0("TBD", "%"), 
-                          "NEW STAT HERE",
-                          icon = icon("star"),
+                 valueBox(paste0(104), 
+                          "MESM Alumni are Very Satisfied with their job placement",
+                          icon = icon("heart"),
                           width = NULL
                  ), # EO valueBox 88% stat
                  valueBox(paste0("TBD"),
