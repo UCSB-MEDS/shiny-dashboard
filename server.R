@@ -238,30 +238,73 @@ server <- function(input, output, session){
                                            "hoverCompareCartesian"))
   }) # EO job source
   
+  
+  
   ## SO placement status ----
-  output$curr_mesm_status <- renderPlot({
-    mesm_status <- mesm_status %>% 
-      group_by(mesm_class_year,
-               member_status) %>% 
-      summarize(count = n())
-    
-    # 2021
-    # color time off & searching
-    # subtitle of students who got a job 6 months after graduating 
-    ggplot(data = mesm_status %>% filter(mesm_class_year == 2021),
-           aes(x = reorder(member_status, count),
-               y = count)) +
-      geom_bar(stat = "identity") +
-      coord_flip() +
+  ## DATA WRANGLING ##
+  status <- mesm_status %>% 
+    select(mesm_class_year,
+           member_status) %>% 
+    mutate(status = case_when(
+      member_status %in% c("FT Career",
+                           "FT Temporary Career",
+                           "PT Temporary Career",
+                           "FT Career-Sponsored",
+                           "PT Career",
+                           "FT Career-Sponsored") ~ "Career",
+      member_status %in% c("Time Off",
+                           "Searching") ~ "Searching or Time Off",
+      member_status %in% c("FT New Business",
+                           "FT Eco-E") ~ "New Business",
+      member_status %in% c("Internship/Fellowship",
+                           "Continuing Internship",
+                           "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+      TRUE ~ member_status
+    )) %>% 
+    group_by(mesm_class_year, status) %>% 
+    summarize(count = n()) %>% 
+    left_join(status_size, by = "mesm_class_year") %>% 
+    mutate(percent = round((count / mesm_responses) * 100, 1))
+  
+  ## PLOTTING ##
+  # ggplot
+  output$mesm_placement_status <- plotly::renderPlotly({
+    status_gg <- ggplot(data = status,
+                        aes(x = mesm_class_year,
+                            y = percent,
+                            fill = reorder(status, percent),
+                            text = paste0("Placement Status: ", status, "\n",
+                                          "Percent: ", percent, "%", "\n",
+                                          "Sample size: ", mesm_responses, "\n",
+                                          "Cohort size: ", program_size))) +
+      geom_bar(position = "dodge",
+               stat = "identity") +
+      scale_x_continuous(breaks = seq(min(status$mesm_class_year),
+                                      max(status$mesm_class_year))) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
-      labs(title = "MESM Placement Overview (2021)",
-           subtitle = "",
+      labs(title = "MESM alumni Placement Status 6 months after graduation",
            x = NULL,
-           y = "Number of students") +
-      geom_text(aes(label = count),
-                hjust = -0.22,
-                size = 4) 
+           y = NULL,
+           fill = NULL) +
+      scale_fill_manual(values = c("Advanced Degree/Another Degree" = "#003660", # ucsb navy
+                                   "Career" = "#047c91", # ucsb aqua
+                                   "Internship, Fellowship, or Short-term Project" = "#9cbebe", # ucsb mist
+                                   "New Business" = "#6d7d33", # ucsb moss
+                                   "Searching or Time Off" = "#79a540") # bren leaf green
+      )
+    
+    #plotly
+    plotly::ggplotly(status_gg, tooltip = "text") %>%
+      layout(legend = list(orientation = "h"),
+             title = list(font = list(size = 16))) %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select",
+                                           "lasso2d",
+                                           "autoScale2d",
+                                           "hoverClosestCartesian",
+                                           "hoverCompareCartesian"))
   }) # EO placement status 
   
   
