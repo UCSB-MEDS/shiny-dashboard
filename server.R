@@ -131,11 +131,9 @@ server <- function(input, output, session){
     summarize(location_count = n())
   
   # calculating percentages
-  # QUESTION: Do we want to calculate based on number of responses received 
-  # OR the size of the cohort?
   placement_location_stats <- placement_location %>% 
     left_join(placement_size, by = "mesm_class_year") %>%
-    mutate(percent = round((location_count / program_size) * 100, 1))
+    mutate(percent = round((location_count / mesm_responses) * 100, 1))
   
   ## PLOTTING ##
   output$mesm_location <- plotly::renderPlotly({
@@ -145,7 +143,10 @@ server <- function(input, output, session){
                               y = percent,
                               fill = reorder(location, percent),
                               text = paste0("Location: ", location, "\n",
-                                            "Percent: ", percent, "%"))) +
+                                            "Percent: ", percent, "%", "\n",
+                                            "Sample size: ", mesm_responses, "\n",
+                                            "Cohort size: ", program_size)
+                              )) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(placement_location_stats$mesm_class_year),

@@ -119,6 +119,13 @@ ui <- dashboardPage(
         ), # EO FR first row
         
         fluidRow(
+          box(width = 12,
+              "All visuals use 2019-2021 data unless otherwise stated",
+              background = "green")
+          
+        ), # EO FR second row
+        
+        fluidRow(
           # * career maps ----
           tabBox(width = 6,
                  tabPanel("Domestic Placements",
