@@ -147,7 +147,7 @@ ui <- dashboardPage(
                  # tabPanel("Sector",
                  #          plotOutput(outputId = "sector_wc") %>%
                  #            withSpinner(color = "#003660", type = 1)
-                 # ), # EO tabPanel 1 in box 2
+                 # ), # EO tabPanel 1 in box 2 
                  tabPanel("Sector Trends",
                           plotly::plotlyOutput(outputId = "sector_trends") %>% 
                             withSpinner(color = "#003660", type = 1),

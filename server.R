@@ -492,7 +492,7 @@ server <- function(input, output, session){
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
-      labs(title = "MESM Placement Satisfaction by Sector",
+      labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types),
            x = NULL,
            y = NULL,
            fill = NULL) +
@@ -503,6 +503,7 @@ server <- function(input, output, session){
       )
     
     plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 15))) %>% 
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
                                            "lasso2d", 
