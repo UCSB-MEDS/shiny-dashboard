@@ -360,13 +360,13 @@ server <- function(input, output, session){
   }) # EO placement status 
   
   
-  ## SO placement sector ----
+  ## SO wordcloud sector ----
   ## DATA WRANGLING ##
   sector_wc <- mesm_placement %>%
     group_by(employer_sector) %>% 
     summarize(sector_count = n())
 
-  ## PLOTTING TREE MAP ##
+  ## PLOTTING WORD CLOUD ##
   output$sector_wc <- renderPlot({
     # gg wordcloud
     ggplot(sector_wc, 
@@ -375,7 +375,7 @@ server <- function(input, output, session){
                color = employer_sector)) +
       ggwordcloud::geom_text_wordcloud() +
       scale_size_area(max_size = 10) +
-      theme(plot.title = element_text(size = 25),
+      theme(plot.title = element_text(size = 50),
             panel.background = element_rect(fill = "white"))
     
   }) # EO placement sector wc

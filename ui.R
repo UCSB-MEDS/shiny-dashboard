@@ -120,7 +120,7 @@ ui <- dashboardPage(
         
         fluidRow(
           box(width = 12,
-              "All visuals use 2019-2021 data unless otherwise stated",
+              title = "All visuals use 2019-2021 data unless otherwise stated",
               background = "green")
           
         ), # EO FR second row
@@ -144,13 +144,18 @@ ui <- dashboardPage(
           
           # * career plots ----
           tabBox(width = 6,
-                 tabPanel("Sector",
-                          plotOutput(outputId = "sector_wc") %>%
-                            withSpinner(color = "#003660", type = 1)
-                 ), # EO tabPanel 1 in box 2 
+                 # tabPanel("Sector",
+                 #          plotOutput(outputId = "sector_wc") %>%
+                 #            withSpinner(color = "#003660", type = 1)
+                 # ), # EO tabPanel 1 in box 2
                  tabPanel("Sector Trends",
                           plotly::plotlyOutput(outputId = "sector_trends") %>% 
-                            withSpinner(color = "#003660", type = 1)
+                            withSpinner(color = "#003660", type = 1),
+                          tags$p(class = "italic_sector",
+                                 "Private includes Consulting and Corporate. 
+                                 Public includes Federal Government, Local Government, 
+                                 State Government, and Research/Education. Other includes 
+                                 Foreign Government and Other. Non-Profit includes Non-Profit.")
                  ), # EO tabPanel sector over time
                  tabPanel("Sector Satisfaction",
                           plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
