@@ -12,16 +12,12 @@
   background-color: #6d7d33 !important;
 }
 
-/* styling sector tree map on career db*/
-/* title styling*/
-#sector_tree {
-  font-size: 25px;
+/* styling font on placement by sector bar plot career db*/
+.italic-sector {
+  font-style: italic;
+  text-align: center;
 }
 
-#sector_tree text {
-  font-size: 18px;
-  fill: black !important;
-}
 
 /* change background color of menuItems when selected */
 .skin-blue .sidebar-menu>li.active>a {
