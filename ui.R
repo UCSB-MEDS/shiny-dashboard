@@ -130,7 +130,9 @@ ui <- dashboardPage(
           tabBox(width = 6,
                  tabPanel("Domestic Placements",
                           tmap::tmapOutput(outputId = "car_alumniMap") %>%
-                            withSpinner(color = "#003660", type = 1)
+                            withSpinner(color = "#003660", type = 1),
+                          tags$p(class = "italic_sector",
+                                 "Click a state to see the number of alumni at each location.")
                           ), # EO tabPanel leaflet map
                  tabPanel("Location of MESM Alumni",
                           plotly::plotlyOutput(outputId = "mesm_location") %>%

@@ -515,32 +515,30 @@ server <- function(input, output, session){
   
   
   
-  ## SO avg compensation ----
+  ## SO compensation ----
   ## DATA WRANGLING ##
   salary <- mesm_placement %>% 
-    select(mesm_class_year,
-           employment_type,
+    select(employment_type,
            estimated_annual_compensation_us) %>%
     # did not include Internship or Part-Time Job (~30 obs dropped)
     # only 1 NA
-    filter(employment_type %in% c("Full-Time Job", "Self-Employed/Freelance (e.g. Eco-E)")) %>% 
+    filter(employment_type == "Full-Time Job") %>% 
     # remove $0 compensation (5 tot)
     filter(estimated_annual_compensation_us != 0) %>% 
     # 3 year average
-    mutate(mean = mean(estimated_annual_compensation_us)) %>%
-    filter(estimated_annual_compensation_us == min(estimated_annual_compensation_us) | estimated_annual_compensation_us == max(estimated_annual_compensation_us)) %>% 
-    pivot_longer(cols = c(estimated_annual_compensation_us,
-                          mean),
+    mutate(Average = mean(estimated_annual_compensation_us)) %>%
+    # 3 year median
+    mutate(Median = median(estimated_annual_compensation_us)) %>% 
+    mutate(Low = min(estimated_annual_compensation_us)) %>% 
+    mutate(High = max(estimated_annual_compensation_us)) %>% 
+    select(-estimated_annual_compensation_us) %>% 
+    pivot_longer(cols = c(Low,
+                          High,
+                          Average,
+                          Median),
                  names_to = "range",
                  values_to = "values") %>% 
-    # assign range labels 
-    mutate(range = case_when(
-      values == 4000.00 ~ "Low",
-      values == 109000.00 ~ "High",
-      employment_type == "Full-Time Job" ~ "Average",
-      TRUE ~ "none"
-    )) %>% 
-    filter(range != "none")
+    mutate(mesm_responses = 196)
   
   ## PLOTTING ##
   output$compensation <- renderPlotly({
@@ -548,7 +546,8 @@ server <- function(input, output, session){
                         aes(x = reorder(range, values),
                             y = values,
                             fill = reorder(range, values),
-                            text = paste0(range, ": ", "$", round(values, 2))
+                            text = paste0(range, ": ", "$", round(values, 2), "\n",
+                                          "Sample size: ", mesm_responses)
                         )) +
       geom_bar(stat = "identity",
                position = "dodge") +
@@ -556,14 +555,16 @@ server <- function(input, output, session){
       scale_y_continuous(labels = scales::dollar_format()) +
       scale_fill_manual(values = c("High" = "#9cbebe",
                                    "Average" = "#003660",
+                                   "Median" = "#047c91",
                                    "Low" = "#dcd6cc")) +
-      labs(title = "MESM Alumni Low, High, and Average Salary Compensation (2019-2021)", 
+      labs(title = "MESM Alumni Low, Median, Average and High Salary Compensation", 
            x = NULL,
            y = "Dollars ($)",
            fill = NULL)
+    salary_gg
     
     plotly::ggplotly(salary_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 13))) %>% 
+      layout(title = list(font = list(size = 14))) %>% 
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
                                            "lasso2d", 
