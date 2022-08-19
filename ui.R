@@ -119,10 +119,13 @@ ui <- dashboardPage(
         ), # EO FR first row
         
         fluidRow(
-          box(width = 12,
+          box(id = "info_data_career",
+              width = 12,
               tags$p(class = "lrg-bold",
                      "All visuals use 2019-2021 data unless otherwise stated"),
-              background = "green")
+              background = "green"),
+          # remove title from box
+          tags$head(tags$style('#info_data_career .box-header{ display: none}'))
           
         ), # EO FR second row
         
