@@ -261,7 +261,9 @@ server <- function(input, output, session){
                             y = percent,
                             fill = reorder(job_source, percent),
                             text = paste0("Job Source: ", job_source, "\n",
-                                          "Percent: ", percent, "%"))) +
+                                          "Percent: ", percent, "%", "\n",
+                                          "Sample size: ", mesm_responses, "\n",
+                                          "Cohort size: ", program_size))) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(mesm_source$mesm_class_year),
@@ -336,7 +338,7 @@ server <- function(input, output, session){
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
-      labs(title = "MESM alumni Placement Status 6 months after graduation",
+      labs(title = "MESM Alumni Placement Status 6 months after graduation",
            x = NULL,
            y = NULL,
            fill = NULL) +
@@ -470,6 +472,12 @@ server <- function(input, output, session){
                                                         "Satisfied",
                                                         "Somewhat Satisfied",
                                                         "Unsatisfied"))) %>% 
+      # change other to Eco-E/New Business
+      mutate(employer_sector = case_when(
+        employer_sector == "Other" ~ "Eco-E/New Business",
+        TRUE ~ employer_sector
+      )) %>% 
+      # reactive filter
       filter(employer_sector %in% input$sector_types)
       
   }) # EO reactive sector_satisfaction()

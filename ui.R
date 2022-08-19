@@ -157,22 +157,24 @@ ui <- dashboardPage(
                                  "Private includes Consulting and Corporate. 
                                  Public includes Federal Government, Local Government, 
                                  State Government, and Research/Education. Other includes 
-                                 Foreign Government and Other. Non-Profit includes Non-Profit.")
+                                 Foreign Government, Eco-E, and New Business. Non-Profit includes Non-Profit.")
                  ), # EO tabPanel sector over time
                  tabPanel("Sector Satisfaction",
                           plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "sector_types",
                                        label = NULL,
-                                       choices = c("Consulting", "Corporate", "Federal Government",
-                                                   "Foreign Government", "Local Government",
-                                                   "Non-Profit", "Research/Education",
-                                                   "State Government", "Other"),
+                                       choices = c("Consulting", "Corporate", "Eco-E/New Business",
+                                                   "Federal Government", "Foreign Government", 
+                                                   "Local Government", "Non-Profit", 
+                                                   "Research/Education", "State Government"),
                                        selected = "Consulting",
                                        inline = TRUE)
                  ), # EO tabPanel placement sector satisfaction in box 2
                  tabPanel("Average Compensation",
-                          plotlyOutput(outputId = "compensation")
+                          plotlyOutput(outputId = "compensation"),
+                          tags$p(class = "italic_sector",
+                                 "Data includes Full-Time Career positions only.")
                  ), # EO tabPanel avg comp in box 2
                  tabPanel("Job Source",
                           plotly::plotlyOutput(outputId = "mesm_job_source") %>%
