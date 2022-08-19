@@ -29,7 +29,7 @@ source("r/age_plot.R")
 source("r/race_plot.R")
 
 # STYLING ----
-mesm_color <- "#6D7D33"
+mesm_color <- "#6D7D33" 
 meds_color <- "#047C91"
 phd_color <- "#005AA3"
 

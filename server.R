@@ -525,59 +525,92 @@ server <- function(input, output, session){
   
   ## SO compensation ----
   ## DATA WRANGLING ##
-  salary <- mesm_placement %>% 
-    select(employment_type,
-           estimated_annual_compensation_us) %>%
-    # did not include Internship or Part-Time Job (~30 obs dropped)
-    # only 1 NA
-    filter(employment_type == "Full-Time Job") %>% 
-    # remove $0 compensation (5 tot)
-    filter(estimated_annual_compensation_us != 0) %>% 
-    # 3 year average
-    mutate(Average = mean(estimated_annual_compensation_us)) %>%
-    # 3 year median
-    mutate(Median = median(estimated_annual_compensation_us)) %>% 
-    mutate(Low = min(estimated_annual_compensation_us)) %>% 
-    mutate(High = max(estimated_annual_compensation_us)) %>% 
-    select(-estimated_annual_compensation_us) %>% 
-    pivot_longer(cols = c(Low,
-                          High,
-                          Average,
-                          Median),
-                 names_to = "range",
-                 values_to = "values") %>% 
-    mutate(mesm_responses = 196)
+  salary <- reactive({
+    
+    if (input$compensation_year == "All Years") {
+      # chose All Years
+      mesm_placement %>% 
+        select(mesm_class_year,
+               employment_type,
+               estimated_annual_compensation_us) %>%
+        # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+        # (41 obs removed)
+        # only 1 NA
+        filter(employment_type == "Full-Time Job") %>% 
+        # remove $0 compensation (5 tot)
+        filter(estimated_annual_compensation_us != 0) %>%
+        # 3 year Median
+        mutate(Median = median(estimated_annual_compensation_us)) %>% 
+        mutate(Low = min(estimated_annual_compensation_us)) %>% 
+        mutate(High = max(estimated_annual_compensation_us)) %>% 
+        select(-estimated_annual_compensation_us) %>% 
+        pivot_longer(cols = c(Low,
+                              High,
+                              Median),
+                     names_to = "range",
+                     values_to = "values") %>% 
+        mutate(mesm_responses = 196)
+      
+    } # EO if statement
+    
+    else {
+      # chose 2019, 2020, 2021
+      mesm_placement %>% 
+        select(mesm_class_year,
+               employment_type,
+               estimated_annual_compensation_us) %>%
+        # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+        # (41 obs removed)
+        # only 1 NA
+        filter(employment_type == "Full-Time Job") %>% 
+        # remove $0 compensation (5 tot)
+        filter(estimated_annual_compensation_us != 0) %>% 
+        # filter for year 
+        filter(mesm_class_year %in% input$compensation_year) %>% 
+        # 3 year Median
+        mutate(Median = median(estimated_annual_compensation_us)) %>% 
+        mutate(Low = min(estimated_annual_compensation_us)) %>% 
+        mutate(High = max(estimated_annual_compensation_us)) %>% 
+        select(-estimated_annual_compensation_us) %>% 
+        pivot_longer(cols = c(Low,
+                              High,
+                              Median),
+                     names_to = "range",
+                     values_to = "values") %>% 
+        mutate(mesm_responses = 196)
+      
+    } # EO else statement
+    
+  })
   
   ## PLOTTING ##
   output$compensation <- renderPlotly({
-    salary_gg <- ggplot(data = salary,
+    # ggplot
+    salary_gg <- ggplot(data = salary(),
                         aes(x = reorder(range, values),
                             y = values,
-                            fill = reorder(range, values),
                             text = paste0(range, ": ", "$", round(values, 2), "\n",
-                                          "Sample size: ", mesm_responses)
+                                          "Number of respondents: ", mesm_responses)
                         )) +
       geom_bar(stat = "identity",
-               position = "dodge") +
+               position = "dodge",
+               fill = "#09847a") +
       theme_minimal() +
-      scale_y_continuous(labels = scales::dollar_format()) +
-      scale_fill_manual(values = c("High" = "#9cbebe",
-                                   "Average" = "#003660",
-                                   "Median" = "#047c91",
-                                   "Low" = "#dcd6cc")) +
-      labs(title = "MESM Alumni Low, Median, Average and High Salary Compensation", 
+      scale_y_continuous(labels = scales::dollar_format(),
+                         breaks = seq(0, 100000, 25000)) +
+      labs(title = paste0("MESM Alumni Low, Median, and High Salary Compensation", 
+                          "\n", "(", input$compensation_year, ")"), 
            x = NULL,
            y = "Dollars ($)",
            fill = NULL)
-    salary_gg
-    
+    # plotly
     plotly::ggplotly(salary_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 14))) %>% 
+      layout(title = list(font = list(size = 16))) %>%
       config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
+                                           "select",
+                                           "lasso2d",
+                                           "autoScale2d",
+                                           "hoverClosestCartesian",
                                            "hoverCompareCartesian"))
     
   }) # EO compensation plot

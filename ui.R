@@ -171,10 +171,16 @@ ui <- dashboardPage(
                                        selected = "Consulting",
                                        inline = TRUE)
                  ), # EO tabPanel placement sector satisfaction in box 2
-                 tabPanel("Average Compensation",
+                 tabPanel("Salary Compensation",
                           plotlyOutput(outputId = "compensation"),
                           tags$p(class = "italic_sector",
-                                 "Data includes Full-Time Career positions only.")
+                                 "Data includes Full-Time Career positions only."),
+                          radioButtons(inputId = "compensation_year",
+                                       label = NULL,
+                                       choices = c(2019, 2020, 2021, "All Years"),
+                                       selected = "All Years",
+                                       inline = TRUE)
+                          
                  ), # EO tabPanel avg comp in box 2
                  tabPanel("Job Source",
                           plotly::plotlyOutput(outputId = "mesm_job_source") %>%
