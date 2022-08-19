@@ -120,7 +120,8 @@ ui <- dashboardPage(
         
         fluidRow(
           box(width = 12,
-              title = "All visuals use 2019-2021 data unless otherwise stated",
+              tags$p(class = "lrg-bold",
+                     "All visuals use 2019-2021 data unless otherwise stated"),
               background = "green")
           
         ), # EO FR second row

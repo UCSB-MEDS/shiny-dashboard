@@ -18,6 +18,12 @@
   text-align: center;
 }
 
+/* styling large and bold font */
+.lrg-bold {
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
 
 /* change background color of menuItems when selected */
 .skin-blue .sidebar-menu>li.active>a {
