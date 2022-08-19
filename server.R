@@ -259,8 +259,8 @@ server <- function(input, output, session){
                         aes(x = mesm_class_year,
                             y = percent,
                             fill = reorder(job_source, percent),
-                            text = paste0("Job Source: ", job_source, "\n",
-                                          "Percent: ", percent, "%", "\n",
+                            text = paste0(job_source, " (", percent, "%", ")",
+                                          "\n",
                                           "Number of respondents: ", mesm_responses, "\n",
                                           "Class size: ", program_size))) +
       geom_bar(position = "dodge",
