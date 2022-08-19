@@ -487,9 +487,8 @@ server <- function(input, output, session){
                                      aes(x = placement_satisfaction,
                                          y = percent,
                                          fill = reorder(placement_satisfaction, percent),
-                                         text = paste0("Placement Satisfaction: ", placement_satisfaction,
+                                         text = paste0(placement_satisfaction, " (", percent, "%", ")",
                                                        "\n",
-                                                       "Percent: ", percent, "%", "\n",
                                                        "Number of respondents: ", sector_count)))+
       geom_bar(position = "dodge",
                stat = "identity") +
