@@ -144,15 +144,14 @@ server <- function(input, output, session){
                               fill = reorder(location, percent),
                               text = paste0("Location: ", location, "\n",
                                             "Percent: ", percent, "%", "\n",
-                                            "Sample size: ", mesm_responses, "\n",
-                                            "Cohort size: ", program_size)
+                                            "Number of respondents: ", mesm_responses, "\n",
+                                            "Class size: ", program_size)
                               )) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(placement_location_stats$mesm_class_year),
                                       max(placement_location_stats$mesm_class_year))) +
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1),
-                         breaks = seq(0, 50, 10)) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
       labs(title = "Where MESM alumni are working 6 months after graduating",
@@ -262,8 +261,8 @@ server <- function(input, output, session){
                             fill = reorder(job_source, percent),
                             text = paste0("Job Source: ", job_source, "\n",
                                           "Percent: ", percent, "%", "\n",
-                                          "Sample size: ", mesm_responses, "\n",
-                                          "Cohort size: ", program_size))) +
+                                          "Number of respondents: ", mesm_responses, "\n",
+                                          "Class size: ", program_size))) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(mesm_source$mesm_class_year),
@@ -329,8 +328,8 @@ server <- function(input, output, session){
                             fill = reorder(status, percent),
                             text = paste0("Placement Status: ", status, "\n",
                                           "Percent: ", percent, "%", "\n",
-                                          "Sample size: ", mesm_responses, "\n",
-                                          "Cohort size: ", program_size))) +
+                                          "Number of respondents: ", mesm_responses, "\n",
+                                          "Class size: ", program_size))) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(status$mesm_class_year),
@@ -413,10 +412,9 @@ server <- function(input, output, session){
                              aes(x = mesm_class_year,
                                  y = percent,
                                  fill = sector_type,
-                                 text = paste0(sector_type, "\n",
-                                               "Percent: ", percent, "%", "\n",
-                                               "Sample size: ", mesm_responses, "\n",
-                                               "Cohort size: ", program_size))) +
+                                 text = paste0(sector_type, " (", percent, "%", ")", "\n",
+                                               "Number of respondents: ", mesm_responses, "\n",
+                                               "Class size: ", program_size))) +
       geom_bar(stat = "identity",
                position = "dodge") +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
@@ -492,7 +490,7 @@ server <- function(input, output, session){
                                          text = paste0("Placement Satisfaction: ", placement_satisfaction,
                                                        "\n",
                                                        "Percent: ", percent, "%", "\n",
-                                                       "Sample size: ", sector_count)))+
+                                                       "Number of respondents: ", sector_count)))+
       geom_bar(position = "dodge",
                stat = "identity") +
       coord_flip() +
@@ -757,7 +755,7 @@ server <- function(input, output, session){
                           fill = demographic,
                           text = paste0(demographic, "\n", 
                                         "Percentage: ", percent, "%", "\n",
-                                        "Sample size: ", program_size)
+                                        "Number of respondents: ", program_size)
                           )) +
       geom_bar(stat = "identity") +
       coord_flip() +
@@ -1050,7 +1048,7 @@ server <- function(input, output, session){
                            text = paste0("Program: ", objective1, "\n",
                                          "Background: ", background, "\n",
                                          "Percent: ", percent, "%", "\n",
-                                         "Sample size: ", tot
+                                         "Number of respondents: ", tot
                            ))) +
       geom_bar(stat = "identity",
                fill = "#003660") +
@@ -1116,7 +1114,7 @@ server <- function(input, output, session){
                            text = paste0("Program: ", objective1, "\n",
                                          "Background: ", background, "\n",
                                          "Percent: ", percent, "%", "\n",
-                                         "Sample size: ", tot
+                                         "Number of respondents: ", tot
                            ))) +
       geom_bar(stat = "identity",
                fill = "#047c91") +
@@ -1183,7 +1181,7 @@ server <- function(input, output, session){
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
-                                       "Sample size: ", tot
+                                       "Number of respondents: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#dcd6cc") +
@@ -1250,7 +1248,7 @@ server <- function(input, output, session){
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
-                                       "Sample size: ", tot
+                                       "Number of respondents: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#6d7d33") +
@@ -1318,7 +1316,7 @@ server <- function(input, output, session){
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
-                                       "Sample size: ", tot
+                                       "Number of respondents: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#9cbebe") +
@@ -1381,7 +1379,7 @@ server <- function(input, output, session){
                                text = paste0("Program: ", objective1, "\n",
                                              "Background: ", background, "\n",
                                              "Percent: ", percent, "%", "\n",
-                                             "Sample size: ", tot
+                                             "Number of respondents: ", tot
                                ))) +
       geom_bar(stat = "identity",
                fill = "#dce1e5") +
@@ -1447,7 +1445,7 @@ server <- function(input, output, session){
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
-                                       "Sample size: ", tot
+                                       "Number of respondents: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#79a540") +
@@ -1510,7 +1508,7 @@ server <- function(input, output, session){
                          text = paste0("Program: ", objective1, "\n",
                                        "Background: ", background, "\n",
                                        "Percent: ", percent, "%", "\n",
-                                       "Sample size: ", tot
+                                       "Number of respondents: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#09847a") +
