@@ -5,7 +5,7 @@ account: hdolinh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6710053
-bundleId: 6219505
+bundleId: 6226252
 url: https://hdolinh.shinyapps.io/shiny-dashboard/
-when: 1660949751.07463
-lastSyncTime: 1660949751.07465
+when: 1661186912.76035
+lastSyncTime: 1661186912.76037
