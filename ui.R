@@ -150,10 +150,14 @@ ui <- dashboardPage(
           
           # * career plots ----
           tabBox(width = 6,
-                 # tabPanel("Sector",
-                 #          plotOutput(outputId = "sector_wc") %>%
-                 #            withSpinner(color = "#003660", type = 1)
-                 # ), # EO tabPanel 1 in box 2 
+                 tabPanel("Placement Status",
+                          plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
+                            withSpinner(color = "#003660", type = 1)
+                 ), # EO tabPanel placement status in box 2
+                 tabPanel("Job Source",
+                          plotly::plotlyOutput(outputId = "mesm_job_source") %>%
+                            withSpinner(color = "#003660", type = 1)
+                 ), # EO tabPanel placement source in box 2
                  tabPanel("Sector Trends",
                           plotly::plotlyOutput(outputId = "sector_trends") %>% 
                             withSpinner(color = "#003660", type = 1),
@@ -175,7 +179,7 @@ ui <- dashboardPage(
                                        selected = "Consulting",
                                        inline = TRUE)
                  ), # EO tabPanel placement sector satisfaction in box 2
-                 tabPanel("Salary Compensation",
+                 tabPanel("Salary",
                           plotlyOutput(outputId = "compensation"),
                           tags$p(class = "italic_sector",
                                  "Data includes Full-Time Career positions only."),
@@ -184,16 +188,17 @@ ui <- dashboardPage(
                                        choices = c(2019, 2020, 2021, "All Years"),
                                        selected = "All Years",
                                        inline = TRUE)
-                          
-                 ), # EO tabPanel avg comp in box 2
-                 tabPanel("Job Source",
-                          plotly::plotlyOutput(outputId = "mesm_job_source") %>%
-                            withSpinner(color = "#003660", type = 1)
-                 ), # EO tabPanel placement source in box 2
-                 tabPanel("Placement Status",
-                          plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
-                            withSpinner(color = "#003660", type = 1)
-                 ) # EO tabPanel placement status in box 2
+                 ), # EO tabPanel compensation in box 2
+                 tabPanel("Salary by Specialization",
+                          plotlyOutput(outputId = "comp_specialization"),
+                          tags$p(class = "italic_sector",
+                                 "Data includes Full-Time Career positions only."),
+                          radioButtons(inputId = "compSpecialization_year",
+                                       label = NULL,
+                                       choices = c(2019, 2020, 2021, "All Years"),
+                                       selected = "All Years",
+                                       inline = TRUE)
+                 ) # EO tabPanel compensation in box 2
           ) # EO tabBox career second plot
         
         ), # EO FR second row
