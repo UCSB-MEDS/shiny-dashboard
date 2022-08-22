@@ -122,7 +122,10 @@ ui <- dashboardPage(
           box(id = "info_data_career",
               width = 12,
               tags$p(class = "lrg-bold",
-                     "All visuals use 2019-2021 data unless otherwise stated"),
+                     "All visuals use 2019-2021 data unless otherwise stated. 
+                     Additionally, all visuals represent alumni employment six 
+                     months after graduation and do not represent current employment."
+                     ),
               background = "green"),
           # remove title from box
           tags$head(tags$style('#info_data_career .box-header{ display: none}'))
@@ -198,7 +201,17 @@ ui <- dashboardPage(
                                        choices = c(2019, 2020, 2021, "All Years"),
                                        selected = "All Years",
                                        inline = TRUE)
-                 ) # EO tabPanel compensation in box 2
+                 ), # EO tabPanel compensation specialization in box 2
+                 tabPanel("Salary by Sector",
+                          plotlyOutput(outputId = "comp_sector"),
+                          tags$p(class = "italic_sector",
+                                 "Data includes Full-Time Career positions only."),
+                          radioButtons(inputId = "compSector_year",
+                                       label = NULL,
+                                       choices = c(2019, 2020, 2021, "All Years"),
+                                       selected = "All Years",
+                                       inline = TRUE)
+                 ) # EO tabPanel compensation sector in box 2
           ) # EO tabBox career second plot
         
         ), # EO FR second row

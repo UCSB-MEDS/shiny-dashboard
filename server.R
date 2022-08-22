@@ -189,7 +189,8 @@ server <- function(input, output, session){
   
   mesm_domestic_stats <- mesm_domestic %>% 
     group_by(state) %>% 
-    summarize(count = n())
+    summarize(count = n()) %>% 
+    mutate(state = paste0(state, " (", count, ")"))
   
   ## PLOTTING MAP ##
   output$car_alumniMap <- tmap::renderTmap({ 
@@ -699,6 +700,129 @@ server <- function(input, output, session){
                                            "hoverClosestCartesian",
                                            "hoverCompareCartesian"))
   }) # EO salary specialization plot
+  
+  
+  ## SO compensation sector ----
+  ## DATA WRANGLING ##
+  salary_sector <- reactive({
+    if (input$compSector_year == "All Years") {
+      mesm_placement %>% 
+        select(mesm_class_year,
+               employer_sector,
+               employment_type,
+               estimated_annual_compensation_us) %>%
+        # assign private, public, and other
+        mutate(sector_type = case_when(
+          employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+          employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
+          employer_sector %in% c("Foreign Government", "Other") ~ "Other",
+          TRUE ~ employer_sector
+        )) %>% 
+        mutate(sector_type = factor(sector_type, levels = c("Private",
+                                                            "Public",
+                                                            "Non-Profit",
+                                                            "Other"))) %>%
+        # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+        # (41 obs removed)
+        # only 1 NA
+        filter(employment_type == "Full-Time Job") %>% 
+        # remove $0 compensation (5 tot)
+        filter(estimated_annual_compensation_us != 0) %>%
+        group_by(sector_type) %>% 
+        summarize(Median = median(estimated_annual_compensation_us),
+                  Low = min(estimated_annual_compensation_us),
+                  High = max(estimated_annual_compensation_us)) %>% 
+        pivot_longer(cols = c("Median",
+                              "Low",
+                              "High"),
+                     names_to = "range",
+                     values_to = "values")
+      
+    }  # EO if statement
+    
+    else {
+      mesm_placement %>% 
+        select(mesm_class_year,
+               employer_sector,
+               employment_type,
+               estimated_annual_compensation_us) %>%
+        # assign private, public, and other
+        mutate(sector_type = case_when(
+          employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+          employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
+          employer_sector %in% c("Foreign Government", "Other") ~ "Other",
+          TRUE ~ employer_sector
+        )) %>% 
+        mutate(sector_type = factor(sector_type, levels = c("Private",
+                                                            "Public",
+                                                            "Non-Profit",
+                                                            "Other"))) %>%
+        # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+        # (41 obs removed)
+        # only 1 NA
+        filter(employment_type == "Full-Time Job") %>% 
+        # remove $0 compensation (5 tot)
+        filter(estimated_annual_compensation_us != 0) %>% 
+        # filter for year
+        filter(mesm_class_year == input$compSector_year) %>% 
+        group_by(sector_type) %>% 
+        summarize(Median = median(estimated_annual_compensation_us),
+                  Low = min(estimated_annual_compensation_us),
+                  High = max(estimated_annual_compensation_us)) %>% 
+        pivot_longer(cols = c("Median",
+                              "Low",
+                              "High"),
+                     names_to = "range",
+                     values_to = "values")
+      
+    } # EO else statement
+    
+  }) # EO salary_sector reactive
+  
+  ## PLOTTING ##
+  output$comp_sector <- plotly::renderPlotly({
+    comp_sector <- ggplot(data = salary_sector(),
+                          aes(x = sector_type,
+                              y = values,
+                              fill = reorder(range, values),
+                              text = paste0(sector_type, "\n",
+                                            range, ": ", "$", values, "\n",
+                                            "Number of respondents: ", 196)
+                          )) +
+      geom_bar(stat = "identity",
+               position = "dodge") +
+      coord_flip() +
+      theme_minimal() +
+      scale_y_continuous(labels = scales::dollar_format(),
+                         breaks = seq(0, 100000, 25000)) +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 25)
+      ) +
+      scale_fill_manual(
+        values = c("High" = "#003660", # ucsb navy
+                   "Median" = "#047c91", # ucsb aqua
+                   "Low" = "#dcd6cc" # uscb clay
+        ) 
+      ) +
+      labs(title = paste0("MESM Alumni Salary Compensation by Sector"),
+           x = NULL,
+           y = "Dollars ($)",
+           fill = NULL)
+    
+    
+    plotly::ggplotly(comp_sector, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 16))) %>%
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select",
+                                           "lasso2d",
+                                           "autoScale2d",
+                                           "hoverClosestCartesian",
+                                           "hoverCompareCartesian"))
+    
+  }) # EO compensation sector plotly
+  
+  
   
   
   # DEMOGRAPHICS DB ----
