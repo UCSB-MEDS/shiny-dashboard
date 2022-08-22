@@ -142,8 +142,8 @@ server <- function(input, output, session){
                           aes(x = mesm_class_year,
                               y = percent,
                               fill = reorder(location, percent),
-                              text = paste0("Location: ", location, "\n",
-                                            "Percent: ", percent, "%", "\n",
+                              text = paste0(location, " (", percent, "%", ")", 
+                                            "\n",
                                             "Number of respondents: ", mesm_responses, "\n",
                                             "Class size: ", program_size)
                               )) +
@@ -496,16 +496,17 @@ server <- function(input, output, session){
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
-      theme(panel.grid.minor = element_blank()) +
+      theme(panel.grid.minor = element_blank(),
+            legend.position = "none") +
       labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types),
            x = NULL,
            y = NULL,
            fill = NULL) +
-      scale_fill_manual(values = c("Very Satisfied" = "#003660", # ucsb navy
-                                   "Satisfied" = "#047c91", # ucsb aqua
-                                   "Somewhat Satisfied" = "#dcd6cc", # uscb clay
-                                   "Unsatisfied" = "#9cbebe") # ucsb mist
-      )
+      # color brewer 4-class PuBu
+      scale_fill_manual(values = c("Very Satisfied" = "#0570b0", 
+                                   "Satisfied" = "#74a9cf", 
+                                   "Somewhat Satisfied" = "#bdc9e1", 
+                                   "Unsatisfied" = "#f1eef6"))
     
     plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") %>% 
       layout(title = list(font = list(size = 15))) %>% 
