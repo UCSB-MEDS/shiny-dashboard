@@ -121,8 +121,10 @@ ui <- dashboardPage(
         fluidRow(
           box(id = "info_data_career",
               width = 12,
-              includeMarkdown("text/career_data_info.md"),
-              tags$p(class = "lrg-bold"),
+              span(
+                tags$div(class = "lrg-bold",
+                         includeMarkdown("text/career_data_info.md"))
+              ),
               background = "green"),
           # remove title from box
           tags$head(tags$style('#info_data_career .box-header{ display: none}'))
@@ -221,87 +223,111 @@ ui <- dashboardPage(
         tabName = "demo_db",
         
         fluidRow(
-          column(4,
+          column(5,
                  ## * intro box ----
-                 fluidRow(
                  box(width = 12,
                      title = "Learn more about students at Bren!",
                      includeMarkdown("text/demo_about.md"),
                      solidHeader = TRUE,
                      status = "success"
-                 ) # EO intro box
-                 ), # EO FR
-                 ## * valueBoxes ----
-                 valueBoxOutput(outputId = "meds_curr_size",
-                                width = NULL), 
-                 valueBoxOutput(outputId = "mesm_curr_size",
-                                width = NULL),
-                 valueBoxOutput(outputId = "phd_curr_size",
-                                width = NULL)
-          ), # EO column 1 valueBoxes
-          
-          column(8,
-                 tabBox(width = 12,
-                        tabPanel("2021 Diversity Demographics",
-                                 plotly::plotlyOutput(outputId = "diversity_2021") %>%
-                                   withSpinner(color = "#003660", type = 1),
-                                 radioButtons(inputId = "diversity_stats_all",
-                                              label = NULL,
-                                              choices = c("MEDS", "MESM", "PHD"),
-                                              selected = "MESM",
-                                              inline = TRUE)
-                        ), # EO 2021 demographics tabPanel
-                        tabPanel("Admissions",
-                                 plotly::plotlyOutput(outputId = "admit_stats_all") %>%
-                                   withSpinner(color = "#003660", type = 1),
-                                 radioButtons(inputId = "admit_stats_all",
-                                              label = NULL,
-                                              choices = c("MEDS", "MESM", "PHD"),
-                                              selected = "MESM",
-                                              inline = TRUE)
-                        ), # EO tabPanel previous admissions
-                        tabPanel("Gender",
-                                 plotly::plotlyOutput(outputId = "gender_all") %>%
-                                   withSpinner(color = "#003660", type = 1)
-                        ), # EO gender tabPanel
-                        tabPanel("Age",
-                                 plotly::plotlyOutput(outputId = "age_all") %>%
-                                   withSpinner(color = "#003660", type = 1),
-                                 radioButtons(inputId = "age_prog",
-                                              label = NULL,
-                                              choices = c("MEDS", "MESM", "PHD"),
-                                              selected = "MESM",
-                                              inline = TRUE)
-                        ), # EO age tabPanel
-                        tabPanel("Residency",
-                                 plotly::plotlyOutput(outputId = "residency_all") %>%
-                                   withSpinner(color = "#003660", type = 1)
-                        ) # EO residency tabPanel
-                 ) # EO demographics tabBox
+                 ), # EO intro box
                  
-                 ) # EO column 2 tabbox
-        ), # EO FR second row
-        
-        ## * plots ----
-        fluidRow(
-          box(width = 12,
-              title = "Where students are coming from based on undergraduate location",
-              solidHeader = TRUE,
-              status = "navy",
-              tmap::tmapOutput(outputId = "origins_map") %>%
-                withSpinner(color = "#003660", type = 1)
-              ) # EO map box  
-        ), # EO FR third row
+                 box(width = 12,
+                     ## * undergrad map ----
+                     title = "Where are students coming from?",
+                     solidHeader = TRUE,
+                     status = "navy",
+                     tmap::tmapOutput(outputId = "origins_map") %>%
+                       withSpinner(color = "#003660", type = 1),
+                     tags$p(class = "italic_sector",
+                            "Students come from over 200+ U.S. universities across 
+                            41 different states, and 66 international universities 
+                            from 24 different countries.")
+                 ) # EO map box 
+          ), # EO column 1 in FR 1
+          
+          column(7,
+                 fluidRow(
+                   ## * valueBoxes ----
+                   valueBoxOutput(outputId = "meds_curr_size",
+                                  width = 4), 
+                   valueBoxOutput(outputId = "mesm_curr_size",
+                                  width = 4),
+                   valueBoxOutput(outputId = "phd_curr_size",
+                                  width = 4)
+                 ), # EO FR 1 in column 2
+                 fluidRow(
+                   tabBox(width = 12,
+                          ## * overall diversity demographics ----
+                          tabPanel("Diversity Demographics",
+                                   plotly::plotlyOutput(outputId = "overall_diversity") %>%
+                                     withSpinner(color = "#003660", type = 1),
+                                   radioButtons(inputId = "diversity_stats_all",
+                                                label = NULL,
+                                                choices = c("MEDS", "MESM", "PHD"),
+                                                selected = "MESM",
+                                                inline = TRUE), 
+                                   tags$p(class = "italic_sector",
+                                          "*URM or Underrepresented Minority is
+                                        defined as a U.S. citizen who identifies
+                                        as Black/African American, Hispanic/Latino,
+                                        or American Indian. All other Race/Ethnicity
+                                        categories or Non-U.S. citizens are
+                                        considered as a Non-Underrepresented Minority.")
+                          ), # EO 2021 demographics tabPanel
+                          ## * admissions ----
+                          tabPanel("Admissions",
+                                   plotly::plotlyOutput(outputId = "admit_stats_all") %>%
+                                     withSpinner(color = "#003660", type = 1),
+                                   radioButtons(inputId = "admit_stats_all",
+                                                label = NULL,
+                                                choices = c("MEDS", "MESM", "PHD"),
+                                                selected = "MESM",
+                                                inline = TRUE)
+                          ), # EO tabPanel previous admissions
+                          ## * gender ----
+                          tabPanel("Gender",
+                                   plotly::plotlyOutput(outputId = "gender_all") %>%
+                                     withSpinner(color = "#003660", type = 1)
+                          ), # EO gender tabPanel
+                          ## * age ----
+                          tabPanel("Age",
+                                   plotly::plotlyOutput(outputId = "age_all") %>%
+                                     withSpinner(color = "#003660", type = 1),
+                                   radioButtons(inputId = "age_prog",
+                                                label = NULL,
+                                                choices = c("MEDS", "MESM", "PHD"),
+                                                selected = "MESM",
+                                                inline = TRUE)
+                          ), # EO age tabPanel
+                          ## * residency ----
+                          tabPanel("Residency",
+                                   plotly::plotlyOutput(outputId = "residency_all") %>%
+                                     withSpinner(color = "#003660", type = 1)
+                          ), # EO residency tabPanel
+                          tabPanel("International",
+                                   "table coming soon",
+                                   plotly::plotlyOutput(outputId = "intl_unis"))
+                   ) # EO demographics tabBox
+                 ) # EO FR 2 in column 2
+          ) # EO column 2 in FR 1
+          
+        ), # EO FR first row
+          
         
         fluidRow(
           ## * definitions ----
-          box(title = "IPEDS and UC Demographics Definitions",
+          box(id = "ipeds_def",
+              title = "Integrated Postsecondary Education Data System (IPEDS) Definitions for Race and Ethnicity Categories",
               width = 12,
-              solidHeader = TRUE,
-              status = "navy",
-              "Here is some text explaining important information and definitions 
-              so a user can interpret these visuals accurately."
-          ) # EO info box
+              span(
+                tags$div(class = "lrg-bold",
+                         includeMarkdown("text/ipeds_text.md"))
+              ), # EO span tag
+              background = "green"
+          ), # EO info box
+          # remove title from box
+          tags$head(tags$style('#ipeds_def .box-header{ display: none}'))
         ), # EO FR fourth row
         
         ## * race & ethnicity plots ----
