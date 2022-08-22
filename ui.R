@@ -348,79 +348,59 @@ ui <- dashboardPage(
           ), # EO race plotly box
           # ethnicity / background
           tabBox(width = 6,
-                 # NOTE(HD): commented out for now bc there are no data
-                 # tabPanel("American Indian or Alaska Native",
-                 #          plotly::plotlyOutput(outputId = "amIn_alNat_eth_pltly") %>%
-                 #            withSpinner(color = "#003660", type = 1),
-                 #          checkboxGroupInput(inputId = "amIn_alNat_eth",
-                 #                             label = NULL,
-                 #                             choices = c("MEDS", "MESM", "PHD"),
-                 #                             selected = c("MEDS", "MESM", "PHD"),
-                 #                             inline = TRUE)
-                 #          ), # EO american indian or alaksa native eth
                  tabPanel("Asian",
                           plotly::plotlyOutput(outputId = "asian_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "asian_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "asian_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ), # EO asian eth
                  tabPanel("Black or African American",
                           plotly::plotlyOutput(outputId = "black_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "black_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "black_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ), # EO black or african american eth
                  tabPanel("Hispanic or Latino Ethnicities",
                           plotly::plotlyOutput(outputId = "hisp_lat_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "hisp_lat_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "hisp_lat_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ), # EO hispanic or latino eth
-                 # NOTE(HD): commented out for now bc there are no data
-                 # tabPanel("Native Hawaiian or Other Pacific Islander",
-                 #          plotly::plotlyOutput(outputId = "natHi_pi_eth_pltly") %>%
-                 #            withSpinner(color = "#003660", type = 1),
-                 #          checkboxGroupInput(inputId = "natHi_pi_eth",
-                 #                             label = NULL,
-                 #                             choices = c("MEDS", "MESM", "PHD"),
-                 #                             selected = c("MEDS", "MESM", "PHD"),
-                 #                             inline = TRUE)
-                 #          ), # EO native hawaiian or other pacific islander eth
                  tabPanel("White",
                           plotly::plotlyOutput(outputId = "white_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "white_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "white_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ), # EO white eth
                  tabPanel("Two or more races",
                           plotly::plotlyOutput(outputId = "two_more_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "two_more_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "two_more_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ), # EO two or more eth
                  tabPanel("Unknown race or ethnicity",
                           plotly::plotlyOutput(outputId = "unk_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
-                          checkboxGroupInput(inputId = "unk_eth",
-                                             label = NULL,
-                                             choices = c("MEDS", "MESM", "PHD"),
-                                             selected = c("MEDS", "MESM", "PHD"),
-                                             inline = TRUE)
+                          radioButtons(inputId = "unk_eth",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
                           ) # EO unknown eth
           ) # EO ethnicity tabBox
         ) # EO FR fifth row
