@@ -1297,25 +1297,46 @@ server <- function(input, output, session){
   
   ## * asian ethnicity ----
   ## DATA WRANGLING
-  # breakdown of asian ethnicities by program
-  asian_background <- ipeds %>% 
-    filter(category_ipeds == "Asian") %>% 
-    mutate(background = case_when(
-      is.na(background) == TRUE ~ "Unknown race and ethnicity",
-      TRUE ~ background
-    )) %>%
-    mutate(background = str_split(background, "; ")) %>% 
-    unnest(background) %>% 
-    group_by(objective1,
-             background) %>% 
-    summarize(count = n())
-  
   # reactive
   asian_background_stats <- reactive({
-    left_join(asian_background, tot_5yr, by = "objective1") %>% 
-      mutate(percent = round((count / tot) * 100, 1)) %>% 
-      filter(objective1 %in% input$white_eth)
-  }) 
+    
+    if (input$asian_eth == "All Programs") {
+      # breakdown of asian ethnicity by program
+      ipeds %>% 
+        filter(category_ipeds == "Asian") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(background) %>% 
+        summarize(count = n()) %>% 
+        mutate(tot = 604) %>% 
+        mutate(percent = round((count / tot) * 100, 1))
+      
+    } # EO if statement
+    
+    else {
+      # breakdown of asian ethnicity by program
+      ipeds %>% 
+        filter(category_ipeds == "Asian") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(objective1,
+                 background) %>% 
+        summarize(count = n()) %>% 
+        left_join(tot_5yr, by = "objective1") %>% 
+        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        filter(objective1 == input$asian_eth)
+      
+    } # EO else statement
+
+  }) # EO asian ethnicity reactive
   
   
   ## PLOTTING
@@ -1323,10 +1344,8 @@ server <- function(input, output, session){
     eth_gg <- ggplot(data = asian_background_stats(),
                        aes(x = background,
                            y = percent,
-                           text = paste0("Program: ", objective1, "\n",
-                                         "Background: ", background, "\n",
-                                         "Percent: ", percent, "%", "\n",
-                                         "Number of respondents: ", tot
+                           text = paste0(background, " (", percent, "%", ")", "\n",
+                                         "Sample size: ", tot
                            ))) +
       geom_bar(stat = "identity",
                fill = "#047c91") +
@@ -1340,13 +1359,14 @@ server <- function(input, output, session){
       theme(
         legend.position = "none"
       ) +
-      labs(title = paste0("Backgrounds of Asian Category"),
+      labs(title = paste0("Ethnicities / Backgrounds of Asian Category", "\n",
+                          "(", input$asian_eth, ")"),
            x = NULL,
            y = NULL,
            fill = NULL)
     
     plotly::ggplotly(eth_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16)))%>% 
+      layout(title = list(font = list(size = 15)))%>% 
       config(
         modeBarButtonsToRemove = list(
           "pan",
@@ -1364,36 +1384,53 @@ server <- function(input, output, session){
   
   ## * black ethnicity ----
   ## DATA WRANGLING
-  # breakdown of white ethnicities by program
-  black_background <- ipeds %>% 
-    filter(category_ipeds == "Black or African American") %>% 
-    mutate(background = case_when(
-      is.na(background) == TRUE ~ "Unknown race and ethnicity",
-      TRUE ~ background
-    )) %>%
-    mutate(background = str_split(background, "; ")) %>% 
-    unnest(background) %>% 
-    group_by(objective1,
-             background) %>% 
-    summarize(count = n())
   
   # reactive
   black_background_stats <- reactive({
-    left_join(black_background, tot_5yr, by = "objective1") %>% 
-      mutate(percent = round((count / tot) * 100, 1)) %>% 
-      filter(objective1 %in% input$black_eth)
-  }) 
-  
+    # breakdown of black ethnicity
+    if(input$black_eth == "All Programs") {
+      ipeds %>% 
+        filter(category_ipeds == "Black or African American") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(background) %>% 
+        summarize(count = n()) %>%
+        mutate(tot = 604) %>% 
+        mutate(percent = round((count / tot) * 100, 1))
+      
+    } # EO if statement
+    
+    else {
+    # breakdown of black ethnicity by program
+      ipeds %>% 
+        filter(category_ipeds == "Black or African American") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(objective1,
+                 background) %>% 
+        summarize(count = n()) %>%
+        left_join(tot_5yr, by = "objective1") %>% 
+        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        filter(objective1 == input$black_eth)
+      
+    } # EO else statement
+  }) # EO black ethnicity reactive
   
   ## PLOTTING
   output$black_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = black_background_stats(),
                      aes(x = background,
                          y = percent,
-                         text = paste0("Program: ", objective1, "\n",
-                                       "Background: ", background, "\n",
-                                       "Percent: ", percent, "%", "\n",
-                                       "Number of respondents: ", tot
+                         text = paste0(background, " (", percent, "%", ")", "\n",
+                                       "Sample size: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#dcd6cc") +
@@ -1407,13 +1444,14 @@ server <- function(input, output, session){
       theme(
         legend.position = "none"
       ) +
-      labs(title = paste0("Backgrounds of Black Category"),
+      labs(title = paste0("Ethnicities / Backgrounds of Black or ", "\n",
+                          "African American Category (", input$black_eth, ")"),
            x = NULL,
            y = NULL,
            fill = NULL)
     
     plotly::ggplotly(eth_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16)))%>% 
+      layout(title = list(font = list(size = 15)))%>% 
       config(
         modeBarButtonsToRemove = list(
           "pan",
