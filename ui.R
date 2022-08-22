@@ -336,12 +336,14 @@ ui <- dashboardPage(
           box(
             width = 6,
             title = "Race / Category",
+            solidHeader = TRUE,
+            status = "navy",
             plotly::plotlyOutput(outputId = "race_pltly") %>% 
               withSpinner(color = "#003660", type = 1),
-            checkboxGroupInput(inputId = "race",
+            radioButtons(inputId = "race",
                          label = NULL,
-                         choices = c("MEDS", "MESM", "PHD"),
-                         selected = c("MEDS", "MESM", "PHD"),
+                         choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                         selected = "All Programs",
                          inline = TRUE)
           ), # EO race plotly box
           # ethnicity / background

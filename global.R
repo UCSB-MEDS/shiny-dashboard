@@ -14,6 +14,8 @@ library(treemap)
 library(d3treeR) # interactive tree map
 library(shinycssloaders) # loading icon
 
+#"MEDS data is limited since program began in 2021"
+
 # IMPORT DATA ----
 admissions <- readRDS("data/admissions.rds")
 enrolled <- readRDS("data/enrolled.rds")
