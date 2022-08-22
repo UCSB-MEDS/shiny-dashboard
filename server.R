@@ -950,27 +950,26 @@ server <- function(input, output, session){
   
   
   
-  ## SO 2021 diversity demographics overall ----
+  ## SO overall diversity demographics ----
   # reactive diversity df 2021
-  diversity_all_21 <- reactive({
-    diversity_stats %>% 
-      filter(ay_year == 2021) %>% 
+  diversity_overall <- reactive({
+    diversity_stats %>%  
       filter(objective1 == input$diversity_stats_all)
   }) # EO reactive diversity df 2021
   
   ## PLOTTING ##
-  output$diversity_2021 <- renderPlotly({
-    demo_21 <- ggplot(data = diversity_all_21(),
+  output$overall_diversity <- renderPlotly({
+    overall_demo <- ggplot(data = diversity_overall(),
                       aes(x = demographic,
                           y = percent,
                           fill = demographic,
                           text = paste0(demographic, "\n", 
                                         "Percentage: ", percent, "%", "\n",
-                                        "Number of respondents: ", program_size)
+                                        "Total number of students (5 years): ", total_students_5yr)
                           )) +
       geom_bar(stat = "identity") +
       coord_flip() +
-      scale_x_discrete(limits = rev(levels(diversity_all_21()$demographic))) +
+      scale_x_discrete(limits = rev(levels(diversity_overall()$demographic))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       scale_fill_manual(
         values = c(
@@ -982,6 +981,7 @@ server <- function(input, output, session){
           "Military" = "#9cbebe",
           "First generation" = "#9cbebe",
           "Undocumented" = "#9cbebe",
+          "URM" = "#09847a",
           "American Indian or Alaska Native" = "#09847a",
           "Asian" = "#09847a",
           "Black or African American" = "#09847a",
@@ -995,12 +995,12 @@ server <- function(input, output, session){
       theme_minimal() +
       theme(legend.position = "none",
             panel.grid.minor = element_blank()) +
-      labs(title = paste0("2021 ", input$diversity_stats_all, " Diversity Demographics"),
+      labs(title = paste0(input$diversity_stats_all, " Overall Diversity Demographics"),
            x = NULL,
            y = NULL)
     
     # plotly 2021
-    plotly::ggplotly(demo_21, tooltip = "text") %>%
+    plotly::ggplotly(overall_demo, tooltip = "text") %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
                                            "lasso2d", 
@@ -1206,7 +1206,8 @@ server <- function(input, output, session){
         style = "jenks",
         n = 6,
         popup.vars = c("Total students: " = "total")
-      ) 
+      ) +
+      tm_view(set.view = c(-10, 32, 1)) # long, lat, zoom
   }) # EO origins map using tmap
   
   
