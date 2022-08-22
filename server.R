@@ -156,7 +156,7 @@ server <- function(input, output, session){
       theme(panel.grid.minor = element_blank()) +
       labs(title = "Where MESM alumni are working 6 months after graduating",
            x = NULL,
-           y = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       scale_fill_manual(values = c("California" = "#9cbebe",
                                    "Out of State" = "#003660",
@@ -273,7 +273,7 @@ server <- function(input, output, session){
       theme(panel.grid.minor = element_blank()) +
       labs(title = "Job Sources MESM alumni are using to secure jobs",
            x = NULL,
-           y = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       scale_fill_manual(values = c("Bren School Network" = "#003660", # ucsb navy
                                    "Company website" = "#047c91", # ucsb aqua
@@ -340,7 +340,7 @@ server <- function(input, output, session){
       theme(panel.grid.minor = element_blank()) +
       labs(title = "MESM Alumni Placement Status 6 months after graduation",
            x = NULL,
-           y = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       scale_fill_manual(values = c("Advanced Degree/Another Degree" = "#003660", # ucsb navy
                                    "Career" = "#047c91", # ucsb aqua
@@ -404,7 +404,7 @@ server <- function(input, output, session){
       theme(panel.grid.minor = element_blank()) +
       labs(title = "MESM Alumni Placement by Sector",
            x = NULL,
-           y = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       scale_fill_manual(values = c("Private" = "#003660", # ucsb navy
                                    "Public" = "#047c91", # ucsb aqua
@@ -482,7 +482,7 @@ server <- function(input, output, session){
             legend.position = "none") +
       labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types),
            x = NULL,
-           y = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       # color brewer 4-class PuBu
       scale_fill_manual(values = c("Very Satisfied" = "#0570b0", 
