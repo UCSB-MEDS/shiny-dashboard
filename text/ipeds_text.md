@@ -1,0 +1,1 @@
+The visuals below use the Integrated Postsecondary Education Data System (IPEDS) [Definitions for Race and Ethnicity Categories](https://nces.ed.gov/ipeds/report-your-data/race-ethnicity-definitions).
