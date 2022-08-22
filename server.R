@@ -1469,36 +1469,52 @@ server <- function(input, output, session){
   
   ## * hispanic / latino ethnicity ----
   ## DATA WRANGLING
-  # breakdown of white ethnicities by program
-  hisp_lat_background <- ipeds %>% 
-    filter(category_ipeds == "Hispanic or Latino") %>% 
-    mutate(background = case_when(
-      is.na(background) == TRUE ~ "Unknown race and ethnicity",
-      TRUE ~ background
-    )) %>%
-    mutate(background = str_split(background, "; ")) %>% 
-    unnest(background) %>% 
-    group_by(objective1,
-             background) %>% 
-    summarize(count = n())
   
   # reactive
   hisp_lat_background_stats <- reactive({
-    left_join(hisp_lat_background, tot_5yr, by = "objective1") %>% 
-      mutate(percent = round((count / tot) * 100, 1)) %>% 
-      filter(objective1 %in% input$hisp_lat_eth)
-  }) 
-  
+    if (input$hisp_lat_eth == "All Programs") {
+      # breakdown of hispanic / latino ethnicity 
+      ipeds %>% 
+        filter(category_ipeds == "Hispanic or Latino") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(background) %>% 
+        summarize(count = n()) %>% 
+        mutate(tot = 604) %>% 
+        mutate(percent = round((count / tot) * 100, 1))
+    } # EO if statement 
+    
+    else {
+      # breakdown of hispanic / latino ethnicity by program
+      ipeds %>% 
+        filter(category_ipeds == "Hispanic or Latino") %>% 
+        mutate(background = case_when(
+          is.na(background) == TRUE ~ "Unknown race and ethnicity",
+          TRUE ~ background
+        )) %>%
+        mutate(background = str_split(background, "; ")) %>% 
+        unnest(background) %>% 
+        group_by(objective1,
+                 background) %>% 
+        summarize(count = n()) %>% 
+        left_join(tot_5yr, by = "objective1") %>% 
+        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        filter(objective1 == input$hisp_lat_eth)
+    } # EO else statement
+
+  }) # EO hispanic / latino ethnicity reactive
   
   ## PLOTTING
   output$hisp_lat_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = hisp_lat_background_stats(),
                      aes(x = background,
                          y = percent,
-                         text = paste0("Program: ", objective1, "\n",
-                                       "Background: ", background, "\n",
-                                       "Percent: ", percent, "%", "\n",
-                                       "Number of respondents: ", tot
+                         text = paste0(background, " (", percent, "%", ")", "\n",
+                                       "Sample size: ", tot
                          ))) +
       geom_bar(stat = "identity",
                fill = "#6d7d33") +
@@ -1512,13 +1528,14 @@ server <- function(input, output, session){
       theme(
         legend.position = "none"
       ) +
-      labs(title = paste0("Backgrounds of Hispanic or Latino Category"),
+      labs(title = paste0("Backgrounds of Hispanic or Latino", "\n",
+                          "Category (", input$hisp_lat_eth, ")"),
            x = NULL,
            y = NULL,
            fill = NULL)
     
     plotly::ggplotly(eth_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16)))%>% 
+      layout(title = list(font = list(size = 15)))%>% 
       config(
         modeBarButtonsToRemove = list(
           "pan",

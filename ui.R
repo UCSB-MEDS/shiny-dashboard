@@ -366,7 +366,7 @@ ui <- dashboardPage(
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO black or african american eth
-                 tabPanel("Hispanic or Latino Ethnicities",
+                 tabPanel("Hispanic or Latino",
                           plotly::plotlyOutput(outputId = "hisp_lat_eth_pltly") %>%
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "hisp_lat_eth",
