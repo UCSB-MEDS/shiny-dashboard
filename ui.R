@@ -121,11 +121,8 @@ ui <- dashboardPage(
         fluidRow(
           box(id = "info_data_career",
               width = 12,
-              tags$p(class = "lrg-bold",
-                     "All visuals use 2019-2021 data unless otherwise stated. 
-                     Additionally, all visuals represent alumni employment six 
-                     months after graduation and do not represent current employment."
-                     ),
+              includeMarkdown("text/career_data_info.md"),
+              tags$p(class = "lrg-bold"),
               background = "green"),
           # remove title from box
           tags$head(tags$style('#info_data_career .box-header{ display: none}'))
@@ -229,7 +226,7 @@ ui <- dashboardPage(
                  fluidRow(
                  box(width = 12,
                      title = "Learn more about students at Bren!",
-                     "Some introductory information",
+                     includeMarkdown("text/demo_about.md"),
                      solidHeader = TRUE,
                      status = "success"
                  ) # EO intro box
