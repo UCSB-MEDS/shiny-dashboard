@@ -43,7 +43,7 @@ program_size <- enrolled %>%
            "objective1")) %>% 
   group_by(ay_year,
            objective1) %>% 
-  summarize(program_size = n())
+  summarize(size = n())
 
 # total number of students per program from 2016-2021
 tot_5yr <- enrolled %>% 
@@ -52,7 +52,12 @@ tot_5yr <- enrolled %>%
            "objective1",
            "dob")) %>% 
   group_by(objective1) %>%
-  summarize(tot = n())
+  summarize(size = n())
+
+# total number of students in each year NOT broken down by program
+total_students_yr <- enrolled %>% 
+  group_by(ay_year) %>% 
+  summarize(size = n())
 
 # program sizes + tot mesm responsdees 
 placement_size <- mesm_placement %>% 
