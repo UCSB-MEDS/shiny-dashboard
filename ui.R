@@ -333,19 +333,36 @@ ui <- dashboardPage(
         ## * race & ethnicity plots ----
         fluidRow(
           # race / category
-          box(
-            width = 6,
-            title = "Race / Category",
-            solidHeader = TRUE,
-            status = "navy",
-            plotly::plotlyOutput(outputId = "race_pltly") %>% 
-              withSpinner(color = "#003660", type = 1),
-            radioButtons(inputId = "race",
-                         label = NULL,
-                         choices = c("MEDS", "MESM", "PHD", "All Programs"),
-                         selected = "All Programs",
-                         inline = TRUE)
-          ), # EO race plotly box
+          tabBox(width = 6,
+                 tabPanel("Race / Category",
+                          plotly::plotlyOutput(outputId = "race_pltly") %>% 
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "race",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
+                 ), # EO race / category distribution tabPanel
+                 tabPanel("Race / Category Trends",
+                          plotly::plotlyOutput(outputId = "race_trends_pltly") %>% 
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "race_trends",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
+                 ), # EO race / category over time tabpanel
+                 tabPanel("URM Trends",
+                          plotly::plotlyOutput(outputId = "urm_trends_pltly") %>% 
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "urm_trends",
+                                       label = NULL,
+                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       selected = "All Programs",
+                                       inline = TRUE)
+                 ) # EO urm distribution tabpanel
+          ), # EO tabBox race / category
+
           # ethnicity / background
           tabBox(width = 6,
                  tabPanel("Asian",
