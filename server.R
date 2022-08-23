@@ -623,7 +623,8 @@ server <- function(input, output, session){
                               "Low",
                               "High"),
                      names_to = "range",
-                     values_to = "values")
+                     values_to = "values") %>% 
+        mutate(range = factor(range, levels = c("High", "Median", "Low")))
       
     } # EO if statement
     
@@ -652,7 +653,8 @@ server <- function(input, output, session){
                               "Low",
                               "High"),
                      names_to = "range",
-                     values_to = "values")
+                     values_to = "values") %>% 
+        mutate(range = factor(range, levels = c("High", "Median", "Low")))
     } # EO else statement
     
   }) # EO salary_special reactive 
@@ -1152,7 +1154,7 @@ server <- function(input, output, session){
     left_join(program_size,
               by = c("ay_year",
                      "objective1")) %>% 
-    mutate(percent = round((residency_count / program_size) * 100)) %>% 
+    mutate(percent = round((residency_count / size) * 100)) %>% 
     mutate(residency = factor(residency, levels = c("ca resident",
                                                     "non resident",
                                                     "international"),
@@ -1213,7 +1215,7 @@ server <- function(input, output, session){
   
   
   ## SO race / category ----
-  ## PLOTTING
+  ## PLOTTING ##
   
   output$race_pltly <- plotly::renderPlotly({
     
@@ -1225,8 +1227,147 @@ server <- function(input, output, session){
     
   }) # EO race plotly
   
-  ## SO ethnicity / background ----
   
+  ## SO race / category trends ----
+  ## DATA WRANGLING ##
+  category_ipeds_stats_time <- reactive({
+    if (input$race_trends == "All Programs") {
+      enrolled %>% 
+        select(ay_year,
+               background,
+               category,
+               hispanic_latino) %>% 
+        # replace NULL string with NA
+        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
+        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
+        # assign demographic using ipeds definition
+        mutate(category_ipeds = case_when(
+          str_detect(category, ";") == TRUE ~ "Two or more races",
+          str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
+          str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
+          str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
+          str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
+          str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
+          hispanic_latino == TRUE ~ "Hispanic or Latino",
+          is.na(category) == TRUE ~ "Unknown race and ethnicity"
+        )) %>% 
+        group_by(ay_year,
+                 category_ipeds) %>% 
+        summarize(count = n()) %>% 
+        mutate(category_ipeds = factor(category_ipeds, levels = c(
+          "American Indian or Alaska Native",
+          "Asian",
+          "Black or African American",
+          "Hispanic or Latino",
+          "Native Hawaiian or Other Pacific Islander",
+          "White",
+          "Two or more races",
+          "Unknown race and ethnicity"
+        ))) %>% 
+        left_join(total_students_yr, by = "ay_year") %>% 
+        mutate(percent = round((count / size) * 100, 1))
+      
+    } # EO if statement
+    
+    else {
+      enrolled %>% 
+        select(ay_year,
+               objective1,
+               background,
+               category,
+               hispanic_latino) %>% 
+        # replace NULL string with NA
+        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
+        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
+        # assign demographic using ipeds definition
+        mutate(category_ipeds = case_when(
+          str_detect(category, ";") == TRUE ~ "Two or more races",
+          str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
+          str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
+          str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
+          str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
+          str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
+          hispanic_latino == TRUE ~ "Hispanic or Latino",
+          is.na(category) == TRUE ~ "Unknown race and ethnicity"
+        )) %>% 
+        group_by(ay_year,
+                 objective1,
+                 category_ipeds) %>% 
+        summarize(count = n()) %>% 
+        mutate(category_ipeds = factor(category_ipeds, levels = c(
+          "American Indian or Alaska Native",
+          "Asian",
+          "Black or African American",
+          "Hispanic or Latino",
+          "Native Hawaiian or Other Pacific Islander",
+          "White",
+          "Two or more races",
+          "Unknown race and ethnicity"
+        ))) %>% 
+        left_join(program_size, by = c("ay_year", "objective1")) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
+        filter(objective1 == input$race_trends)
+
+    } # EO else statement
+  }) # EO category_ipeds_stats_time reactive
+  
+  ## PLOTTING ##
+  output$race_trends_pltly <- plotly::renderPlotly({
+    race_trends_gg <- ggplot(data = category_ipeds_stats_time(),
+                             aes(x = ay_year,
+                                 y = percent,
+                                 fill = reorder(category_ipeds, percent),
+                                 text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
+                                               "Sample size: ", size
+                                 ))) +
+      geom_bar(stat = "identity",
+               position = "dodge") +
+      scale_x_continuous(breaks = seq(max(category_ipeds_stats_time()$ay_year),
+                                      min(category_ipeds_stats_time()$ay_year))) +
+      theme_minimal() +
+      theme(panel.grid.minor = element_blank()) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      scale_fill_manual(values = c(
+        "American Indian or Alaska Native" = "#003660", # ucsb navy
+        "Asian" = "#047c91", # ucsb aqua
+        "Black or African American" = "#dcd6cc", # ucsb clay
+        "Hispanic or Latino" = "#6d7d33", # ucsb moss
+        "Native Hawaiian or Other Pacific Islander" = "#9cbebe", # ucsb mist
+        "White" = "#dce1e5", # ucsb light grey
+        "Two or more races" = "#79a540", # bren leaf green
+        "Unknown race and ethnicity" = "#09847a" # ucsb sea green
+      )) +
+      labs(title = paste0("IPEDS Categories Over Time", " (", input$race_trends, ")"),
+           y = NULL,
+           x = NULL,
+           fill = NULL)
+    
+    plotly::ggplotly(race_trends_gg, tooltip = "text") %>% 
+      layout(legend = list(orientation = "h",
+                           y = -0.1)) %>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      )
+    
+  }) # EO render plotly 
+  
+  
+  
+  
+  
+  ## SO URM trends ----
+  ## DATA WRANGLING ##
+  
+  ## PLOTTING ##
+  
+  ## SO ethnicity / background ----
   ## * american indian or alaska native ethnicity ----
   ## DATA WRANGLING ##
   
@@ -1235,7 +1376,7 @@ server <- function(input, output, session){
   
   
   ## * asian ethnicity ----
-  ## DATA WRANGLING
+  ## DATA WRANGLING ##
   # reactive
   asian_background_stats <- reactive({
     
@@ -1251,8 +1392,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
@@ -1270,7 +1411,7 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$asian_eth)
       
     } # EO else statement
@@ -1278,13 +1419,13 @@ server <- function(input, output, session){
   }) # EO asian ethnicity reactive
   
   
-  ## PLOTTING
+  ## PLOTTING ##
   output$asian_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = asian_background_stats(),
                        aes(x = background,
                            y = percent,
                            text = paste0(background, " (", percent, "%", ")", "\n",
-                                         "Sample size: ", tot
+                                         "Sample size: ", size
                            ))) +
       geom_bar(stat = "identity",
                fill = "#047c91") +
@@ -1305,7 +1446,7 @@ server <- function(input, output, session){
            fill = NULL)
     
     plotly::ggplotly(eth_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 15)))%>% 
+      layout(title = list(font = list(size = 15))) %>% 
       config(
         modeBarButtonsToRemove = list(
           "pan",
@@ -1322,7 +1463,7 @@ server <- function(input, output, session){
   
   
   ## * black ethnicity ----
-  ## DATA WRANGLING
+  ## DATA WRANGLING ##
   
   # reactive
   black_background_stats <- reactive({
@@ -1338,8 +1479,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>%
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
@@ -1357,19 +1498,19 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>%
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$black_eth)
       
     } # EO else statement
   }) # EO black ethnicity reactive
   
-  ## PLOTTING
+  ## PLOTTING ##
   output$black_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = black_background_stats(),
                      aes(x = background,
                          y = percent,
                          text = paste0(background, " (", percent, "%", ")", "\n",
-                                       "Sample size: ", tot
+                                       "Sample size: ", size
                          ))) +
       geom_bar(stat = "identity",
                fill = "#dcd6cc") +
@@ -1407,7 +1548,7 @@ server <- function(input, output, session){
   
   
   ## * hispanic / latino ethnicity ----
-  ## DATA WRANGLING
+  ## DATA WRANGLING ##
   
   # reactive
   hisp_lat_background_stats <- reactive({
@@ -1423,8 +1564,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
     } # EO if statement 
     
     else {
@@ -1441,19 +1582,19 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$hisp_lat_eth)
     } # EO else statement
 
   }) # EO hispanic / latino ethnicity reactive
   
-  ## PLOTTING
+  ## PLOTTING ##
   output$hisp_lat_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = hisp_lat_background_stats(),
                      aes(x = background,
                          y = percent,
                          text = paste0(background, " (", percent, "%", ")", "\n",
-                                       "Sample size: ", tot
+                                       "Sample size: ", size
                          ))) +
       geom_bar(stat = "identity",
                fill = "#6d7d33") +
@@ -1493,12 +1634,12 @@ server <- function(input, output, session){
   ## * native hawaiian or other pacific islander ethnicity ----
   ## DATA WRANGLING ##
   
-  ## PLOTTING
+  ## PLOTTING ##
   
   
   
   ## * white ethnicity ----
-  ## DATA WRANGLING
+  ## DATA WRANGLING ##
   
   # reactive
   white_background_stats <- reactive({
@@ -1514,8 +1655,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
        
     } # EO if statement
     
@@ -1533,20 +1674,20 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$white_eth)
     } # EO else statement
 
   }) # EO white ethnicity reactive
   
-  
-  ## PLOTTING
+   
+  ## PLOTTING ##
   output$white_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = white_background_stats(),
                            aes(x = background,
                                y = percent,
                                text = paste0(background, " (", percent, "%", ")", "\n",
-                                             "Sample Size: ", tot
+                                             "Sample Size: ", size
                                ))) +
       geom_bar(stat = "identity",
                fill = "#dce1e5") +
@@ -1599,8 +1740,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
@@ -1618,7 +1759,7 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$two_more_eth)
       
     } # EO else statement
@@ -1626,13 +1767,13 @@ server <- function(input, output, session){
   }) # EO two or more race ethnicity reactive 
   
   
-  ## PLOTTING
+  ## PLOTTING ##
   output$two_more_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = two_more_eth_background_stats(),
                      aes(x = background,
                          y = percent,
                          text = paste0(background, " (", percent, "%", ")", "\n",
-                                       "Sample size: ", tot
+                                       "Sample size: ", size
                          ))) +
       geom_bar(stat = "identity",
                fill = "#79a540") +
@@ -1682,8 +1823,8 @@ server <- function(input, output, session){
         unnest(background) %>% 
         group_by(background) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
@@ -1701,7 +1842,7 @@ server <- function(input, output, session){
                  background) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$unk_eth)
       
     } # EO else statement
@@ -1709,13 +1850,13 @@ server <- function(input, output, session){
   }) # EO unknown race or ethnicity reactive
   
   
-  ## PLOTTING
+  ## PLOTTING ##
   output$unk_eth_pltly <- plotly::renderPlotly({
     eth_gg <- ggplot(data = unk_eth_background_stats(),
                      aes(x = background,
                          y = percent,
                          text = paste0(background, " (", percent, "%", ")", "\n",
-                                       "Sample size: ", tot
+                                       "Sample size: ", size
                          ))) +
       geom_bar(stat = "identity",
                fill = "#09847a") +
