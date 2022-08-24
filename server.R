@@ -50,7 +50,7 @@ server <- function(input, output, session){
     shinydashboard::valueBox(
       "MESM Alumni placed in a career or similar position",
       value = paste0(status_stat$percent, "%"),
-      icon = icon("home"),
+      icon = icon("house"),
       color = "green"
     ) # EO valueBox
   }) # EO MEDS valueBox prog size
@@ -1615,12 +1615,23 @@ server <- function(input, output, session){
         left_join(tot_5yr, by = "objective1") %>% 
         mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$black_eth)
-      
+  
     } # EO else statement
+    
   }) # EO black ethnicity reactive
+  
+
+
   
   ## PLOTTING ##
   output$black_eth_pltly <- plotly::renderPlotly({
+    
+    # validate 
+    validate(
+      need(nrow(black_background_stats()) > 0,
+           paste0("There are no data on Black or African American racial category for ", input$black_eth, " degree program."))
+    ) # EO validate
+    
     eth_gg <- ggplot(data = black_background_stats(),
                      aes(x = background,
                          y = percent,
