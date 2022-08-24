@@ -241,8 +241,9 @@ ui <- dashboardPage(
                        withSpinner(color = "#003660", type = 1),
                      tags$p(class = "italic_sector",
                             "Students come from over 200+ U.S. universities across 
-                            41 different states, and 66 international universities 
-                            from 24 different countries.")
+                            41 states, and 66 international universities 
+                            from 24 countries. View table of international
+                            universities on the International tab to the right.")
                  ) # EO map box 
           ), # EO column 1 in FR 1
           
@@ -305,9 +306,10 @@ ui <- dashboardPage(
                                    plotly::plotlyOutput(outputId = "residency_all") %>%
                                      withSpinner(color = "#003660", type = 1)
                           ), # EO residency tabPanel
+                          ## * international unis tbl ----
                           tabPanel("International",
-                                   "table coming soon",
-                                   plotly::plotlyOutput(outputId = "intl_unis"))
+                                   #tags$p("International Universities Bren Alumni Attended"),
+                                   DT::dataTableOutput(outputId = "intl_unis"))
                    ) # EO demographics tabBox
                  ) # EO FR 2 in column 2
           ) # EO column 2 in FR 1
