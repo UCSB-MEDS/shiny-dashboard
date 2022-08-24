@@ -6,39 +6,6 @@ race_plot <- function(df, prog_input){
   
   ## DATA WRANGLING ##
   # 2016-2021
-  # category_ipeds <- df %>% 
-  #   select(ay_year,
-  #          objective1,
-  #          background,
-  #          category,
-  #          hispanic_latino) %>% 
-  #   # replace NULL string with NA
-  #   naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
-  #   mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
-  #   # assign race using ipeds definition
-  #   mutate(category_ipeds = case_when(
-  #     str_detect(category, ";") == TRUE ~ "Two or more races",
-  #     str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
-  #     str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
-  #     str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
-  #     str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
-  #     str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
-  #     hispanic_latino == TRUE ~ "Hispanic or Latino",
-  #     is.na(category) == TRUE ~ "Unknown race and ethnicity"
-  #   )) %>% 
-  #   mutate(category_ipeds = factor(category_ipeds, levels = c("American Indian or Alaska Native",
-  #                                                             "Asian",
-  #                                                             "Black or African American",
-  #                                                             "Hispanic or Latino",
-  #                                                             "Native Hawaiian or Other Pacific Islander",
-  #                                                             "White",
-  #                                                             "Two or more races",
-  #                                                             "Unknown race and ethnicity"))) %>% 
-  #   group_by(objective1,
-  #            category_ipeds) %>% 
-  #   summarize(count = n())
-  
-  # left join with tot number of students and calculate percentages
   # reactive
   category_ipeds_stats <- reactive({
     if (prog_input == "All Programs") {
@@ -72,8 +39,8 @@ race_plot <- function(df, prog_input){
                                                                   "Unknown race and ethnicity"))) %>% 
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
-        mutate(tot = 604) %>% 
-        mutate(percent = round((count / tot) * 100, 1))
+        mutate(size = 604) %>% 
+        mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
@@ -110,7 +77,7 @@ race_plot <- function(df, prog_input){
                  category_ipeds) %>% 
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "objective1") %>% 
-        mutate(percent = round((count / tot) * 100, 1)) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == prog_input)
       
     } # EO else statement
@@ -125,7 +92,7 @@ race_plot <- function(df, prog_input){
                          y = percent,
                          fill = category_ipeds,
                          text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
-                                       "Sample size: ", tot))
+                                       "Sample size: ", size))
   ) +
     geom_bar(stat = "identity") +
     coord_flip() +
