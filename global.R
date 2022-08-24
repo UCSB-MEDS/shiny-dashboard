@@ -35,6 +35,7 @@ source("r/urm_trends_plot.R")
 mesm_color <- "#6D7D33" 
 meds_color <- "#047C91"
 phd_color <- "#005AA3"
+all_programs_color <- "#09847a"
 
 # REUSABLE DFS
 # program sizes 2016-2021
