@@ -1361,18 +1361,133 @@ server <- function(input, output, session){
   
   
   
-  
   ## SO URM trends ----
   ## DATA WRANGLING ##
+  # urm vars
+  category_urms <- c("African American / Black",
+                     "American Indian / Alaska Native")
+  
+  visa_urms <- c("Permanent Residency Pending (Work Permit)",
+                 "Permanent Resident")
+  
+  urm_trends <- reactive({
+    if (input$urm_trends == "All Programs") {
+      enrolled %>% 
+        select("ay_year",
+               "application_id",
+               "objective1",
+               "citizenship_country",
+               "residency_country",
+               "birth_country",
+               "visa",
+               "background",
+               "category",
+               "hispanic_latino") %>% 
+        # replace NULL string with NA
+        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
+        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
+        rowwise() %>% # Note(HD): look into this, but forces to go through every row?
+        mutate(urm_status = case_when(
+          # us citizens are hispanic/latino
+          hispanic_latino == TRUE & citizenship_country == "US" ~ "Y",
+          # permanent residents are hispanic/latino
+          hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
+          # us citizens identify as urms
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
+          & citizenship_country == "US" ~ "Y",
+          # permanent residents identify as urms
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
+          & visa %in% visa_urms ~ "Y",
+          # everything else
+          TRUE ~ "N")) %>% 
+        group_by(ay_year,
+                 urm_status) %>% 
+        summarize(count = n()) %>% 
+        filter(urm_status == "Y") %>% 
+        left_join(total_students_yr, by = "ay_year") %>% 
+        mutate(percent = round((count / size) * 100, 1))
+      
+    } # EO if statement
+    
+    else {
+      enrolled %>% 
+        select("ay_year",
+               "application_id",
+               "objective1",
+               "citizenship_country",
+               "residency_country",
+               "birth_country",
+               "visa",
+               "background",
+               "category",
+               "hispanic_latino") %>% 
+        # replace NULL string with NA
+        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
+        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
+        rowwise() %>% # Note(HD): look into this, but forces to go through every row?
+        mutate(urm_status = case_when(
+          # us citizens are hispanic/latino
+          hispanic_latino == TRUE & citizenship_country == "US" ~ "Y",
+          # permanent residents are hispanic/latino
+          hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
+          # us citizens identify as urms
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
+          & citizenship_country == "US" ~ "Y",
+          # permanent residents identify as urms
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
+          & visa %in% visa_urms ~ "Y",
+          # everything else
+          TRUE ~ "N")) %>% 
+        group_by(ay_year,
+                 urm_status,
+                 objective1) %>% 
+        summarize(count = n()) %>% 
+        filter(urm_status == "Y") %>% 
+        left_join(program_size, by = c("ay_year", "objective1")) %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
+        filter(objective1 == input$urm_trends)
+      
+    } # EO else statement
+    
+  }) # EO urm trends reactive 
   
   ## PLOTTING ##
+  output$urm_trends_pltly <- plotly::renderPlotly({
+    # empty vars
+    color <- NULL
+    
+    if (input$urm_trends == "All Programs") {
+      color <- "#09847a"
+    } # EO if All Programs urm trend plot
+    
+    else if (input$urm_trends == "MESM") {
+      color <- mesm_color
+    } # EO else if MESM urm trend plot
+    
+    else if (input$urm_trends == "MEDS") {
+      color <- meds_color
+    } # EO else if MEDS urm trend plot
+    
+    else if (input$urm_trends == "PHD") {
+      color <- phd_color
+    } # EO else if PHD urm trend plot
+    
+    # urm trends plot function
+    urm_trends_plot(
+      df = urm_trends(),
+      color = color,
+      prog_input = input$urm_trends
+    )
+    
+  }) # EO urm trends plotly
+  
+  
   
   ## SO ethnicity / background ----
+  
   ## * american indian or alaska native ethnicity ----
   ## DATA WRANGLING ##
-  
   ## PLOTTING ##
-  
   
   
   ## * asian ethnicity ----
@@ -1633,9 +1748,7 @@ server <- function(input, output, session){
   
   ## * native hawaiian or other pacific islander ethnicity ----
   ## DATA WRANGLING ##
-  
   ## PLOTTING ##
-  
   
   
   ## * white ethnicity ----
