@@ -345,7 +345,7 @@ ui <- dashboardPage(
                                        selected = "All Programs",
                                        inline = TRUE)
                  ), # EO race / category distribution tabPanel
-                 tabPanel("Race / Category Trends",
+                 tabPanel("Race / Category Trends Option 1",
                           plotly::plotlyOutput(outputId = "race_trends_pltly") %>% 
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "race_trends",
@@ -354,6 +354,20 @@ ui <- dashboardPage(
                                        selected = "All Programs",
                                        inline = TRUE)
                  ), # EO race / category over time tabpanel
+                 tabPanel("Race / Category Trends Option 2",
+                          plotly::plotlyOutput(outputId = "race_trends_2_pltly") %>% 
+                            withSpinner(color = "#003660", type = 1),
+                          radioButtons(inputId = "race_trends_2",
+                                       label = NULL,
+                                       choices = c("Asian", 
+                                                   "Black or African American", 
+                                                   "Hispanic or Latino",
+                                                   "White",
+                                                   "Two or more races",
+                                                   "Unknown race and ethnicity"),
+                                       selected = "Asian",
+                                       inline = TRUE)
+                 ), # EO race / category over time tabpanel 2
                  tabPanel("URM Trends",
                           plotly::plotlyOutput(outputId = "urm_trends_pltly") %>% 
                             withSpinner(color = "#003660", type = 1),
