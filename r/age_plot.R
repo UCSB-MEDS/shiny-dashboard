@@ -30,7 +30,7 @@ age_plot <- function(df, color, year_str, prog_input){
   # reactive
   age_stats <- reactive({
     left_join(age_program_groups, tot_5yr, by = "objective1") %>% 
-      mutate(age_percent = round((age_group_counts / tot) * 100, 1)) %>% 
+      mutate(age_percent = round((age_group_counts / size) * 100, 1)) %>% 
       filter(objective1 == prog_input)
   }) # EO reactive age_stats df
   
@@ -49,7 +49,7 @@ age_plot <- function(df, color, year_str, prog_input){
                            "%",
                            "\n",
                            "Sample size: ",
-                           tot
+                           size
                          )
                        )) +
     geom_bar(stat = "identity",
