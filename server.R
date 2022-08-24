@@ -840,7 +840,7 @@ server <- function(input, output, session){
   output$meds_curr_size <- renderValueBox({
     shinydashboard::valueBox(
       "MEDS students in 2021 cohort",
-      value = meds_size$program_size,
+      value = meds_size$size,
       icon = icon("users", lib = "font-awesome"),
       color = "light-blue"
     )
@@ -850,7 +850,7 @@ server <- function(input, output, session){
   output$mesm_curr_size <- renderValueBox({
     valueBox(
       "MESM students in 2021 cohort",
-      value = mesm_size$program_size,
+      value = mesm_size$size,
       icon = icon("users", lib = "font-awesome"),
       color = "blue"
     )
@@ -861,7 +861,7 @@ server <- function(input, output, session){
   output$phd_curr_size <- renderValueBox({
     valueBox(
       "PhD students in 2021 cohort",
-      value = phd_size$program_size,
+      value = phd_size$size,
       icon = icon("users", lib = "font-awesome"),
       color = "green"
     )
