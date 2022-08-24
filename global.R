@@ -29,6 +29,7 @@ mesm_status <- readRDS("data/status_data.rds")
 # SOURCE FUNCTIONS ----
 source("r/age_plot.R")
 source("r/race_plot.R")
+source("r/urm_trends_plot.R")
 
 # STYLING ----
 mesm_color <- "#6D7D33" 
