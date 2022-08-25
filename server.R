@@ -965,9 +965,8 @@ server <- function(input, output, session){
                       aes(x = demographic,
                           y = percent,
                           fill = demographic,
-                          text = paste0(demographic, "\n", 
-                                        "Percentage: ", percent, "%", "\n",
-                                        "Total number of students (5 years): ", total_students_5yr)
+                          text = paste0(demographic, " (", percent, "%", ")", "\n",
+                                        "Sample size: ", total_students_5yr)
                           )) +
       geom_bar(stat = "identity") +
       coord_flip() +
@@ -1051,8 +1050,9 @@ server <- function(input, output, session){
                          aes(x = ay_year,
                              y = gender_percent,
                              fill = reorder(gender, gender_percent),
-                             text = paste0("Gender: ", gender, "\n",
-                                           "Percent: ", gender_percent, "%"))) +
+                             text = paste0(gender, " (", gender_percent, "%", ")", "\n",
+                                           "Sample size: ", cohort_tot))
+                         ) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(gender_stats_time$ay_year),
@@ -1168,8 +1168,9 @@ server <- function(input, output, session){
                             aes(x = ay_year,
                                 y = percent,
                                 fill = reorder(residency, percent),
-                                text = paste0("Residency: ", residency, "\n",
-                                              "Percent: ", percent, "%"))) +
+                                text = paste0(residency, " (", percent, "%", ")", "\n",
+                                              "Sample size: ", size)
+                                )) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(residency_stats$ay_year),

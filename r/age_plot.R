@@ -40,17 +40,9 @@ age_plot <- function(df, color, year_str, prog_input){
                        aes(
                          x = age_group,
                          y = age_percent,
-                         text = paste0(
-                           "Age group: ",
-                           age_group,
+                         text = paste0("Age group: ", age_group, " (", age_percent, "%", ")",
                            "\n",
-                           "Percent: ",
-                           age_percent,
-                           "%",
-                           "\n",
-                           "Sample size: ",
-                           size
-                         )
+                           "Sample size: ", size)
                        )) +
     geom_bar(stat = "identity",
              fill = color) +
