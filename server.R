@@ -48,7 +48,7 @@ server <- function(input, output, session){
   output$placement_stat <- renderValueBox({
     
     shinydashboard::valueBox(
-      "MESM Alumni placed in a career or similar position",
+      "MESM Alumni placed in a career or similar position 6 months after graduating",
       value = paste0(status_stat$percent, "%"),
       icon = icon("house"),
       color = "green"

@@ -80,7 +80,7 @@ ui <- dashboardPage(
                  fluidRow(
                    box(
                      width = 12,
-                     title = "Explore jobs Bren graduates are securing!",
+                     title = "Explore Bren Alumni Career Outcomes",
                      solidHeader = TRUE,
                      status = "success",
                      includeMarkdown("text/career_about.md")
@@ -134,17 +134,17 @@ ui <- dashboardPage(
         fluidRow(
           # * career maps ----
           tabBox(width = 6,
-                 tabPanel("Domestic Placements",
+                 tabPanel("Initial Placement Location",
                           tmap::tmapOutput(outputId = "car_alumniMap") %>%
                             withSpinner(color = "#003660", type = 1)#,
                           # tags$p(class = "italic_sector",
                           #        "Click a state to see the number of alumni at each location.")
                           ), # EO tabPanel leaflet map
-                 tabPanel("Location of MESM Alumni",
+                 tabPanel("Initial Placement",
                           plotly::plotlyOutput(outputId = "mesm_location") %>%
                             withSpinner(color = "#003660", type = 1)
                  ), # EO tabPanel bar plot location of MESM alumni
-                 tabPanel("International Placements",
+                 tabPanel("Initial International Placements",
                           DT::dataTableOutput(outputId = "international_place") %>%
                             withSpinner(color = "#003660", type = 1)
                           ) # EO tabPanel international placements

@@ -1,1 +1,1 @@
-Bren alumni secure initial placements in a variety of sectors, organizations, and locations. Learn more below, and learn more about Bren Career Services [here](https://bren.ucsb.edu/career-services).
+Master of Environmental Science and Management (MESM) alumni are employable in a wide variety of sectors, organizations, and locations. Learn more about their initial job placements below. Find more information about Bren Career Services [here](https://bren.ucsb.edu/career-services).
