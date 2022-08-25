@@ -272,9 +272,8 @@ ui <- dashboardPage(
                                           "*URM or Underrepresented Minority is
                                         defined as a U.S. citizen who identifies
                                         as Black/African American, Hispanic/Latino,
-                                        or American Indian. All other Race/Ethnicity
-                                        categories or Non-U.S. citizens are
-                                        considered as a Non-Underrepresented Minority.")
+                                        or American Indian, which is consistent 
+                                        with the UC definition of URM.")
                           ), # EO 2021 demographics tabPanel
                           ## * admissions ----
                           tabPanel("Admissions",
