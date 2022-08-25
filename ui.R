@@ -254,7 +254,7 @@ ui <- dashboardPage(
                                   width = 4), 
                    valueBoxOutput(outputId = "mesm_curr_size",
                                   width = 4),
-                   valueBoxOutput(outputId = "phd_curr_size",
+                   valueBoxOutput(outputId = "PhD_curr_size",
                                   width = 4)
                  ), # EO FR 1 in column 2
                  fluidRow(
@@ -265,7 +265,7 @@ ui <- dashboardPage(
                                      withSpinner(color = "#003660", type = 1),
                                    radioButtons(inputId = "diversity_stats_all",
                                                 label = NULL,
-                                                choices = c("MEDS", "MESM", "PHD"),
+                                                choices = c("MEDS", "MESM", "PhD"),
                                                 selected = "MESM",
                                                 inline = TRUE), 
                                    tags$p(class = "italic_sector",
@@ -281,7 +281,7 @@ ui <- dashboardPage(
                                      withSpinner(color = "#003660", type = 1),
                                    radioButtons(inputId = "admit_stats_all",
                                                 label = NULL,
-                                                choices = c("MEDS", "MESM", "PHD"),
+                                                choices = c("MEDS", "MESM", "PhD"),
                                                 selected = "MESM",
                                                 inline = TRUE)
                           ), # EO tabPanel previous admissions
@@ -296,7 +296,7 @@ ui <- dashboardPage(
                                      withSpinner(color = "#003660", type = 1),
                                    radioButtons(inputId = "age_prog",
                                                 label = NULL,
-                                                choices = c("MEDS", "MESM", "PHD"),
+                                                choices = c("MEDS", "MESM", "PhD"),
                                                 selected = "MESM",
                                                 inline = TRUE)
                           ), # EO age tabPanel
@@ -340,7 +340,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "race",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                  ), # EO race / category distribution tabPanel
@@ -349,7 +349,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "race_trends",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                  ), # EO race / category over time tabpanel
@@ -372,7 +372,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "urm_trends",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                  ) # EO urm distribution tabpanel
@@ -385,7 +385,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "asian_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO asian eth
@@ -394,7 +394,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "black_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO black or african american eth
@@ -403,7 +403,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "hisp_lat_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO hispanic or latino eth
@@ -412,7 +412,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "white_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO white eth
@@ -421,7 +421,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "two_more_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ), # EO two or more eth
@@ -430,7 +430,7 @@ ui <- dashboardPage(
                             withSpinner(color = "#003660", type = 1),
                           radioButtons(inputId = "unk_eth",
                                        label = NULL,
-                                       choices = c("MEDS", "MESM", "PHD", "All Programs"),
+                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
                                        inline = TRUE)
                           ) # EO unknown eth

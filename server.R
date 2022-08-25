@@ -834,7 +834,7 @@ server <- function(input, output, session){
   
   meds_size <- program_size_21 %>% filter(objective1 == "MEDS")
   mesm_size <- program_size_21 %>% filter(objective1 == "MESM")
-  phd_size <- program_size_21 %>% filter(objective1 == "PHD")
+  PhD_size <- program_size_21 %>% filter(objective1 == "PhD")
   
   # MEDS valueBox output
   output$meds_curr_size <- renderValueBox({
@@ -857,15 +857,15 @@ server <- function(input, output, session){
     
   })# EO MESM valueBox prog size
   
-  # PHD valueBox output
-  output$phd_curr_size <- renderValueBox({
+  # PhD valueBox output
+  output$PhD_curr_size <- renderValueBox({
     valueBox(
       "PhD students in 2021 cohort",
-      value = phd_size$size,
+      value = PhD_size$size,
       icon = icon("users", lib = "font-awesome"),
       color = "green"
     )
-  }) # EO PHD valueBox prog size
+  }) # EO PhD valueBox prog size
   
   
   
@@ -967,7 +967,7 @@ server <- function(input, output, session){
                           fill = demographic,
                           text = paste0(demographic, " (", percent, "%", ")", "\n",
                                         "Number of students: ", count, "\n",
-                                        "Sample size: ", total_students_5yr)
+                                        "Sample size: ", size)
                           )) +
       geom_bar(stat = "identity") +
       coord_flip() +
@@ -1099,10 +1099,10 @@ server <- function(input, output, session){
       year_str <- "2021"
     } # EO else if MEDS age plot
 
-    else if (input$age_prog == "PHD") {
+    else if (input$age_prog == "PhD") {
       color <- phd_color
       year_str <- "2016-2021"
-    } # EO else if PHD age plot
+    } # EO else if PhD age plot
     
     # age plot function
     age_plot(
@@ -1314,9 +1314,9 @@ server <- function(input, output, session){
       color <- meds_color
     } # EO else if meds
     
-    else if (input$race == "PHD") {
+    else if (input$race == "PhD") {
       color <- phd_color
-    } # EO else if phd 
+    } # EO else if PhD 
     
     # race plot function
     race_plot(
@@ -1521,7 +1521,7 @@ server <- function(input, output, session){
         values = c(
           "MESM" = mesm_color,
           "MEDS" = meds_color,
-          "PHD" = phd_color
+          "PhD" = phd_color
         )
       ) +
       theme_minimal() +
@@ -1649,9 +1649,9 @@ server <- function(input, output, session){
       color <- meds_color
     } # EO else if MEDS urm trend plot
     
-    else if (input$urm_trends == "PHD") {
+    else if (input$urm_trends == "PhD") {
       color <- phd_color
-    } # EO else if PHD urm trend plot
+    } # EO else if PhD urm trend plot
     
     # urm trends plot function
     urm_trends_plot(
