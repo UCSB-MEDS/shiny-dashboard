@@ -966,6 +966,7 @@ server <- function(input, output, session){
                           y = percent,
                           fill = demographic,
                           text = paste0(demographic, " (", percent, "%", ")", "\n",
+                                        "Number of students: ", count, "\n",
                                         "Sample size: ", total_students_5yr)
                           )) +
       geom_bar(stat = "identity") +
