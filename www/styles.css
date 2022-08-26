@@ -25,6 +25,15 @@
   text-align: center;
 }
 
+/* styling large and bold font; link (a tag) white and underline */
+.lrg-bold a {
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  text-decoration: underline;
+}
+
 /* change background color of menuItems when selected */
 .skin-blue .sidebar-menu>li.active>a {
   background-color: #3c8dbc;
