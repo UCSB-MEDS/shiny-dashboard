@@ -12,6 +12,17 @@
   background-color: #6d7d33 !important;
 }
 
+/* styling font on tabsetPanel on career db*/
+/*.nav.nav-tabs {
+  font-size: large;
+  font-weight: bold;
+}*.
+/* change background color of tabsetPanel when selected on career db*/
+/*.nav.nav-tabs>li.active>a {
+  background-color: #3c8dbc;
+}*/
+
+
 /* styling font on placement by sector bar plot career db*/
 .italic_sector {
   font-style: italic;
