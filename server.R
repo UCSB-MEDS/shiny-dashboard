@@ -1,14 +1,11 @@
 # server instructions
 server <- function(input, output, session){
 
-  # 2021 DB ----
-
-  
-  
   # CAREER DB ----
   
   ## SO career valuebox stats ----
   ## * placement status stat ----
+  
   ## DATA WRANGLING ##
   # status df for valuebox stat
   status_stat <- mesm_status %>% 
@@ -44,7 +41,7 @@ server <- function(input, output, session){
     mutate(percent = round((count / 235) * 100, 1)) %>% 
     filter(placed == "Placed")
   
-  # MEDS valueBox output
+  ## VALUEBOX ##
   output$placement_stat <- renderValueBox({
     
     shinydashboard::valueBox(
@@ -53,7 +50,50 @@ server <- function(input, output, session){
       icon = icon("house"),
       color = "green"
     ) # EO valueBox
-  }) # EO MEDS valueBox prog size
+  }) # EO MESM valueBox prog size
+  
+  ## * bren network stat ----
+  ## DATA WRANGLING ##
+  mesm_brenNet <- mesm_placement %>% 
+    group_by(job_source) %>% 
+    summarize(count = n()) %>% 
+    # calculate percentages
+    # total responses (196)
+    mutate(percent = round((count / 196) * 100, 1)) %>% 
+    filter(job_source == "Bren School Network")
+  
+  ## VALUEBOX ##
+  output$brenNet_stat <- renderValueBox({
+    
+    valueBox(
+      "of graduates learned of their jobs through the Bren School Network",
+      value = paste0(mesm_brenNet$percent, "%"),
+      icon = icon("briefcase"),
+      color = "blue"
+    ) # EO valueBox
+  }) # EO MESM bren network stat
+  
+  
+  ## * MESM satisfaction initial placement stat ----
+  ## DATA WRANGLING ##
+  mesm_satisfaction_stat <- mesm_placement %>% 
+    group_by(placement_satisfaction) %>% 
+    summarize(count = n()) %>% 
+    # calculate percentages
+    # total responses (196)
+    mutate(percent = round((count / 196) * 100, 1)) %>% 
+    filter(placement_satisfaction == "Very Satisfied")
+  
+  ## VALUEBOX ##
+  output$mesm_satisfied_stat <- renderValueBox({
+    
+    valueBox("of graduates ranked being “very satisfied” with their initial job placement",
+             value = paste0(mesm_satisfaction_stat$percent, "%"),
+             icon = icon("heart"),
+             color = "light-blue"
+    ) # EO valueBox overall satisfaction stat
+  }) # EO MESM satisfaction initial placement stat
+  
   
   
   
@@ -62,6 +102,13 @@ server <- function(input, output, session){
   employer <- mesm_placement %>% 
     select(c(employer_account_name,
              employer_sector)) %>%
+    mutate(employer_account_name = case_when(
+      employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
+      employer_account_name == "Clean, Renewable and Environmental Opportunities (CREO)CREO" ~ "Clean, Renewable and Environmental Opportunities (CREO)",
+      employer_account_name == "Environmental Incentives. LLC" ~ "Environmental Incentives, LLC",
+      TRUE ~ employer_account_name
+    )) %>% 
+    mutate(employer_account_name = str_replace_all(employer_account_name, "Formerly", "formerly")) %>% 
     group_by(employer_account_name,
              employer_sector) %>% 
     summarize(freq = n())
