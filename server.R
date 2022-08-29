@@ -48,7 +48,7 @@ server <- function(input, output, session){
   output$placement_stat <- renderValueBox({
     
     shinydashboard::valueBox(
-      "MESM Alumni placed in a career or similar position 6 months after graduating",
+      "of graduates were employed 6 months after graduation",
       value = paste0(status_stat$percent, "%"),
       icon = icon("house"),
       color = "green"
@@ -75,7 +75,7 @@ server <- function(input, output, session){
       class = "cell-border stripe",
       rownames = FALSE,
       options = list(
-        pageLength = 9,
+        pageLength = 10,
         dom = 'Bftipr'
       ) # EO options
       
