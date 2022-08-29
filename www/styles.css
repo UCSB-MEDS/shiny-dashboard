@@ -13,15 +13,21 @@
 }
 
 /* styling font on tabsetPanel on career db*/
-/*.nav.nav-tabs {
+.mesm_main_tab {
   font-size: large;
   font-weight: bold;
-}*.
+  color: #fff;
+  background-color: #07528c;
+}
 /* change background color of tabsetPanel when selected on career db*/
-/*.nav.nav-tabs>li.active>a {
-  background-color: #3c8dbc;
-}*/
+.mesm_main_tab>li.active>a {
+  background-color: #013660;
+}
 
+/* styling padding inbtwn main tabs and  career db*/
+.tab-content {
+  margin-top: 0.5rem;
+}
 
 /* styling font on placement by sector bar plot career db*/
 .italic_sector {
