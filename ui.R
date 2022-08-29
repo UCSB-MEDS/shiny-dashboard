@@ -109,21 +109,12 @@ ui <- dashboardPage(
                            ), # EO FR
 
                            
-                           # # ** valueBox stats ----
+                           ## ** valueBox stats ----
                            fluidRow(
-                             valueBox(paste0("XX.X", "%"),
-                                      "of graduates learned of their jobs through the Bren School Network",
-                                      icon = icon("briefcase"),
-                                      color = "blue",
-                                      width = 6
-                             ), # EO valueBox stay connected stat
-                             valueBox(paste0(44.3, "%"),
-                                      "of graduates ranked being “very satisfied” 
-                                    with their initial job placement",
-                                    icon = icon("heart"),
-                                    width = 6
-                             ) # EO valueBox overall satisfaction stat
-                             
+                             valueBoxOutput(outputId = "brenNet_stat",
+                                            width = 6),
+                             valueBoxOutput(outputId = "mesm_satisfied_stat",
+                                            width = 6)
                            ), # EO FR valueBox 1
                            fluidRow(
                              # placement stat
@@ -135,7 +126,7 @@ ui <- dashboardPage(
                     column(8,
                            # ** info box ----
                            box(
-                             title = "Bren MESM Alumni Employers and Sectors since 2019",
+                             title = "Initial Employers and Sectors (Data over 3 Years)",
                              width = 12,
                              solidHeader = TRUE,
                              status = "navy",
