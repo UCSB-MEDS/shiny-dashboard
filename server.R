@@ -38,7 +38,7 @@ server <- function(input, output, session){
     summarize(count = n()) %>% 
     # calculate percentage
     # used tot mesm_responses (79+74+82)
-    mutate(percent = round((count / 235) * 100, 1)) %>% 
+    mutate(percent = round((count / 235) * 100)) %>% 
     filter(placed == "Placed")
   
   ## VALUEBOX ##
@@ -59,7 +59,7 @@ server <- function(input, output, session){
     summarize(count = n()) %>% 
     # calculate percentages
     # total responses (196)
-    mutate(percent = round((count / 196) * 100, 1)) %>% 
+    mutate(percent = round((count / 196) * 100)) %>% 
     filter(job_source == "Bren School Network")
   
   ## VALUEBOX ##
@@ -81,7 +81,7 @@ server <- function(input, output, session){
     summarize(count = n()) %>% 
     # calculate percentages
     # total responses (196)
-    mutate(percent = round((count / 196) * 100, 1)) %>% 
+    mutate(percent = round((count / 196) * 100)) %>% 
     filter(placement_satisfaction == "Very Satisfied")
   
   ## VALUEBOX ##
