@@ -1,3 +1,2 @@
+<br>
 Master of Environmental Science and Management (MESM) alumni are employable in a wide variety of sectors, organizations, and locations. Learn more about their initial job placements below. Find more information about Bren Career Services [here](https://bren.ucsb.edu/career-services).
-
-Please Note: All data on this dashboard pulls from MESM 2019-2021 initial placement data. Data for 2022 will be added in January/February of 2023. In addition, all visuals, charts, and statistics combine MESM 2019-2021 data except for visuals that break out or allow you to select specific years. All data represents alumni employment six months after graduation rather than current employment.
