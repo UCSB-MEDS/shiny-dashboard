@@ -211,7 +211,8 @@ server <- function(input, output, session){
     
     # plotly
     plotly::ggplotly(location_gg, tooltip = "text") %>%
-      layout(legend = list(orientation = "h"),
+      layout(legend = list(orientation = "h",
+                           y = -0.1),
              title = list(font = list(size = 15.5))) %>% 
       config(modeBarButtonsToRemove = list("pan", 
                                            "select",
