@@ -359,7 +359,7 @@ server <- function(input, output, session){
       member_status %in% c("Time Off",
                            "Searching") ~ "Searching or Time Off",
       member_status %in% c("FT New Business",
-                           "FT Eco-E") ~ "New Business",
+                           "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
       member_status %in% c("Internship/Fellowship",
                            "Continuing Internship",
                            "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
@@ -395,13 +395,14 @@ server <- function(input, output, session){
       scale_fill_manual(values = c("Advanced Degree/Another Degree" = "#003660", # ucsb navy
                                    "Career" = "#047c91", # ucsb aqua
                                    "Internship, Fellowship, or Short-term Project" = "#9cbebe", # ucsb mist
-                                   "New Business" = "#6d7d33", # ucsb moss
+                                   "Eco-Entrepreneurship/New Business" = "#6d7d33", # ucsb moss
                                    "Searching or Time Off" = "#79a540") # bren leaf green
       )
     
     #plotly
     plotly::ggplotly(status_gg, tooltip = "text") %>%
-      layout(legend = list(orientation = "h"),
+      layout(legend = list(orientation = "h",
+                           y = -0.1),
              title = list(font = list(size = 16))) %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select",
