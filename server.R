@@ -334,7 +334,8 @@ server <- function(input, output, session){
       )
     # plotly
     plotly::ggplotly(source_gg, tooltip = "text") %>%
-      layout(legend = list(orientation = "h")) %>%
+      layout(legend = list(orientation = "h",
+                           y = -0.1)) %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select",
                                            "lasso2d",
