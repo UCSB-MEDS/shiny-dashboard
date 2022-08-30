@@ -153,20 +153,20 @@ ui <- dashboardPage(
                   fluidRow(
                     # ** career maps ----
                     tabBox(width = 6,
-                           tabPanel("Initial Placement Location",
+                           tabPanel(title = HTML(paste("Domestic Placement", "(Over last 3 Years)", sep = "<br/>")),
                                     tmap::tmapOutput(outputId = "car_alumniMap") %>%
                                       withSpinner(color = "#003660", type = 1)#,
                                     # tags$p(class = "italic_sector",
                                     #        "Click a state to see the number of alumni at each location.")
                            ), # EO tabPanel leaflet map
-                           tabPanel("Initial Placement",
-                                    plotly::plotlyOutput(outputId = "mesm_location") %>%
-                                      withSpinner(color = "#003660", type = 1)
-                           ), # EO tabPanel bar plot location of MESM alumni
-                           tabPanel("Initial International Placements",
+                           tabPanel(title = HTML(paste("International Placement", "(Over last 3 Years)", sep = "<br/>")),
                                     DT::dataTableOutput(outputId = "international_place") %>%
                                       withSpinner(color = "#003660", type = 1)
-                           ) # EO tabPanel international placements
+                           ), # EO tabPanel international placements
+                           tabPanel("Geographic Comparison",
+                                    plotly::plotlyOutput(outputId = "mesm_location") %>%
+                                      withSpinner(color = "#003660", type = 1)
+                           ) # EO tabPanel bar plot location of MESM alumni
                     ), # EO tabBox employers map / info
                     
                     # ** career plots ----
