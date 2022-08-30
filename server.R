@@ -169,8 +169,8 @@ server <- function(input, output, session){
     )) %>% 
     # assign ca / out of state / international
     mutate(location = case_when(
-      work_location_state == "CA" ~ "California",
-      work_location_state != "CA" & work_location_country == "United States" ~ "Out of State",
+      work_location_state == "CA" ~ "Domestic (California)",
+      work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
       work_location_country != "United States" ~ "International"
     )) %>% 
     group_by(mesm_class_year,
@@ -205,14 +205,13 @@ server <- function(input, output, session){
            x = NULL,
            y = "Percent of Respondents",
            fill = NULL) +
-      scale_fill_manual(values = c("California" = "#9cbebe",
-                                   "Out of State" = "#003660",
+      scale_fill_manual(values = c("Domestic (California)" = "#9cbebe",
+                                   "Domestic (Out of State)" = "#003660",
                                    "International" = "#dcd6cc"))
     
     # plotly
     plotly::ggplotly(location_gg, tooltip = "text") %>%
-      layout(legend = list(orientation = "h",
-                           x = 0.1),
+      layout(legend = list(orientation = "h"),
              title = list(font = list(size = 15.5))) %>% 
       config(modeBarButtonsToRemove = list("pan", 
                                            "select",
@@ -264,6 +263,10 @@ server <- function(input, output, session){
   international_tbl <- mesm_placement %>% 
     filter(!work_location_country %in% c("US", "Usa", "USA", "United States"),
            !is.na(work_location_country)) %>% 
+    mutate(employer_account_name = case_when(
+      employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
+      TRUE ~ employer_account_name
+    )) %>% 
     group_by(employer_account_name,
              employer_sector,
              work_location_country) %>% 
