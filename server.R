@@ -301,7 +301,7 @@ server <- function(input, output, session){
     # 2 NAs 2019; 3 NAs 2021
     drop_na() %>% 
     left_join(placement_size, by = "mesm_class_year") %>% 
-    mutate(percent = round((count / program_size) * 100, 1))
+    mutate(percent = round((count / mesm_responses) * 100, 1))
   
   ## PLOTTING ##
   output$mesm_job_source <- plotly::renderPlotly({
@@ -507,7 +507,7 @@ server <- function(input, output, session){
                                                         "Unsatisfied"))) %>% 
       # change other to Eco-E/New Business
       mutate(employer_sector = case_when(
-        employer_sector == "Other" ~ "Eco-E/New Business",
+        employer_sector == "Other" ~ "Eco-Entrepreneurship/New Business",
         TRUE ~ employer_sector
       )) %>% 
       # reactive filter
@@ -533,7 +533,8 @@ server <- function(input, output, session){
       theme_minimal() +
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
-      labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types),
+      labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types, "\n",
+                          "(Over last 3 Years)"),
            x = NULL,
            y = "Percent of Respondents",
            fill = NULL) +
@@ -556,7 +557,7 @@ server <- function(input, output, session){
   
   
   
-  ## SO compensation ----
+  ## SO salary ----
   ## DATA WRANGLING ##
   salary <- reactive({
     
@@ -610,11 +611,11 @@ server <- function(input, output, session){
                               Median),
                      names_to = "range",
                      values_to = "values") %>% 
-        mutate(mesm_responses = 196)
+        left_join(placement_size, by = "mesm_class_year")
       
     } # EO else statement
     
-  })
+  }) # EO salary reactive
   
   ## PLOTTING ##
   output$compensation <- renderPlotly({
@@ -646,11 +647,11 @@ server <- function(input, output, session){
                                            "hoverClosestCartesian",
                                            "hoverCompareCartesian"))
     
-  }) # EO compensation plot
+  }) # EO salary plot
   
   
   
-  ## SO compensation specialization ----
+  ## SO salary specialization ----
   ## DATA WRANGLING ##
   salary_special <- reactive({
     if (input$compSpecialization_year == "All Years") {
@@ -757,7 +758,7 @@ server <- function(input, output, session){
   }) # EO salary specialization plot
   
   
-  ## SO compensation sector ----
+  ## SO salary sector ----
   ## DATA WRANGLING ##
   salary_sector <- reactive({
     if (input$compSector_year == "All Years") {
