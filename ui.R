@@ -73,6 +73,7 @@ ui <- dashboardPage(
       # tabs career ----
       tabItem(
           tabName = "career_db",
+          tags$div(class = "career_tabpanels",
             tabsetPanel(
               # * MESM tabPanel ----
                 tabPanel(
@@ -235,14 +236,16 @@ ui <- dashboardPage(
                   )# EO FR second row
                 ), # EO tabPanel MESM
               
-              
+              # * MEDS tabPanel ----
               tabPanel(
                 title = "MEDS Initial Career Placements",
                 "Coming soon!"
-              ) # EO tabPanel MEDS
+                ) # EO tabPanel MEDS
+
               
             ) # EO tabsetPanel career_db
-        ), # EO tabItem career_db
+        ) # EO tabItem career_db
+      ), # EO tags$div career_tabpanels
       
 
       
