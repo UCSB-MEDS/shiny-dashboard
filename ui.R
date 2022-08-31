@@ -183,17 +183,17 @@ ui <- dashboardPage(
                                     plotly::plotlyOutput(outputId = "sector_trends") %>% 
                                       withSpinner(color = "#003660", type = 1),
                                     tags$p(class = "italic_sector",
-                                           "Private includes Consulting and Corporate. 
-                                 Public includes Federal Government, Local Government, 
-                                 State Government, and Research/Education. Other includes 
-                                 Foreign Government, Eco-E, and New Business. Non-Profit includes Non-Profit.")
+                                           "Private = Consulting and Corporate | 
+                                           Public = Federal, Local & State Government & Research/Education | 
+                                           Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
+                                           Eco-Entrepreneurship & New Business")
                            ), # EO tabPanel sector over time
                            tabPanel("Sector Satisfaction",
                                     plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
                                       withSpinner(color = "#003660", type = 1),
                                     radioButtons(inputId = "sector_types",
                                                  label = NULL,
-                                                 choices = c("Consulting", "Corporate", "Eco-E/New Business",
+                                                 choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
                                                              "Federal Government", "Foreign Government", 
                                                              "Local Government", "Non-Profit", 
                                                              "Research/Education", "State Government"),
