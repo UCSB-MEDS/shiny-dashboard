@@ -73,8 +73,8 @@ ui <- dashboardPage(
       # tabs career ----
       tabItem(
           tabName = "career_db",
-          tags$div(class = "career_tabpanels",
             tabsetPanel(
+              id = "career_tabpanels",
               # * MESM tabPanel ----
                 tabPanel(
                   title = "MESM Initial Career Placements",
@@ -244,10 +244,8 @@ ui <- dashboardPage(
                 bren-admissions@ucsb.edu."
                 ) # EO tabPanel MEDS
 
-              
             ) # EO tabsetPanel career_db
-        ) # EO tabItem career_db
-      ), # EO tags$div career_tabpanels
+        ), # EO tabItem career_db
       
 
       
