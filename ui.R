@@ -239,7 +239,9 @@ ui <- dashboardPage(
               # * MEDS tabPanel ----
               tabPanel(
                 title = "MEDS Initial Career Placements",
-                "Coming soon!"
+                "Data for MEDS 2022 will be added in January/February of 2023.
+                If you have any immediate questions please reach out to
+                bren-admissions@ucsb.edu."
                 ) # EO tabPanel MEDS
 
               
