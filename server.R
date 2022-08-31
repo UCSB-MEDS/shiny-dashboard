@@ -191,8 +191,7 @@ server <- function(input, output, session){
                               fill = reorder(location, percent),
                               text = paste0(location, " (", percent, "%", ")", 
                                             "\n",
-                                            "Number of respondents: ", mesm_responses, "\n",
-                                            "Class size: ", program_size)
+                                            "Number of respondents: ", mesm_responses)
                               )) +
       geom_bar(position = "dodge",
                stat = "identity") +
@@ -313,8 +312,7 @@ server <- function(input, output, session){
                             fill = reorder(job_source, percent),
                             text = paste0(job_source, " (", percent, "%", ")",
                                           "\n",
-                                          "Number of respondents: ", mesm_responses, "\n",
-                                          "Class size: ", program_size))) +
+                                          "Number of respondents: ", mesm_responses))) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(mesm_source$mesm_class_year),
@@ -381,8 +379,7 @@ server <- function(input, output, session){
                             fill = reorder(status, percent),
                             text = paste0(status, " (", percent, "%", ")",
                                           "\n",
-                                          "Number of respondents: ", mesm_responses, "\n",
-                                          "Class size: ", program_size))) +
+                                          "Number of respondents: ", mesm_responses))) +
       geom_bar(position = "dodge",
                stat = "identity") +
       scale_x_continuous(breaks = seq(min(status$mesm_class_year),
@@ -448,8 +445,7 @@ server <- function(input, output, session){
                                  y = percent,
                                  fill = sector_type,
                                  text = paste0(sector_type, " (", percent, "%", ")", "\n",
-                                               "Number of respondents: ", mesm_responses, "\n",
-                                               "Class size: ", program_size))) +
+                                               "Number of respondents: ", mesm_responses))) +
       geom_bar(stat = "identity",
                position = "dodge") +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
