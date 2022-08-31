@@ -715,46 +715,181 @@ server <- function(input, output, session){
   
   ## PLOTTING ##
   output$comp_specialization <- plotly::renderPlotly({
-    salary_special_gg <- ggplot(data = salary_special(),
-                            aes(x = mesm_program_enrollment_specializations,
-                                y = values,
-                                fill = reorder(range, values),
-                                text = paste0(mesm_program_enrollment_specializations, "\n",
-                                              range, ": ", "$", values, "\n",
-                                              "Number of respondents: ", 196)
-                            )) +
-      geom_bar(stat = "identity",
-               position = "dodge") +
-      coord_flip() +
-      theme_minimal() +
-      scale_y_continuous(labels = scales::dollar_format(),
-                         breaks = seq(0, 100000, 25000)) +
-      scale_x_discrete(
-        labels = function(x)
-          str_wrap(x, width = 25)
-      ) +
-      scale_fill_manual(
-        values = c(
-          "High" = "#003660", # ucsb navy
-          "Median" = "#047c91", # ucsb aqua
-          "Low" = "#dcd6cc" # uscb clay
-        )) +
-      labs(title = paste0("Salary Compensation by MESM Specialization"),
-           x = NULL,
-           y = "Dollars ($)",
-           fill = NULL)
+    if (input$compSpecialization_year == "All Years") {
+      salary_special_gg <- ggplot(data = salary_special(),
+                                  aes(x = mesm_program_enrollment_specializations,
+                                      y = values,
+                                      fill = reorder(range, values),
+                                      text = paste0(mesm_program_enrollment_specializations, "\n",
+                                                    range, ": ", "$", values, "\n",
+                                                    "Number of respondents: ", 196)
+                                  )) +
+        geom_bar(stat = "identity",
+                 position = "dodge") +
+        coord_flip() +
+        theme_minimal() +
+        scale_y_continuous(labels = scales::dollar_format(),
+                           breaks = seq(0, 100000, 25000)) +
+        scale_x_discrete(
+          labels = function(x)
+            str_wrap(x, width = 25)
+        ) +
+        scale_fill_manual(
+          values = c(
+            "High" = "#003660", # ucsb navy
+            "Median" = "#047c91", # ucsb aqua
+            "Low" = "#dcd6cc" # uscb clay
+          )) +
+        labs(title = paste0("Salary Compensation by MESM Specialization"),
+             x = NULL,
+             y = "Dollars ($)",
+             fill = NULL)
+      
+      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
+        layout(title = list(font = list(size = 16)),
+               legend = list(orientation = "h",
+                             y = -0.25,
+                             x = 0.2)) %>%
+        config(modeBarButtonsToRemove = list("pan", 
+                                             "select",
+                                             "lasso2d",
+                                             "autoScale2d",
+                                             "hoverClosestCartesian",
+                                             "hoverCompareCartesian"))
+      
+    } # EO if 
     
-    plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16)),
-             legend = list(orientation = "h",
-                           y = -0.25,
-                           x = 0.2)) %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select",
-                                           "lasso2d",
-                                           "autoScale2d",
-                                           "hoverClosestCartesian",
-                                           "hoverCompareCartesian"))
+    else if (input$compSpecialization_year == 2019) {
+      salary_special_gg <- ggplot(data = salary_special(),
+                                  aes(x = mesm_program_enrollment_specializations,
+                                      y = values,
+                                      fill = reorder(range, values),
+                                      text = paste0(mesm_program_enrollment_specializations, "\n",
+                                                    range, ": ", "$", values, "\n",
+                                                    "Number of respondents: ", 67)
+                                  )) +
+        geom_bar(stat = "identity",
+                 position = "dodge") +
+        coord_flip() +
+        theme_minimal() +
+        scale_y_continuous(labels = scales::dollar_format(),
+                           breaks = seq(0, 100000, 25000)) +
+        scale_x_discrete(
+          labels = function(x)
+            str_wrap(x, width = 25)
+        ) +
+        scale_fill_manual(
+          values = c(
+            "High" = "#003660", # ucsb navy
+            "Median" = "#047c91", # ucsb aqua
+            "Low" = "#dcd6cc" # uscb clay
+          )) +
+        labs(title = paste0("Salary Compensation by MESM Specialization"),
+             x = NULL,
+             y = "Dollars ($)",
+             fill = NULL)
+      
+      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
+        layout(title = list(font = list(size = 16)),
+               legend = list(orientation = "h",
+                             y = -0.25,
+                             x = 0.2)) %>%
+        config(modeBarButtonsToRemove = list("pan", 
+                                             "select",
+                                             "lasso2d",
+                                             "autoScale2d",
+                                             "hoverClosestCartesian",
+                                             "hoverCompareCartesian"))
+      
+    } # EO else if
+    
+    else if (input$compSpecialization_year == 2020) {
+      salary_special_gg <- ggplot(data = salary_special(),
+                                  aes(x = mesm_program_enrollment_specializations,
+                                      y = values,
+                                      fill = reorder(range, values),
+                                      text = paste0(mesm_program_enrollment_specializations, "\n",
+                                                    range, ": ", "$", values, "\n",
+                                                    "Number of respondents: ", 63)
+                                  )) +
+        geom_bar(stat = "identity",
+                 position = "dodge") +
+        coord_flip() +
+        theme_minimal() +
+        scale_y_continuous(labels = scales::dollar_format(),
+                           breaks = seq(0, 100000, 25000)) +
+        scale_x_discrete(
+          labels = function(x)
+            str_wrap(x, width = 25)
+        ) +
+        scale_fill_manual(
+          values = c(
+            "High" = "#003660", # ucsb navy
+            "Median" = "#047c91", # ucsb aqua
+            "Low" = "#dcd6cc" # uscb clay
+          )) +
+        labs(title = paste0("Salary Compensation by MESM Specialization"),
+             x = NULL,
+             y = "Dollars ($)",
+             fill = NULL)
+      
+      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
+        layout(title = list(font = list(size = 16)),
+               legend = list(orientation = "h",
+                             y = -0.25,
+                             x = 0.2)) %>%
+        config(modeBarButtonsToRemove = list("pan", 
+                                             "select",
+                                             "lasso2d",
+                                             "autoScale2d",
+                                             "hoverClosestCartesian",
+                                             "hoverCompareCartesian"))
+      
+    } # EO else if
+    
+    else if (input$compSpecialization_year == 2021) {
+      salary_special_gg <- ggplot(data = salary_special(),
+                                  aes(x = mesm_program_enrollment_specializations,
+                                      y = values,
+                                      fill = reorder(range, values),
+                                      text = paste0(mesm_program_enrollment_specializations, "\n",
+                                                    range, ": ", "$", values, "\n",
+                                                    "Number of respondents: ", 66)
+                                  )) +
+        geom_bar(stat = "identity",
+                 position = "dodge") +
+        coord_flip() +
+        theme_minimal() +
+        scale_y_continuous(labels = scales::dollar_format(),
+                           breaks = seq(0, 100000, 25000)) +
+        scale_x_discrete(
+          labels = function(x)
+            str_wrap(x, width = 25)
+        ) +
+        scale_fill_manual(
+          values = c(
+            "High" = "#003660", # ucsb navy
+            "Median" = "#047c91", # ucsb aqua
+            "Low" = "#dcd6cc" # uscb clay
+          )) +
+        labs(title = paste0("Salary Compensation by MESM Specialization"),
+             x = NULL,
+             y = "Dollars ($)",
+             fill = NULL)
+      
+      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
+        layout(title = list(font = list(size = 16)),
+               legend = list(orientation = "h",
+                             y = -0.25,
+                             x = 0.2)) %>%
+        config(modeBarButtonsToRemove = list("pan", 
+                                             "select",
+                                             "lasso2d",
+                                             "autoScale2d",
+                                             "hoverClosestCartesian",
+                                             "hoverCompareCartesian"))
+      
+    } # EO else if
   }) # EO salary specialization plot
   
   
