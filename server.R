@@ -678,7 +678,8 @@ server <- function(input, output, session){
                               "High"),
                      names_to = "range",
                      values_to = "values") %>% 
-        mutate(range = factor(range, levels = c("High", "Median", "Low")))
+        mutate(range = factor(range, levels = c("High", "Median", "Low"))) %>% 
+        mutate(mesm_responses = 196)
       
     } # EO if statement
     
@@ -699,7 +700,8 @@ server <- function(input, output, session){
         filter(mesm_class_year == input$compSpecialization_year) %>% 
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
         unnest(mesm_program_enrollment_specializations) %>% 
-        group_by(mesm_program_enrollment_specializations) %>% 
+        group_by(mesm_class_year,
+                 mesm_program_enrollment_specializations) %>% 
         summarize(Median = median(estimated_annual_compensation_us),
                   Low = min(estimated_annual_compensation_us),
                   High = max(estimated_annual_compensation_us)) %>% 
@@ -708,65 +710,22 @@ server <- function(input, output, session){
                               "High"),
                      names_to = "range",
                      values_to = "values") %>% 
-        mutate(range = factor(range, levels = c("High", "Median", "Low")))
+        mutate(range = factor(range, levels = c("High", "Median", "Low"))) %>%
+        left_join(placement_size, by = "mesm_class_year")
     } # EO else statement
     
   }) # EO salary_special reactive 
   
   ## PLOTTING ##
   output$comp_specialization <- plotly::renderPlotly({
-    if (input$compSpecialization_year == "All Years") {
-      salary_special_gg <- ggplot(data = salary_special(),
-                                  aes(x = mesm_program_enrollment_specializations,
-                                      y = values,
-                                      fill = reorder(range, values),
-                                      text = paste0(mesm_program_enrollment_specializations, "\n",
-                                                    range, ": ", "$", values, "\n",
-                                                    "Number of respondents: ", 196)
-                                  )) +
-        geom_bar(stat = "identity",
-                 position = "dodge") +
-        coord_flip() +
-        theme_minimal() +
-        scale_y_continuous(labels = scales::dollar_format(),
-                           breaks = seq(0, 100000, 25000)) +
-        scale_x_discrete(
-          labels = function(x)
-            str_wrap(x, width = 25)
-        ) +
-        scale_fill_manual(
-          values = c(
-            "High" = "#003660", # ucsb navy
-            "Median" = "#047c91", # ucsb aqua
-            "Low" = "#dcd6cc" # uscb clay
-          )) +
-        labs(title = paste0("Salary Compensation by MESM Specialization"),
-             x = NULL,
-             y = "Dollars ($)",
-             fill = NULL)
-      
-      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
-        layout(title = list(font = list(size = 16)),
-               legend = list(orientation = "h",
-                             y = -0.25,
-                             x = 0.2)) %>%
-        config(modeBarButtonsToRemove = list("pan", 
-                                             "select",
-                                             "lasso2d",
-                                             "autoScale2d",
-                                             "hoverClosestCartesian",
-                                             "hoverCompareCartesian"))
-      
-    } # EO if 
     
-    else if (input$compSpecialization_year == 2019) {
-      salary_special_gg <- ggplot(data = salary_special(),
+    salary_special_gg <- ggplot(data = salary_special(),
                                   aes(x = mesm_program_enrollment_specializations,
                                       y = values,
                                       fill = reorder(range, values),
                                       text = paste0(mesm_program_enrollment_specializations, "\n",
                                                     range, ": ", "$", values, "\n",
-                                                    "Number of respondents: ", 67)
+                                                    "Number of respondents: ", mesm_responses)
                                   )) +
         geom_bar(stat = "identity",
                  position = "dodge") +
@@ -801,96 +760,8 @@ server <- function(input, output, session){
                                              "hoverClosestCartesian",
                                              "hoverCompareCartesian"))
       
-    } # EO else if
-    
-    else if (input$compSpecialization_year == 2020) {
-      salary_special_gg <- ggplot(data = salary_special(),
-                                  aes(x = mesm_program_enrollment_specializations,
-                                      y = values,
-                                      fill = reorder(range, values),
-                                      text = paste0(mesm_program_enrollment_specializations, "\n",
-                                                    range, ": ", "$", values, "\n",
-                                                    "Number of respondents: ", 63)
-                                  )) +
-        geom_bar(stat = "identity",
-                 position = "dodge") +
-        coord_flip() +
-        theme_minimal() +
-        scale_y_continuous(labels = scales::dollar_format(),
-                           breaks = seq(0, 100000, 25000)) +
-        scale_x_discrete(
-          labels = function(x)
-            str_wrap(x, width = 25)
-        ) +
-        scale_fill_manual(
-          values = c(
-            "High" = "#003660", # ucsb navy
-            "Median" = "#047c91", # ucsb aqua
-            "Low" = "#dcd6cc" # uscb clay
-          )) +
-        labs(title = paste0("Salary Compensation by MESM Specialization"),
-             x = NULL,
-             y = "Dollars ($)",
-             fill = NULL)
-      
-      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
-        layout(title = list(font = list(size = 16)),
-               legend = list(orientation = "h",
-                             y = -0.25,
-                             x = 0.2)) %>%
-        config(modeBarButtonsToRemove = list("pan", 
-                                             "select",
-                                             "lasso2d",
-                                             "autoScale2d",
-                                             "hoverClosestCartesian",
-                                             "hoverCompareCartesian"))
-      
-    } # EO else if
-    
-    else if (input$compSpecialization_year == 2021) {
-      salary_special_gg <- ggplot(data = salary_special(),
-                                  aes(x = mesm_program_enrollment_specializations,
-                                      y = values,
-                                      fill = reorder(range, values),
-                                      text = paste0(mesm_program_enrollment_specializations, "\n",
-                                                    range, ": ", "$", values, "\n",
-                                                    "Number of respondents: ", 66)
-                                  )) +
-        geom_bar(stat = "identity",
-                 position = "dodge") +
-        coord_flip() +
-        theme_minimal() +
-        scale_y_continuous(labels = scales::dollar_format(),
-                           breaks = seq(0, 100000, 25000)) +
-        scale_x_discrete(
-          labels = function(x)
-            str_wrap(x, width = 25)
-        ) +
-        scale_fill_manual(
-          values = c(
-            "High" = "#003660", # ucsb navy
-            "Median" = "#047c91", # ucsb aqua
-            "Low" = "#dcd6cc" # uscb clay
-          )) +
-        labs(title = paste0("Salary Compensation by MESM Specialization"),
-             x = NULL,
-             y = "Dollars ($)",
-             fill = NULL)
-      
-      plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
-        layout(title = list(font = list(size = 16)),
-               legend = list(orientation = "h",
-                             y = -0.25,
-                             x = 0.2)) %>%
-        config(modeBarButtonsToRemove = list("pan", 
-                                             "select",
-                                             "lasso2d",
-                                             "autoScale2d",
-                                             "hoverClosestCartesian",
-                                             "hoverCompareCartesian"))
-      
-    } # EO else if
   }) # EO salary specialization plot
+  
   
   
   ## SO salary sector ----
@@ -927,7 +798,8 @@ server <- function(input, output, session){
                               "Low",
                               "High"),
                      names_to = "range",
-                     values_to = "values")
+                     values_to = "values") %>%
+        mutate(mesm_responses = 196)
       
     }  # EO if statement
     
@@ -955,8 +827,9 @@ server <- function(input, output, session){
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
         # filter for year
-        filter(mesm_class_year == input$compSector_year) %>% 
-        group_by(sector_type) %>% 
+        filter(mesm_class_year == input$compSector_year) %>%
+        group_by(mesm_class_year,
+                 sector_type) %>% 
         summarize(Median = median(estimated_annual_compensation_us),
                   Low = min(estimated_annual_compensation_us),
                   High = max(estimated_annual_compensation_us)) %>% 
@@ -964,7 +837,8 @@ server <- function(input, output, session){
                               "Low",
                               "High"),
                      names_to = "range",
-                     values_to = "values")
+                     values_to = "values") %>%
+        left_join(placement_size, by = "mesm_class_year")
       
     } # EO else statement
     
@@ -978,7 +852,7 @@ server <- function(input, output, session){
                               fill = reorder(range, values),
                               text = paste0(sector_type, "\n",
                                             range, ": ", "$", values, "\n",
-                                            "Number of respondents: ", 196)
+                                            "Number of respondents: ", mesm_responses)
                           )) +
       geom_bar(stat = "identity",
                position = "dodge") +
