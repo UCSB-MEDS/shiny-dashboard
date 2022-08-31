@@ -2,8 +2,13 @@
 # header, sidebar, body
 ui <- dashboardPage(
   # HEADER ----
-  dashboardHeader(
-    title = "Bren Dashboard"
+  dashboardHeader(title =
+                    span(tags$a(img(src = "logos/bren-logo.png"),
+                                href = "https://bren.ucsb.edu/",
+                                target = "_blank"), # _blank opens link in a new tab
+                         "Bren Dashboard"
+                         ) # EO span
+    #title = "Bren Dashboard"
   ), # EO dashboardHeader
   
   # SIDEBAR ----
