@@ -1,4 +1,36 @@
-/* career home page styling */
+/* DASHBOARD STYLES*/
+/* top nav bar */
+.skin-blue .main-header .navbar {
+  background-color: #003660;
+}
+/* top header */
+.skin-blue .main-header .logo {
+  background-color: #003660;
+}
+.skin-blue .main-header .logo:hover {
+  background-color: #07528c;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+  background-color: #07528c;
+}
+/* side bar */
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+  background-color: #fff;
+}
+.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li.menu-open > a, .skin-blue .sidebar-menu > li:hover > a {
+  background: #74a1c4;
+}
+.skin-blue .sidebar-menu > li.active > a {
+  background-color: #07528c;
+}
+.skin-blue .sidebar-menu > li.active > a {
+  border-left-color: #07528c;
+}
+
+
+
+
+/* CAREER DB STYLES */
 /* this is not working figure out later */
 .small-box.bg-light-blue {
   background-color: #168496 !important;
@@ -10,6 +42,19 @@
 
 .small-box.bg-green {
   background-color: #6d7d33 !important;
+}
+
+/* intro box background color */
+.box.box-solid.box-success {
+  border: 1px solid #79A540 !important;
+}
+.box.box-solid.box-success > .box-header {
+  background-color:#79A540 !important;
+}
+
+/* initial employers and sectors table color */
+.box.box-solid.box-navy > .box-header {
+  background-color: #003660;
 }
 
 /* styling font on tabsetPanel on career db*/
@@ -51,7 +96,4 @@
   text-decoration: underline;
 }
 
-/* change background color of menuItems when selected */
-.skin-blue .sidebar-menu>li.active>a {
-  background-color: #3c8dbc;
-}
+
