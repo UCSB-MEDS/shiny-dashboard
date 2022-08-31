@@ -562,6 +562,7 @@ server <- function(input, output, session){
       mesm_placement %>% 
         select(mesm_class_year,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
@@ -569,6 +570,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>%
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>% 
         # 3 year Median
         mutate(Median = median(estimated_annual_compensation_us)) %>% 
         mutate(Low = min(estimated_annual_compensation_us)) %>% 
@@ -588,6 +591,7 @@ server <- function(input, output, session){
       mesm_placement %>% 
         select(mesm_class_year,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
@@ -595,6 +599,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>% 
         # filter for year 
         filter(mesm_class_year %in% input$compensation_year) %>% 
         # 3 year Median
@@ -656,6 +662,7 @@ server <- function(input, output, session){
         select(mesm_class_year,
                mesm_program_enrollment_specializations,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
@@ -663,6 +670,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>%
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
         unnest(mesm_program_enrollment_specializations) %>% 
         group_by(mesm_program_enrollment_specializations) %>% 
@@ -685,6 +694,7 @@ server <- function(input, output, session){
         select(mesm_class_year,
                mesm_program_enrollment_specializations,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
@@ -692,6 +702,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>%
         # filter for year
         filter(mesm_class_year == input$compSpecialization_year) %>% 
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
@@ -768,6 +780,7 @@ server <- function(input, output, session){
         select(mesm_class_year,
                employer_sector,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # assign private, public, and other
         mutate(sector_type = case_when(
@@ -786,6 +799,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>%
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>%
         group_by(sector_type) %>% 
         summarize(Median = median(estimated_annual_compensation_us),
                   Low = min(estimated_annual_compensation_us),
@@ -804,6 +819,7 @@ server <- function(input, output, session){
         select(mesm_class_year,
                employer_sector,
                employment_type,
+               compensation_frequency,
                estimated_annual_compensation_us) %>%
         # assign private, public, and other
         mutate(sector_type = case_when(
@@ -822,6 +838,8 @@ server <- function(input, output, session){
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
+        # remove stipend compensation_frequency
+        filter(compensation_frequency != "Stipend") %>%
         # filter for year
         filter(mesm_class_year == input$compSector_year) %>%
         group_by(mesm_class_year,
