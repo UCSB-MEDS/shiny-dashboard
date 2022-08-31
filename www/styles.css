@@ -26,11 +26,19 @@
 .skin-blue .sidebar-menu > li.active > a {
   border-left-color: #07528c;
 }
+/* text color */
+.skin-blue .sidebar a {
+  color: #414445;
+}
 
 
 
 
-/* CAREER DB STYLES */
+/* CAREER DB STYLES 
+.career_tabpanels:first-child .nav-tabs li.active > a {
+  color: pink !important;
+}*/
+
 /* this is not working figure out later */
 .small-box.bg-light-blue {
   background-color: #168496 !important;
