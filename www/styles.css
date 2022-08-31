@@ -34,10 +34,15 @@
 
 
 
-/* CAREER DB STYLES 
-.career_tabpanels:first-child .nav-tabs li.active > a {
-  color: pink !important;
-}*/
+/* CAREER DB STYLES */
+#career_tabpanels a {
+  color: #fff !important;
+  background-color: #74a1c4;
+  font-size: medium;
+}
+#career_tabpanels > li.active > a {
+  background: #07528c;
+}
 
 /* this is not working figure out later */
 .small-box.bg-light-blue {
