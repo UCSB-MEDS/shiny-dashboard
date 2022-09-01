@@ -1,4 +1,4 @@
-race_plot <- function(df, color, prog_input){
+race_plot <- function(df, prog_input){
   # df = data frame used to create category_ipeds (i.e. enrolled)
   # color = program color to be used to fill bar plots (i.e. mesm_color)
   # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
@@ -90,12 +90,13 @@ race_plot <- function(df, color, prog_input){
   ipeds_gg <- ggplot(data = category_ipeds_stats(),
                      aes(x = category_ipeds,
                          y = percent,
-                         #fill = category_ipeds,
+                         fill = category_ipeds,
                          text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
                                        "Sample size: ", size))
   ) +
     geom_bar(stat = "identity",
-             fill = color) +
+             #fill = color
+             ) +
     coord_flip() +
     theme_minimal() +
     theme(
@@ -107,18 +108,18 @@ race_plot <- function(df, color, prog_input){
                      labels = function(x)
                        str_wrap(x, width = 35)) +
     scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-    # scale_fill_manual(
-    #   values = c(
-    #     "American Indian or Alaska Native" = "#003660", # ucsb navy
-    #     "Asian" = "#047c91", # ucsb aqua
-    #     "Black or African American" = "#dcd6cc", # ucsb clay
-    #     "Hispanic or Latino" = "#6d7d33", # ucsb moss
-    #     "Native Hawaiian or Other Pacific Islander" = "#9cbebe", # ucsb mist
-    #     "White" = "#dce1e5", # ucsb light grey
-    #     "Two or more races" = "#79a540", # bren leaf green
-    #     "Unknown race and ethnicity" = "#09847a" # ucsb sea green
-    #   )
-    # ) +
+    scale_fill_manual(
+      values = c(
+        "American Indian or Alaska Native" = "#003660", # ucsb navy
+        "Asian" = "#047c91", # ucsb aqua
+        "Black or African American" = "#dcd6cc", # ucsb clay
+        "Hispanic or Latino" = "#6d7d33", # ucsb moss
+        "Native Hawaiian or Other Pacific Islander" = "#9cbebe", # ucsb mist
+        "White" = "#dce1e5", # ucsb light grey
+        "Two or more races" = "#79a540", # bren leaf green
+        "Unknown race and ethnicity" = "#09847a" # ucsb sea green
+      )
+    ) +
     labs(
       title = paste0("IPEDS Categories and Distribution", "\n",
                      "(", prog_input, ")"),
