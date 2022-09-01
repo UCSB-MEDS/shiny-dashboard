@@ -24,19 +24,19 @@ ui <- dashboardPage(
         badgeColor = "green"
       ), # EO curr yr menuItem
       
-      # career ----
-      menuItem(
-        tabName = "career_db",
-        text = "Career Outcomes",
-        icon = icon("road", lib = "glyphicon")
-      ), # EO career menuItem
-      
       # student demographics ----
       menuItem(
         tabName = "demo_db",
         text = "Student Demographics",
         icon = icon("user", lib = "glyphicon")
-      )#, # EO student demographics menuItem
+      ), # EO student demographics menuItem
+      
+      # career ----
+      menuItem(
+        tabName = "career_db",
+        text = "Career Outcomes",
+        icon = icon("road", lib = "glyphicon")
+      ) # EO career menuItem
       
     ) # EO sidebarMenu
   ), # EO dashboardSidebar
@@ -62,200 +62,52 @@ ui <- dashboardPage(
       tabItem(
         tabName = "welcome",
         h2("Welcome to the Bren Dashboard!"),
+        tags$img(class = "banner",
+                 src = "images/bren.png"),
+        
         
         # * intro text ----
         fluidRow(
-          box(title = "Get to know our students",
-              width = 12,
-              solidHeader = TRUE,
-              status = "navy",
-              "Here is some text explaining the dashboard, 
-              why it's important, and what a user can do with it")
-        ) # EO FR first row
+          column(width = 6,
+            box(title = 
+                  tags$div(class = "intro_box_title",
+                           span(
+                             tags$i(class="fa-solid fa-users"),
+                             tags$p("Get to know Bren Students")
+                           ), # EO span
+                  ), # EO div
+                width = NULL,
+                solidHeader = TRUE,
+                status = "navy",
+                includeMarkdown("text/welcome_what_text.md")
+              ) # EO what box
+          ), # EO column 1
+          column(width = 6,
+            box(title = 
+                  tags$div(class = "intro_box_title",
+                           span(
+                             tags$i(class="fa-solid fa-database"),
+                             tags$p("Where the Data Comes From")
+                           ), # EO span
+                  ), # EO div
+                width = NULL,
+                solidHeader = TRUE,
+                status = "navy",
+                includeMarkdown("text/welcome_data_text.md")
+            ) # EO why box
+            ) # EO column 2
+        ), # EO FR first row
+        
+        # * footer----
+        hr(),
+        includeHTML("text/footer.html")
+        #print("This Shiny application was developed by MEDS 2022 Alum, Halina Do-Linh, and will be updated annually. You can find the source code on GitHub. If you see mistakes or want to suggest changes, please submit an issue on the source repository.")
         ), # EO curr yr tabItem
       
-      
-      # tabs career ----
-      tabItem(
-          tabName = "career_db",
-            tabsetPanel(
-              id = "career_tabpanels",
-              # * MESM tabPanel ----
-                tabPanel(
-                  title = "MESM Initial Career Placements",
-                  
-                  fluidRow(
-                    column(4,
-                           # ** intro box ----
-                           fluidRow(
-                             box(
-                               width = 12,
-                               title = "Explore MESM Alumni Career Outcomes",
-                               solidHeader = TRUE,
-                               status = "success",
-                               tabsetPanel(
-                                 tabPanel(
-                                   "Welcome!",
-                                   includeMarkdown("text/career_about.md")
-                                 ), # EO intro tabPanel
-                                 tabPanel(
-                                   "About the Data",
-                                   includeMarkdown("text/career_data_info.md")
-                                 ) # EO intro about data
-                               ) # EO tabsetPanel intro box
-                             ), # EO intro box
-                             # ** about the data ----
-                             # box(
-                             #   width = 12,
-                             #   title = "About the data",
-                             #   solidHeader = TRUE,
-                             #   status = "success",
-                             #   includeMarkdown("text/career_data_info.md")
-                             # ) # EO about data box 
-                           ), # EO FR
-
-                           
-                           ## ** valueBox stats ----
-                           fluidRow(
-                             valueBoxOutput(outputId = "brenNet_stat",
-                                            width = 6),
-                             valueBoxOutput(outputId = "mesm_satisfied_stat",
-                                            width = 6)
-                           ), # EO FR valueBox 1
-                           fluidRow(
-                             # placement stat
-                             valueBoxOutput(outputId = "placement_stat",
-                                            width = 12)
-                           ) # EO FR valueBox 2
-                    ), # EO column 1
-                    
-                    column(8,
-                           # ** info box ----
-                           box(
-                             title = "Initial Employers and Sectors (Data over 3 Years)",
-                             width = 12,
-                             solidHeader = TRUE,
-                             status = "navy",
-                             DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
-                               withSpinner(color = "#003660", type = 1)
-                           ) # EO employers and sectors box
-                    ) # EO column 2
-                    
-                  ), # EO FR first row
-                  
-                  # fluidRow(
-                  #   box(id = "info_data_career",
-                  #       width = 12,
-                  #       span(
-                  #         tags$div(class = "lrg-bold",
-                  #                  includeMarkdown("text/career_data_info.md"))
-                  #       ),
-                  #       background = "green"),
-                  #   # remove title from box
-                  #   tags$head(tags$style('#info_data_career .box-header{ display: none}'))
-                  #   
-                  # ), # EO FR second row
-                  
-                  fluidRow(
-                    # ** career maps ----
-                    tabBox(width = 6,
-                           tabPanel(title = HTML(paste("Domestic Placement", "(Over last 3 Years)", sep = "<br/>")),
-                                    tmap::tmapOutput(outputId = "car_alumniMap") %>%
-                                      withSpinner(color = "#003660", type = 1)#,
-                                    # tags$p(class = "italic_sector",
-                                    #        "Click a state to see the number of alumni at each location.")
-                           ), # EO tabPanel leaflet map
-                           tabPanel(title = HTML(paste("International Placement", "(Over last 3 Years)", sep = "<br/>")),
-                                    DT::dataTableOutput(outputId = "international_place") %>%
-                                      withSpinner(color = "#003660", type = 1)
-                           ), # EO tabPanel international placements
-                           tabPanel("Geographic Comparison",
-                                    plotly::plotlyOutput(outputId = "mesm_location") %>%
-                                      withSpinner(color = "#003660", type = 1)
-                           ) # EO tabPanel bar plot location of MESM alumni
-                    ), # EO tabBox employers map / info
-                    
-                    # ** career plots ----
-                    tabBox(width = 6,
-                           tabPanel("Placement Status",
-                                    plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
-                                      withSpinner(color = "#003660", type = 1)
-                           ), # EO tabPanel placement status in box 2
-                           tabPanel("Job Source",
-                                    plotly::plotlyOutput(outputId = "mesm_job_source") %>%
-                                      withSpinner(color = "#003660", type = 1)
-                           ), # EO tabPanel placement source in box 2
-                           tabPanel("Sector Trends",
-                                    plotly::plotlyOutput(outputId = "sector_trends") %>% 
-                                      withSpinner(color = "#003660", type = 1),
-                                    tags$p(class = "italic_sector",
-                                           "Private = Consulting and Corporate | 
-                                           Public = Federal, Local & State Government & Research/Education | 
-                                           Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
-                                           Eco-Entrepreneurship & New Business")
-                           ), # EO tabPanel sector over time
-                           tabPanel("Sector Satisfaction",
-                                    plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
-                                      withSpinner(color = "#003660", type = 1),
-                                    radioButtons(inputId = "sector_types",
-                                                 label = NULL,
-                                                 choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
-                                                             "Federal Government", "Foreign Government", 
-                                                             "Local Government", "Non-Profit", 
-                                                             "Research/Education", "State Government"),
-                                                 selected = "Consulting",
-                                                 inline = TRUE)
-                           ), # EO tabPanel placement sector satisfaction in box 2
-                           tabPanel("Salary",
-                                    plotlyOutput(outputId = "compensation"),
-                                    tags$p(class = "italic_sector",
-                                           "Data includes Full-Time Career positions only."),
-                                    radioButtons(inputId = "compensation_year",
-                                                 label = NULL,
-                                                 choices = c(2019, 2020, 2021, "All Years"),
-                                                 selected = "All Years",
-                                                 inline = TRUE)
-                           ), # EO tabPanel compensation in box 2
-                           tabPanel("Salary by Specialization",
-                                    plotlyOutput(outputId = "comp_specialization"),
-                                    tags$p(class = "italic_sector",
-                                           "Data includes Full-Time Career positions only."),
-                                    radioButtons(inputId = "compSpecialization_year",
-                                                 label = NULL,
-                                                 choices = c(2019, 2020, 2021, "All Years"),
-                                                 selected = "All Years",
-                                                 inline = TRUE)
-                           ), # EO tabPanel compensation specialization in box 2
-                           tabPanel("Salary by Sector",
-                                    plotlyOutput(outputId = "comp_sector"),
-                                    tags$p(class = "italic_sector",
-                                           "Data includes Full-Time Career positions only."),
-                                    radioButtons(inputId = "compSector_year",
-                                                 label = NULL,
-                                                 choices = c(2019, 2020, 2021, "All Years"),
-                                                 selected = "All Years",
-                                                 inline = TRUE)
-                           ) # EO tabPanel compensation sector in box 2
-                    ) # EO tabBox career second plot
-                    
-                  )# EO FR second row
-                ), # EO tabPanel MESM
-              
-              # * MEDS tabPanel ----
-              tabPanel(
-                title = "MEDS Initial Career Placements",
-                "Data for MEDS 2022 will be added in January/February of 2023.
-                If you have any immediate questions please reach out to
-                bren-admissions@ucsb.edu."
-                ) # EO tabPanel MEDS
-
-            ) # EO tabsetPanel career_db
-        ), # EO tabItem career_db
-      
 
       
       
-      # tabs demographics ----
+      # TABS DEMOGRAPHICS ----
       tabItem(
         tabName = "demo_db",
         
@@ -486,7 +338,184 @@ ui <- dashboardPage(
                           ) # EO unknown eth
           ) # EO ethnicity tabBox
         ) # EO FR fifth row
-      ) # EO demo home tabItem
+      ), # EO student demographics tabItem
+      
+      # TABS CAREER ----
+      tabItem(
+        tabName = "career_db",
+        tabsetPanel(
+          id = "career_tabpanels",
+          # * MESM tabPanel ----
+          tabPanel(
+            title = "MESM Initial Career Placements",
+            
+            fluidRow(
+              column(4,
+                     # ** intro box ----
+                     fluidRow(
+                       box(
+                         width = 12,
+                         title = "Explore MESM Alumni Career Outcomes",
+                         solidHeader = TRUE,
+                         status = "success",
+                         tabsetPanel(
+                           tabPanel(
+                             "Welcome!",
+                             includeMarkdown("text/career_about.md")
+                           ), # EO intro tabPanel
+                           tabPanel(
+                             "About the Data",
+                             includeMarkdown("text/career_data_info.md")
+                           ) # EO intro about data
+                         ) # EO tabsetPanel intro box
+                       ), # EO intro box
+                       # ** about the data ----
+                       # box(
+                       #   width = 12,
+                       #   title = "About the data",
+                       #   solidHeader = TRUE,
+                       #   status = "success",
+                       #   includeMarkdown("text/career_data_info.md")
+                       # ) # EO about data box 
+                     ), # EO FR
+                     
+                     
+                     ## ** valueBox stats ----
+                     fluidRow(
+                       valueBoxOutput(outputId = "brenNet_stat",
+                                      width = 6),
+                       valueBoxOutput(outputId = "mesm_satisfied_stat",
+                                      width = 6)
+                     ), # EO FR valueBox 1
+                     fluidRow(
+                       # placement stat
+                       valueBoxOutput(outputId = "placement_stat",
+                                      width = 12)
+                     ) # EO FR valueBox 2
+              ), # EO column 1
+              
+              column(8,
+                     # ** info box ----
+                     box(
+                       title = "Initial Employers and Sectors (Data over 3 Years)",
+                       width = 12,
+                       solidHeader = TRUE,
+                       status = "navy",
+                       DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
+                         withSpinner(color = "#003660", type = 1)
+                     ) # EO employers and sectors box
+              ) # EO column 2
+              
+            ), # EO FR first row
+            
+            # fluidRow(
+            #   box(id = "info_data_career",
+            #       width = 12,
+            #       span(
+            #         tags$div(class = "lrg-bold",
+            #                  includeMarkdown("text/career_data_info.md"))
+            #       ),
+            #       background = "green"),
+            #   # remove title from box
+            #   tags$head(tags$style('#info_data_career .box-header{ display: none}'))
+            #   
+            # ), # EO FR second row
+            
+            fluidRow(
+              # ** career maps ----
+              tabBox(width = 6,
+                     tabPanel(title = HTML(paste("Domestic Placement", "(Over last 3 Years)", sep = "<br/>")),
+                              tmap::tmapOutput(outputId = "car_alumniMap") %>%
+                                withSpinner(color = "#003660", type = 1)#,
+                              # tags$p(class = "italic_sector",
+                              #        "Click a state to see the number of alumni at each location.")
+                     ), # EO tabPanel leaflet map
+                     tabPanel(title = HTML(paste("International Placement", "(Over last 3 Years)", sep = "<br/>")),
+                              DT::dataTableOutput(outputId = "international_place") %>%
+                                withSpinner(color = "#003660", type = 1)
+                     ), # EO tabPanel international placements
+                     tabPanel("Geographic Comparison",
+                              plotly::plotlyOutput(outputId = "mesm_location") %>%
+                                withSpinner(color = "#003660", type = 1)
+                     ) # EO tabPanel bar plot location of MESM alumni
+              ), # EO tabBox employers map / info
+              
+              # ** career plots ----
+              tabBox(width = 6,
+                     tabPanel("Placement Status",
+                              plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
+                                withSpinner(color = "#003660", type = 1)
+                     ), # EO tabPanel placement status in box 2
+                     tabPanel("Job Source",
+                              plotly::plotlyOutput(outputId = "mesm_job_source") %>%
+                                withSpinner(color = "#003660", type = 1)
+                     ), # EO tabPanel placement source in box 2
+                     tabPanel("Sector Trends",
+                              plotly::plotlyOutput(outputId = "sector_trends") %>% 
+                                withSpinner(color = "#003660", type = 1),
+                              tags$p(class = "italic_sector",
+                                     "Private = Consulting and Corporate | 
+                                           Public = Federal, Local & State Government & Research/Education | 
+                                           Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
+                                           Eco-Entrepreneurship & New Business")
+                     ), # EO tabPanel sector over time
+                     tabPanel("Sector Satisfaction",
+                              plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
+                                withSpinner(color = "#003660", type = 1),
+                              radioButtons(inputId = "sector_types",
+                                           label = NULL,
+                                           choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
+                                                       "Federal Government", "Foreign Government", 
+                                                       "Local Government", "Non-Profit", 
+                                                       "Research/Education", "State Government"),
+                                           selected = "Consulting",
+                                           inline = TRUE)
+                     ), # EO tabPanel placement sector satisfaction in box 2
+                     tabPanel("Salary",
+                              plotlyOutput(outputId = "compensation"),
+                              tags$p(class = "italic_sector",
+                                     "Data includes Full-Time Career positions only."),
+                              radioButtons(inputId = "compensation_year",
+                                           label = NULL,
+                                           choices = c(2019, 2020, 2021, "All Years"),
+                                           selected = "All Years",
+                                           inline = TRUE)
+                     ), # EO tabPanel compensation in box 2
+                     tabPanel("Salary by Specialization",
+                              plotlyOutput(outputId = "comp_specialization"),
+                              tags$p(class = "italic_sector",
+                                     "Data includes Full-Time Career positions only."),
+                              radioButtons(inputId = "compSpecialization_year",
+                                           label = NULL,
+                                           choices = c(2019, 2020, 2021, "All Years"),
+                                           selected = "All Years",
+                                           inline = TRUE)
+                     ), # EO tabPanel compensation specialization in box 2
+                     tabPanel("Salary by Sector",
+                              plotlyOutput(outputId = "comp_sector"),
+                              tags$p(class = "italic_sector",
+                                     "Data includes Full-Time Career positions only."),
+                              radioButtons(inputId = "compSector_year",
+                                           label = NULL,
+                                           choices = c(2019, 2020, 2021, "All Years"),
+                                           selected = "All Years",
+                                           inline = TRUE)
+                     ) # EO tabPanel compensation sector in box 2
+              ) # EO tabBox career second plot
+              
+            )# EO FR second row
+          ), # EO tabPanel MESM
+          
+          # * MEDS tabPanel ----
+          tabPanel(
+            title = "MEDS Initial Career Placements",
+            "Data for MEDS 2022 will be added in January/February of 2023.
+                If you have any immediate questions please reach out to
+                bren-admissions@ucsb.edu."
+          ) # EO tabPanel MEDS
+          
+        ) # EO tabsetPanel career_db
+      ) # EO tabItem career_db
       
       ) # EO tabItems
       
