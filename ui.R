@@ -365,7 +365,14 @@ ui <- dashboardPage(
               background = "green"
           ), # EO info box
           # remove title from box
-          tags$head(tags$style('#ipeds_def .box-header{ display: none}'))
+          tags$head(tags$style('#ipeds_def .box-header{ display: none}')),
+          
+          box(
+            id = "race_ethnicity_text",
+            width = 12,
+            includeMarkdown("text/race_ethnicity_text.md")
+          ), # EO race / category / ethnicity plots text
+          tags$head(tags$style('#race_ethnicity_text .box-header{ display: none}')),
         ), # EO FR fourth row
         
         ## * race & ethnicity plots ----
@@ -411,7 +418,13 @@ ui <- dashboardPage(
                                        label = NULL,
                                        choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                        selected = "All Programs",
-                                       inline = TRUE)
+                                       inline = TRUE),
+                          tags$p(class = "italic_sector",
+                                 "*URM or Underrepresented Minority is
+                                 defined as a U.S. citizen who identifies
+                                 as Black/African American, Hispanic/Latino,
+                                 or American Indian, which is consistent 
+                                 with the UC definition of URM.")
                  ) # EO urm distribution tabpanel
           ), # EO tabBox race / category
 
