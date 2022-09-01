@@ -1,4 +1,18 @@
 /* DASHBOARD STYLES*/
+
+/* image resizing */
+img.banner {
+  display:block;
+  max-width: 100%;
+  width: auto; 
+}
+
+/* BOX TITLE STYLING */
+.intro_box_title span {
+  display: flex;
+  gap: 0.4rem;
+}
+
 /* top nav bar */
 .skin-blue .main-header .navbar {
   background-color: #003660;
