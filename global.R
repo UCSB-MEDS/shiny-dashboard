@@ -13,6 +13,7 @@ library(plotly)
 library(treemap)
 library(d3treeR) # interactive tree map
 library(shinycssloaders) # loading icon
+library(fontawesome) # icons
 
 #"MEDS data is limited since program began in 2021"
 

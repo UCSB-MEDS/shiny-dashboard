@@ -1,6 +1,11 @@
 # server instructions
 server <- function(input, output, session){
 
+  # WELCOME / LANDING PAGE -----
+  
+  
+  
+  
   # CAREER DB ----
   
   ## SO career valuebox stats ----
@@ -1375,14 +1380,14 @@ server <- function(input, output, session){
   ## OBSERVE EVENTS ##
   # Note(HD): note sure what this means, got it from SO
   # for maintaining the state of drill-down variables
-  # race_pltly <- reactiveVal()
-  # 
-  # # when clicking on a race / category
-  # observeEvent(event_data("plotly_click", source = "race_pltly"), {
-  #   
-  #   race_pltly(event_data("plotly_click", source = "race_pltly")$x)
-  #   
-  #   }) # EO OE
+  race_pltly <- reactiveVal()
+
+  # when clicking on a race / category
+  observeEvent(event_data("plotly_click", source = "race_pltly"), {
+
+    race_pltly(event_data("plotly_click", source = "race_pltly")$x)
+
+    }) # EO OE
   
   
   ## PLOTTING ##
