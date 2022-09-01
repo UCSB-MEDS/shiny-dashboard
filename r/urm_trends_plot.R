@@ -16,7 +16,7 @@ urm_trends_plot <- function(df, color, prog_input){
     scale_x_continuous(breaks = seq(max(df$ay_year),
                                     min(df$ay_year))) +
     scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-    labs(title = paste0("URM Trends", " (", prog_input, ")"),
+    labs(title = paste0("Underrepresented Minority Trends", " (", prog_input, ")"),
          y = NULL,
          x = NULL) 
   
