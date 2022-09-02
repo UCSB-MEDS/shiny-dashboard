@@ -73,7 +73,7 @@ ui <- dashboardPage(
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-users"),
-                             tags$p("Get to know Bren Students")
+                             tags$p("Learn More About Students at Bren")
                            ), # EO span
                   ), # EO div
                 width = NULL,
@@ -249,20 +249,6 @@ ui <- dashboardPage(
                                        selected = "All Programs",
                                        inline = TRUE)
                  ), # EO race / category over time tabpanel
-                 # tabPanel("Race / Category Trends Option 2",
-                 #          plotly::plotlyOutput(outputId = "race_trends_2_pltly") %>% 
-                 #            withSpinner(color = "#003660", type = 1),
-                 #          radioButtons(inputId = "race_trends_2",
-                 #                       label = NULL,
-                 #                       choices = c("Asian", 
-                 #                                   "Black or African American", 
-                 #                                   "Hispanic or Latino",
-                 #                                   "White",
-                 #                                   "Two or more races",
-                 #                                   "Unknown race and ethnicity"),
-                 #                       selected = "Asian",
-                 #                       inline = TRUE)
-                 # ), # EO race / category over time tabpanel 2
                  tabPanel("URM Trends",
                           plotly::plotlyOutput(outputId = "urm_trends_pltly") %>% 
                             withSpinner(color = "#003660", type = 1),
@@ -279,6 +265,14 @@ ui <- dashboardPage(
                                  with the UC definition of URM.")
                  ) # EO urm distribution tabpanel
           ), # EO tabBox race / category
+          
+          
+          # TEST ethnicity / background ----
+          # box(width = 6,
+          #     title = "TEST ethnicity / background",
+          #     plotly::plotlyOutput(outputId = "eth_pltly") %>%
+          #       withSpinner(color = "#003660", type = 1)
+          #     ) # EO TEST ethnicity / background
 
           # ethnicity / background
           tabBox(width = 6,
@@ -338,6 +332,11 @@ ui <- dashboardPage(
                           ) # EO unknown eth
           ) # EO ethnicity tabBox
         ) # EO FR fifth row
+        
+        # fixedRow(
+        #   actionButton(inputId = "reset",
+        #                "Reset Selection")
+        # ) # EO FR sixth row
       ), # EO student demographics tabItem
       
       # TABS CAREER ----

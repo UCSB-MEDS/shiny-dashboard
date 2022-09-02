@@ -128,7 +128,7 @@ race_plot <- function(df, prog_input){
     )
   
   # plotly
-  plotly::ggplotly(ipeds_gg, tooltip = "text") %>% 
+  p <- plotly::ggplotly(ipeds_gg, tooltip = "text") %>% 
     config(
       modeBarButtonsToRemove = list(
         "pan",
@@ -139,6 +139,8 @@ race_plot <- function(df, prog_input){
         "hoverCompareCartesian"
       )
     )
+  
+  return(p)
   
   
 } # EO age plot function

@@ -469,6 +469,9 @@ server <- function(input, output, session){
     
     # plotly
     plotly::ggplotly(sector_time_gg, tooltip = "text") %>%
+      layout(legend = list(orientation = "h",
+                           y = -0.1,
+                           x = 0.1)) %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
                                            "lasso2d", 
@@ -631,15 +634,22 @@ server <- function(input, output, session){
     salary_gg <- ggplot(data = salary(),
                         aes(x = reorder(range, values),
                             y = values,
+                            fill = range,
                             text = paste0(range, ": ", "$", round(values, 2), "\n",
                                           "Number of respondents: ", mesm_responses)
                         )) +
       geom_bar(stat = "identity",
-               position = "dodge",
-               fill = "#6d7d33") +
+               position = "dodge") +
       theme_minimal() +
+      theme(legend.position = "none") +
       scale_y_continuous(labels = scales::dollar_format(),
                          breaks = seq(0, 100000, 25000)) +
+      scale_fill_manual(
+        values = c(
+          "Low" = "#dcd6cc",
+          "Median" = "#047c91",
+          "High" = "#003660"
+        )) +
       labs(title = paste0("MESM Alumni Low, Median, and High Salary Compensation", 
                           "\n", "(", input$compensation_year, ")"), 
            x = NULL,
@@ -895,9 +905,12 @@ server <- function(input, output, session){
            y = "Dollars ($)",
            fill = NULL)
     
-    
     plotly::ggplotly(comp_sector, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16))) %>%
+      layout(title = list(font = list(size = 16)),
+             legend = list(orientation = "h",
+                           y = -0.25,
+                           x = 0.2)
+             ) %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select",
                                            "lasso2d",
@@ -1378,19 +1391,7 @@ server <- function(input, output, session){
   
   
   ## SO race / category ----
-  ## OBSERVE EVENTS ##
-  # Note(HD): note sure what this means, got it from SO
-  # for maintaining the state of drill-down variables
-  race_pltly <- reactiveVal()
 
-  # when clicking on a race / category
-  observeEvent(event_data("plotly_click", source = "race_pltly"), {
-
-    race_pltly(event_data("plotly_click", source = "race_pltly")$x)
-
-    }) # EO OE
-  
-  
   ## PLOTTING ##
   output$race_pltly <- plotly::renderPlotly({
 
@@ -1400,7 +1401,25 @@ server <- function(input, output, session){
       prog_input = input$race
     ) # EO race plot function
     
+    # selectedPoints <- reactiveVal()
+    # 
+    # observeEvent(event_data("plotly_click", source = "p"),{
+    #   print(event_data("plotly_click", source = "p"))
+    #   pn <- event_data("plotly_click", source = "p")$pointNumber
+    #   selectedPoints(c(selectedPoints(),pn))
+    #   print(selectedPoints())
+    # })
+    # observeEvent(input$reset,{
+    #   selectedPoints(NULL)})
+    # 
+
+    
   }) # EO race plotly
+  
+  ## * eth_pltly ----
+  ## DATA WRANGLING ##
+  
+  ## PLOTTING ##
   
   
   ## SO race / category trends ----
@@ -1740,6 +1759,9 @@ server <- function(input, output, session){
   
   
   ## SO ethnicity / background ----
+  
+
+  
   
   ## * american indian or alaska native ethnicity ----
   ## DATA WRANGLING ##
