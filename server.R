@@ -117,6 +117,7 @@ server <- function(input, output, session){
     group_by(employer_account_name,
              employer_sector) %>% 
     summarize(freq = n())
+  
   ## TABLE ##
   output$career_employ_sector_tbl <- DT::renderDataTable({
     DT::datatable(
@@ -635,7 +636,7 @@ server <- function(input, output, session){
                         )) +
       geom_bar(stat = "identity",
                position = "dodge",
-               fill = "#09847a") +
+               fill = "#6d7d33") +
       theme_minimal() +
       scale_y_continuous(labels = scales::dollar_format(),
                          breaks = seq(0, 100000, 25000)) +

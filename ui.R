@@ -397,7 +397,7 @@ ui <- dashboardPage(
               column(8,
                      # ** info box ----
                      box(
-                       title = "Initial Employers and Sectors (Data over 3 Years)",
+                       title = "Initial Employers and Sectors (Over 3 Years)",
                        width = 12,
                        solidHeader = TRUE,
                        status = "navy",
@@ -408,29 +408,18 @@ ui <- dashboardPage(
               
             ), # EO FR first row
             
-            # fluidRow(
-            #   box(id = "info_data_career",
-            #       width = 12,
-            #       span(
-            #         tags$div(class = "lrg-bold",
-            #                  includeMarkdown("text/career_data_info.md"))
-            #       ),
-            #       background = "green"),
-            #   # remove title from box
-            #   tags$head(tags$style('#info_data_career .box-header{ display: none}'))
-            #   
-            # ), # EO FR second row
+
             
             fluidRow(
               # ** career maps ----
               tabBox(width = 6,
-                     tabPanel(title = HTML(paste("Domestic Placement", "(Over last 3 Years)", sep = "<br/>")),
+                     tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
                               tmap::tmapOutput(outputId = "car_alumniMap") %>%
                                 withSpinner(color = "#003660", type = 1)#,
                               # tags$p(class = "italic_sector",
                               #        "Click a state to see the number of alumni at each location.")
                      ), # EO tabPanel leaflet map
-                     tabPanel(title = HTML(paste("International Placement", "(Over last 3 Years)", sep = "<br/>")),
+                     tabPanel(title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
                               DT::dataTableOutput(outputId = "international_place") %>%
                                 withSpinner(color = "#003660", type = 1)
                      ), # EO tabPanel international placements
@@ -446,10 +435,12 @@ ui <- dashboardPage(
                               plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
                                 withSpinner(color = "#003660", type = 1)
                      ), # EO tabPanel placement status in box 2
+                     
                      tabPanel("Job Source",
                               plotly::plotlyOutput(outputId = "mesm_job_source") %>%
                                 withSpinner(color = "#003660", type = 1)
                      ), # EO tabPanel placement source in box 2
+                     
                      tabPanel("Sector Trends",
                               plotly::plotlyOutput(outputId = "sector_trends") %>% 
                                 withSpinner(color = "#003660", type = 1),
@@ -459,6 +450,7 @@ ui <- dashboardPage(
                                            Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
                                            Eco-Entrepreneurship & New Business")
                      ), # EO tabPanel sector over time
+                     
                      tabPanel("Sector Satisfaction",
                               plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
                                 withSpinner(color = "#003660", type = 1),
@@ -471,6 +463,7 @@ ui <- dashboardPage(
                                            selected = "Consulting",
                                            inline = TRUE)
                      ), # EO tabPanel placement sector satisfaction in box 2
+                     
                      tabPanel("Salary",
                               plotlyOutput(outputId = "compensation"),
                               tags$p(class = "italic_sector",
@@ -481,16 +474,7 @@ ui <- dashboardPage(
                                            selected = "All Years",
                                            inline = TRUE)
                      ), # EO tabPanel compensation in box 2
-                     tabPanel("Salary by Specialization",
-                              plotlyOutput(outputId = "comp_specialization"),
-                              tags$p(class = "italic_sector",
-                                     "Data includes Full-Time Career positions only."),
-                              radioButtons(inputId = "compSpecialization_year",
-                                           label = NULL,
-                                           choices = c(2019, 2020, 2021, "All Years"),
-                                           selected = "All Years",
-                                           inline = TRUE)
-                     ), # EO tabPanel compensation specialization in box 2
+                     
                      tabPanel("Salary by Sector",
                               plotlyOutput(outputId = "comp_sector"),
                               tags$p(class = "italic_sector",
@@ -500,7 +484,18 @@ ui <- dashboardPage(
                                            choices = c(2019, 2020, 2021, "All Years"),
                                            selected = "All Years",
                                            inline = TRUE)
-                     ) # EO tabPanel compensation sector in box 2
+                     ), # EO tabPanel compensation sector in box 2
+                     
+                     tabPanel("Salary by Specialization",
+                              plotlyOutput(outputId = "comp_specialization"),
+                              tags$p(class = "italic_sector",
+                                     "Data includes Full-Time Career positions only."),
+                              radioButtons(inputId = "compSpecialization_year",
+                                           label = NULL,
+                                           choices = c(2019, 2020, 2021, "All Years"),
+                                           selected = "All Years",
+                                           inline = TRUE)
+                     ) # EO tabPanel compensation specialization in box 2
               ) # EO tabBox career second plot
               
             )# EO FR second row
