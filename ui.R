@@ -129,10 +129,11 @@ ui <- dashboardPage(
                      tmap::tmapOutput(outputId = "origins_map") %>%
                        withSpinner(color = "#003660", type = 1),
                      tags$p(class = "italic_sector",
-                            "Students come from over 200+ U.S. universities across 
-                            41 states, and 66 international universities 
-                            from 24 countries. View table of international
-                            universities on the International tab to the right.")
+                            "In the last 5 years, students have come from 
+                            200+ U.S. universities across 41 states, and 66 
+                            international universities  from 24 countries. See 
+                            International tab to view table of international 
+                            universities.")
                  ) # EO map box 
           ), # EO column 1 in FR 1
           
@@ -175,7 +176,7 @@ ui <- dashboardPage(
                                                 inline = TRUE)
                           ), # EO tabPanel previous admissions
                           ## * gender ----
-                          tabPanel("Gender",
+                          tabPanel("Sex",
                                    plotly::plotlyOutput(outputId = "gender_all") %>%
                                      withSpinner(color = "#003660", type = 1)
                           ), # EO gender tabPanel
@@ -367,15 +368,7 @@ ui <- dashboardPage(
                              includeMarkdown("text/career_data_info.md")
                            ) # EO intro about data
                          ) # EO tabsetPanel intro box
-                       ), # EO intro box
-                       # ** about the data ----
-                       # box(
-                       #   width = 12,
-                       #   title = "About the data",
-                       #   solidHeader = TRUE,
-                       #   status = "success",
-                       #   includeMarkdown("text/career_data_info.md")
-                       # ) # EO about data box 
+                       ) # EO intro box
                      ), # EO FR
                      
                      
@@ -383,12 +376,12 @@ ui <- dashboardPage(
                      fluidRow(
                        valueBoxOutput(outputId = "brenNet_stat",
                                       width = 6),
-                       valueBoxOutput(outputId = "mesm_satisfied_stat",
+                       valueBoxOutput(outputId = "placement_stat",
                                       width = 6)
                      ), # EO FR valueBox 1
                      fluidRow(
                        # placement stat
-                       valueBoxOutput(outputId = "placement_stat",
+                       valueBoxOutput(outputId = "mesm_satisfied_stat",
                                       width = 12)
                      ) # EO FR valueBox 2
               ), # EO column 1

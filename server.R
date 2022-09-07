@@ -71,7 +71,7 @@ server <- function(input, output, session){
   output$brenNet_stat <- renderValueBox({
     
     valueBox(
-      "of graduates learned of their jobs through the Bren School Network",
+      "of graduates found their jobs through the Bren School Network",
       value = paste0(mesm_brenNet$percent, "%"),
       icon = icon("briefcase"),
       color = "blue"
@@ -87,13 +87,22 @@ server <- function(input, output, session){
     # calculate percentages
     # total responses (196)
     mutate(percent = round((count / 196) * 100)) %>% 
-    filter(placement_satisfaction == "Very Satisfied")
+    filter(placement_satisfaction %in% c("Satisfied", "Very Satisfied"))
+  
+  # isolate just satisfied percent
+  satisfied_num <- mesm_satisfaction_stat %>% filter(placement_satisfaction == "Satisfied") %>% 
+    select(percent)
+  # isolate just very satisfied percent
+  verySatisfied_num <- mesm_satisfaction_stat %>% filter(placement_satisfaction == "Very Satisfied") %>% 
+    select(percent)
+  # add percentages together for valueBox
+  total_satisfied <- satisfied_num$percent + verySatisfied_num$percent
   
   ## VALUEBOX ##
   output$mesm_satisfied_stat <- renderValueBox({
     
-    valueBox("of graduates ranked being “very satisfied” with their initial job placement",
-             value = paste0(mesm_satisfaction_stat$percent, "%"),
+    valueBox("of graduates ranked being “satisfied” or “very satisfied” with their initial job placement",
+             value = paste0(total_satisfied, "%"),
              icon = icon("heart"),
              color = "light-blue"
     ) # EO valueBox overall satisfaction stat
@@ -539,7 +548,7 @@ server <- function(input, output, session){
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
       labs(title = paste0("MESM Placement Satisfaction in ", input$sector_types, "\n",
-                          "(Over last 3 Years)"),
+                          "(Over 3 Years)"),
            x = NULL,
            y = "Percent of Respondents",
            fill = NULL) +
@@ -1156,7 +1165,7 @@ server <- function(input, output, session){
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
-      labs(title = "Gender diversity and distribution trends by degree program",
+      labs(title = "Sex diversity and distribution trends by degree program",
            x = NULL,
            y = NULL,
            fill = NULL) +
