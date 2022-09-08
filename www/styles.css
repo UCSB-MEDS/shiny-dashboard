@@ -7,6 +7,14 @@ img.banner {
   width: auto; 
 }
 
+/* image resizing bren hex sidebar */
+/* NOTE(HD): general logo size is 32px */
+.main-header .logo img {
+  max-width: 32px;
+  min-width: 32px;
+  height: auto;
+}
+
 /* BOX TITLE STYLING */
 .intro_box_title span {
   display: flex;
