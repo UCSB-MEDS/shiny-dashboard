@@ -273,13 +273,6 @@ ui <- dashboardPage(
                 ) # EO race / category distribution tabPanel
               ) # EO race_tabsetPanel 
           ), # EO race box
-          
-          
-          # tabBox(id = "race_box",
-          #        width = 4,
-          # 
-          # ), # EO tabBox race / category
-          
         
           # ethnicity / background
           box(id = "background_box",
@@ -287,63 +280,6 @@ ui <- dashboardPage(
               "Plot will go here"
             
           ) # EO box
-          # tabBox(id = "background_box",
-          #        width = 6,
-          #        tabPanel("Asian",
-          #                 plotly::plotlyOutput(outputId = "asian_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "asian_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ), # EO asian eth
-          #        tabPanel("Black or African American",
-          #                 plotly::plotlyOutput(outputId = "black_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "black_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ), # EO black or african american eth
-          #        tabPanel("Hispanic or Latino",
-          #                 plotly::plotlyOutput(outputId = "hisp_lat_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "hisp_lat_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ), # EO hispanic or latino eth
-          #        tabPanel("White",
-          #                 plotly::plotlyOutput(outputId = "white_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "white_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ), # EO white eth
-          #        tabPanel("Two or more races",
-          #                 plotly::plotlyOutput(outputId = "two_more_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "two_more_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ), # EO two or more eth
-          #        tabPanel("Unknown race or ethnicity",
-          #                 plotly::plotlyOutput(outputId = "unk_eth_pltly") %>%
-          #                   withSpinner(color = "#003660", type = 1),
-          #                 radioButtons(inputId = "unk_eth",
-          #                              label = NULL,
-          #                              choices = c("MEDS", "MESM", "PhD", "All Programs"),
-          #                              selected = "All Programs",
-          #                              inline = TRUE)
-          #                 ) # EO unknown eth
-          # ) # EO ethnicity tabBox
         ) # EO FR fifth row
         
         # fixedRow(
