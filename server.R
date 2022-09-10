@@ -1397,6 +1397,25 @@ server <- function(input, output, session){
       tm_view(set.view = c(-10, 32, 1)) # long, lat, zoom
   }) # EO origins map using tmap
   
+  ## OBSERVE EVENTS ----
+  observeEvent(input$race_tabsetPanel, {
+
+    if (input$race_tabsetPanel == "Race / Category") {
+      shinyjs::show(id = "background_box")
+      
+      shinydashboardPlus::updateBox(id = "race_box",
+                                    action = "update",
+                                    options = list(width = 6))
+    } # EO if statement
+
+    else {
+      shinyjs::hide(id = "background_box")
+
+      shinydashboardPlus::updateBox(id = "race_box",
+                                    action = "update",
+                                    options = list(width = 12))
+    } # EO else statement
+  }) # EO OE
   
   
   ## SO race / category ----
@@ -1410,25 +1429,7 @@ server <- function(input, output, session){
       prog_input = input$race
     ) # EO race plot function
     
-    # selectedPoints <- reactiveVal()
-    # 
-    # observeEvent(event_data("plotly_click", source = "p"),{
-    #   print(event_data("plotly_click", source = "p"))
-    #   pn <- event_data("plotly_click", source = "p")$pointNumber
-    #   selectedPoints(c(selectedPoints(),pn))
-    #   print(selectedPoints())
-    # })
-    # observeEvent(input$reset,{
-    #   selectedPoints(NULL)})
-    # 
-
-    
   }) # EO race plotly
-  
-  ## * eth_pltly ----
-  ## DATA WRANGLING ##
-  
-  ## PLOTTING ##
   
   
   ## SO race / category trends ----
@@ -1560,88 +1561,6 @@ server <- function(input, output, session){
       )
     
   }) # EO render plotly 
-  
-  
-  
-  
-  ## SO race / category trends 2 ----
-  ## DATA WRANGLING #
-  # category_ipeds_time_2 <- reactive({
-  #   enrolled %>% 
-  #     select(ay_year,
-  #            objective1,
-  #            background,
-  #            category,
-  #            hispanic_latino) %>% 
-  #     # replace NULL string with NA
-  #     naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
-  #     mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
-  #     # assign demographic using ipeds definition
-  #     mutate(category_ipeds = case_when(
-  #       str_detect(category, ";") == TRUE ~ "Two or more races",
-  #       str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
-  #       str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
-  #       str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
-  #       str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
-  #       str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
-  #       hispanic_latino == TRUE ~ "Hispanic or Latino",
-  #       is.na(category) == TRUE ~ "Unknown race and ethnicity"
-  #     )) %>% 
-  #     group_by(ay_year,
-  #              objective1,
-  #              category_ipeds) %>% 
-  #     summarize(count = n()) %>% 
-  #     mutate(category_ipeds = factor(category_ipeds, levels = c(
-  #       "American Indian or Alaska Native",
-  #       "Asian",
-  #       "Black or African American",
-  #       "Hispanic or Latino",
-  #       "Native Hawaiian or Other Pacific Islander",
-  #       "White",
-  #       "Two or more races",
-  #       "Unknown race and ethnicity"
-  #     ))) %>% 
-  #     left_join( program_size, by = c("ay_year", "objective1")) %>%
-  #     mutate(percent = round((count / size) * 100, 1)) %>% 
-  #     filter(category_ipeds == input$race_trends_2)
-  #   
-  # }) # EO category ipeds time 2 reactive
-  # 
-  # ## PLOTTING ##
-  # output$race_trends_2_pltly <- plotly::renderPlotly({
-  #   race_trends_2 <- ggplot(data = category_ipeds_time_2(),
-  #                           aes(x = ay_year,
-  #                               y = percent,
-  #                               fill = objective1,
-  #                               text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
-  #                                             "Sample size: ", size)
-  #                           )) +
-  #     geom_bar(stat = "identity") +
-  #     scale_x_continuous(breaks = seq(max(category_ipeds_time_2()$ay_year),
-  #                                     min(category_ipeds_time_2()$ay_year))) +
-  #     scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-  #     scale_fill_manual(
-  #       values = c(
-  #         "MESM" = mesm_color,
-  #         "MEDS" = meds_color,
-  #         "PhD" = phd_color
-  #       )
-  #     ) +
-  #     theme_minimal() +
-  #     theme(legend.position = "none",
-  #           panel.grid.minor = element_blank()) +
-  #     labs(
-  #       title = paste0(input$race_trends_2, " IPEDS Category Trend"),
-  #       x = NULL,
-  #       y = NULL,
-  #       fill = NULL
-  #     ) +
-  #     facet_wrap(~objective1, ncol = 1)
-  #   
-  #   
-  #   plotly::ggplotly(race_trends_2, tooltip = "text")
-  #   
-  # }) # EO race trends plotly 2
   
   
   

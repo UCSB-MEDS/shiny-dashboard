@@ -4,7 +4,7 @@ library(rsconnect)
 library(bslib)
 library(shiny)
 library(shinydashboard)
-library(shinydashboardPlus)
+library(shinydashboardPlus) # update boxes
 library(shinyjs)
 library(lubridate)
 library(tmap)
