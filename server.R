@@ -490,7 +490,7 @@ server <- function(input, output, session){
 
  
   
-  ## SO placement sector satisfaction ----
+  ## SO sector satisfaction ----
   ## DATA WRANGLING ##
   # total number of alumni in each sector (2019-2021)
   sector_totals <- mesm_placement %>% 
@@ -539,7 +539,7 @@ server <- function(input, output, session){
                                                        "Number of respondents: ", sector_count)))+
       geom_bar(position = "dodge",
                stat = "identity") +
-      coord_flip() +
+      coord_flip(ylim = c(0, 100)) +
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
