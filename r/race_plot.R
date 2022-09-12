@@ -1,78 +1,31 @@
+#' RACE PLOTLY
+#'
+#' @param df data frame used to create category_ipeds
+#' @param prog_input input id 
+#'
+#' @return interactive race plot depending on degree program selected by input 
+#'
+#' @examples race_plot(df = ipeds, prog_input = input$race)
+#' 
 race_plot <- function(df, prog_input){
-  # df = data frame used to create category_ipeds (i.e. enrolled)
-  # color = program color to be used to fill bar plots (i.e. mesm_color)
-  # year_str = chr string of years data comes from (i.e. "2016-2021" or "2021")
-  # prog_input = input selected (i.e. input$age_prog)
-  
+
   ## DATA WRANGLING ##
-  # 2016-2021
+  # 2017-curr_year
   # reactive
   category_ipeds_stats <- reactive({
     if (prog_input == "All Programs") {
       df %>% 
-        select(ay_year,
-               objective1,
-               background,
-               category,
-               hispanic_latino) %>% 
-        # replace NULL string with NA
-        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
-        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
-        # assign race using ipeds definition
-        mutate(category_ipeds = case_when(
-          str_detect(category, ";") == TRUE ~ "Two or more races",
-          str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
-          str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
-          str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
-          str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
-          str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
-          hispanic_latino == TRUE ~ "Hispanic or Latino",
-          is.na(category) == TRUE ~ "Unknown race and ethnicity"
-        )) %>% 
-        mutate(category_ipeds = factor(category_ipeds, levels = c("American Indian or Alaska Native",
-                                                                  "Asian",
-                                                                  "Black or African American",
-                                                                  "Hispanic or Latino",
-                                                                  "Native Hawaiian or Other Pacific Islander",
-                                                                  "White",
-                                                                  "Two or more races",
-                                                                  "Unknown race and ethnicity"))) %>% 
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
-        mutate(size = 604) %>% 
+        # total number of enrolled students in the past 5 years
+        # MEDS(57) + MESM(508) + PHD(62)
+        mutate(size = 627) %>% 
         mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
     
     else {
       df %>% 
-        select(ay_year,
-               objective1,
-               background,
-               category,
-               hispanic_latino) %>% 
-        # replace NULL string with NA
-        naniar::replace_with_na(replace = list(hispanic_latino = "NULL")) %>%
-        mutate(hispanic_latino = unlist(hispanic_latino)) %>% 
-        # assign race using ipeds definition
-        mutate(category_ipeds = case_when(
-          str_detect(category, ";") == TRUE ~ "Two or more races",
-          str_detect(category, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
-          str_detect(category, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
-          str_detect(category, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
-          str_detect(category, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
-          str_detect(category, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
-          hispanic_latino == TRUE ~ "Hispanic or Latino",
-          is.na(category) == TRUE ~ "Unknown race and ethnicity"
-        )) %>% 
-        mutate(category_ipeds = factor(category_ipeds, levels = c("American Indian or Alaska Native",
-                                                                  "Asian",
-                                                                  "Black or African American",
-                                                                  "Hispanic or Latino",
-                                                                  "Native Hawaiian or Other Pacific Islander",
-                                                                  "White",
-                                                                  "Two or more races",
-                                                                  "Unknown race and ethnicity"))) %>% 
         group_by(objective1,
                  category_ipeds) %>% 
         summarize(count = n()) %>% 
@@ -94,9 +47,7 @@ race_plot <- function(df, prog_input){
                          text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
                                        "Sample size: ", size))
   ) +
-    geom_bar(stat = "identity",
-             #fill = color
-             ) +
+    geom_bar(stat = "identity") +
     coord_flip() +
     theme_minimal() +
     theme(
@@ -143,4 +94,4 @@ race_plot <- function(df, prog_input){
   return(p)
   
   
-} # EO age plot function
+} # EO race plot function
