@@ -1395,6 +1395,9 @@ server <- function(input, output, session){
       tm_view(set.view = c(-10, 32, 1)) # long, lat, zoom
   }) # EO origins map using tmap
   
+  
+  
+  
   ## OBSERVE EVENTS ----
   observeEvent(input$race_tabsetPanel, {
 
@@ -1423,7 +1426,7 @@ server <- function(input, output, session){
 
     # race plot function
     race_plot(
-      df = enrolled,
+      df = ipeds,
       prog_input = input$race
     ) # EO race plot function
     
