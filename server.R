@@ -935,13 +935,13 @@ server <- function(input, output, session){
   # DEMOGRAPHICS DB ----
   ## SO program sizes valueBox ----
   # program size df
-  program_size_21 <- program_size %>% filter(ay_year == 2021)
+  program_size_curr_year <- program_size %>% filter(ay_year == curr_year)
   
-  meds_size <- program_size_21 %>% filter(objective1 == "MEDS")
-  mesm_size <- program_size_21 %>% filter(objective1 == "MESM")
-  PhD_size <- program_size_21 %>% filter(objective1 == "PhD")
+  meds_size <- program_size_curr_year %>% filter(objective1 == "MEDS")
+  mesm_size <- program_size_curr_year %>% filter(objective1 == "MESM")
+  phd_size <- program_size_curr_year %>% filter(objective1 == "PhD")
   
-  # MEDS valueBox output
+  # MEDS curr size valueBox output
   output$meds_curr_size <- renderValueBox({
     shinydashboard::valueBox(
       "MEDS students in 2021 cohort",
@@ -949,9 +949,9 @@ server <- function(input, output, session){
       icon = icon("users", lib = "font-awesome"),
       color = "light-blue"
     )
-  }) # EO MEDS valueBox prog size
+  }) # EO MEDS valueBox curr size
   
-  # MESM valueBox output
+  # MESM curr size valueBox output
   output$mesm_curr_size <- renderValueBox({
     valueBox(
       "MESM students in 2021 cohort",
@@ -960,23 +960,23 @@ server <- function(input, output, session){
       color = "blue"
     )
     
-  })# EO MESM valueBox prog size
+  })# EO MESM valueBox curr size
   
-  # PhD valueBox output
-  output$PhD_curr_size <- renderValueBox({
+  # PhD curr size valueBox output
+  output$phd_curr_size <- renderValueBox({
     valueBox(
       "PhD students in 2021 cohort",
-      value = PhD_size$size,
+      value = phd_size$size,
       icon = icon("users", lib = "font-awesome"),
       color = "green"
     )
-  }) # EO PhD valueBox prog size
+  }) # EO PhD valueBox curr size
   
   
   
-  ## SO 2016-2021 admit stats ----
+  ## SO 2017-curr_year admit stats ----
   ## DATA WRANGLING ##
-  # reactive stacked df 2016 - 2021
+  # reactive stacked df 2017 - curr_year
   admissions_stacked_all <- reactive({
     admissions %>% 
       select(c(ay_year,
@@ -994,7 +994,7 @@ server <- function(input, output, session){
                                                         "Admitted",
                                                         "Enrolled")))
     
-  }) # EO reactive stacked df 2016 - 2021
+  }) # EO reactive stacked df 2017 - curr_year
   
   # avg acceptance rate
   admissions_rate <- reactive({
@@ -1007,7 +1007,7 @@ server <- function(input, output, session){
   output$admit_stats_all <- renderPlotly({
     
     ## PLOTTING ##
-    # 2016- 2021 admissions stacked
+    # 2017 - curr_year admissions stacked
     admissions_all_plot <- ggplot(data = admissions_stacked_all(),
                                   aes(x = ay_year,
                                       y = counts,
@@ -1044,7 +1044,7 @@ server <- function(input, output, session){
            y = NULL,
            fill = NULL)
     
-    # plotly 2016 - 2021 admissions 
+    # plotly 2017 - curr_year admissions 
     plotly::ggplotly(admissions_all_plot, tooltip = "text") %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
@@ -1053,16 +1053,17 @@ server <- function(input, output, session){
                                            "hoverClosestCartesian", 
                                            "hoverCompareCartesian"))
     
-  }) # EO 2016-2021 admit stats
+  }) # EO 2017-curr_year admit stats
   
   
   
   ## SO overall diversity demographics ----
-  # reactive diversity df 2021
+  # reactive diversity df 2017 - curr_year
   diversity_overall <- reactive({
     diversity_stats %>%  
       filter(objective1 == input$diversity_stats_all)
-  }) # EO reactive diversity df 2021
+    
+  }) # EO reactive diversity df 2017 - curr_year
   
   ## PLOTTING ##
   output$overall_diversity <- renderPlotly({
@@ -1105,7 +1106,7 @@ server <- function(input, output, session){
            x = NULL,
            y = NULL)
     
-    # plotly 2021
+    # plotly 2017 - curr_year
     plotly::ggplotly(overall_demo, tooltip = "text") %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
@@ -1114,11 +1115,11 @@ server <- function(input, output, session){
                                            "hoverClosestCartesian", 
                                            "hoverCompareCartesian"))
     
-  }) # EO 2021 diversity demo
+  }) # EO renderPlotly 2017 - curr_year overall diversity demo
   
-  ## SO gender ----
+  ## SO sex ----
   ## DATA WRANGLING ##
-  gender_program_time <- enrolled %>% 
+  sex_program_time <- enrolled %>% 
     select(c("ay_year",
              "application_id",
              "gender",
@@ -1126,42 +1127,31 @@ server <- function(input, output, session){
     group_by(ay_year,
              objective1,
              gender) %>% 
-    summarize(gender_count = n())
+    summarize(count = n())
   
-  gender_cohort_tot_all <- enrolled %>% 
-    select(c(
-      "ay_year",
-      "application_id",
-      "gender",
-      "objective1")) %>%
-    group_by(objective1,
-             ay_year) %>%
-    summarize(cohort_tot = n())
-  
-  gender_stats_time <- left_join(gender_program_time, 
-                                 gender_cohort_tot_all, 
-                                 by = c("ay_year",
-                                        "objective1")) %>% 
-    mutate(gender_percent = round((gender_count / cohort_tot) * 100)) %>% 
+  sex_stats_time <- left_join(sex_program_time,
+                              program_size,
+                              by = c("ay_year", 
+                                     "objective1")) %>% 
+    mutate(percent = round((count / size) * 100)) %>% 
     mutate(gender = factor(gender, levels = c("F", "M", "U"),
                            labels = c("Female", "Male", "Undeclared")))
   
   ## PLOTTING ##
-  output$gender_all <- renderPlotly({
+  output$sex_all <- renderPlotly({
     
     # group bar chart over time 
-    # think about adding text on MEDS plot to emphasize inaugural year? Not lack of data?
-    gender_all <- ggplot(data = gender_stats_time,
+    sex_all <- ggplot(data = sex_stats_time,
                          aes(x = ay_year,
-                             y = gender_percent,
-                             fill = reorder(gender, gender_percent),
-                             text = paste0(gender, " (", gender_percent, "%", ")", "\n",
-                                           "Sample size: ", cohort_tot))
-                         ) +
+                             y = percent,
+                             fill = reorder(gender, percent),
+                             text = paste0(gender, " (", percent, "%", ")", "\n",
+                                           "Sample size: ", size))
+                      ) +
       geom_bar(position = "dodge",
                stat = "identity") +
-      scale_x_continuous(breaks = seq(min(gender_stats_time$ay_year),
-                                      max(gender_stats_time$ay_year))) +
+      scale_x_continuous(breaks = seq(min(sex_stats_time$ay_year),
+                                      max(sex_stats_time$ay_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
@@ -1174,7 +1164,7 @@ server <- function(input, output, session){
                                    "Undeclared" = "#dcd6cc")) +
       facet_wrap(~objective1, ncol = 1)
     
-    plotly::ggplotly(gender_all, tooltip = "text") %>%
+    plotly::ggplotly(sex_all, tooltip = "text") %>%
       config(modeBarButtonsToRemove = list("pan", 
                                            "select", 
                                            "lasso2d", 
@@ -1183,11 +1173,10 @@ server <- function(input, output, session){
                                            "hoverCompareCartesian"))
     
     
-  }) # EO gender plotly
+  }) # EO sex renderPlotly
   
   
   ## SO age ----
-  # render plotly
   output$age_all <- renderPlotly({
     # empty vars
     color <- NULL
@@ -1195,17 +1184,17 @@ server <- function(input, output, session){
     
     if (input$age_prog == "MESM") {
       color <- mesm_color
-      year_str <- "2016-2021"
+      year_str <- "2017-2022"
     } # EO if MESM age plot
 
     else if (input$age_prog == "MEDS") {
       color <- meds_color
-      year_str <- "2021"
+      year_str <- "2021-2022"
     } # EO else if MEDS age plot
 
     else if (input$age_prog == "PhD") {
       color <- phd_color
-      year_str <- "2016-2021"
+      year_str <- "2017-2022"
     } # EO else if PhD age plot
     
     # age plot function
@@ -1222,7 +1211,7 @@ server <- function(input, output, session){
   ## SO residency ----
   ## DATA WRANGLING ##
   
-  # 2016-2021
+  # 2017-curr_year
   residency_stats <- enrolled %>% 
     select(c("ay_year",
              "application_id",
@@ -1239,13 +1228,12 @@ server <- function(input, output, session){
       # ca resident
       california_resident == TRUE & visa %in% c(NA,
                                                 "DACA/AB540",
+                                                "None: DACA Recipient",
                                                 "Permanent Resident",
-                                                "Permanent Residency Pending (Work Permit)",
                                                 "Undocumented Status") ~ "ca resident",
       # non ca resident
       california_resident == FALSE & visa %in% c(NA,
                                                  "Permanent Resident",
-                                                 "Permanent Residency Pending (Work Permit)",
                                                  "Undocumented Status") ~ "non resident",
       # international
       visa %in% c("F-1 Student",
@@ -1255,11 +1243,11 @@ server <- function(input, output, session){
     group_by(ay_year,
              objective1,
              residency) %>% 
-    summarize(residency_count = n()) %>%
+    summarize(count = n()) %>%
     left_join(program_size,
               by = c("ay_year",
                      "objective1")) %>% 
-    mutate(percent = round((residency_count / size) * 100)) %>% 
+    mutate(percent = round((count / size) * 100)) %>% 
     mutate(residency = factor(residency, levels = c("ca resident",
                                                     "non resident",
                                                     "international"),
