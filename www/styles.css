@@ -158,18 +158,18 @@ img.phd_hex {
 
 /* styling large and bold font */
 .lrg-bold {
-  font-size: large;
-  font-weight: bold;
-  text-align: center;
+  font-size: medium;
 }
 
 /* styling large and bold font; link (a tag) white and underline */
 .lrg-bold a {
-  font-size: large;
+  font-size: medium;
   font-weight: bold;
-  text-align: center;
   color: #fff;
   text-decoration: underline;
 }
 
+.btn.btn-box-tool.btn-sm {
+  color: #fff !important;
+}
 

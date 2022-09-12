@@ -210,23 +210,23 @@ ui <- dashboardPage(
         fluidRow(
           ## * definitions ----
           box(id = "ipeds_def",
-              title = "Integrated Postsecondary Education Data System (IPEDS) Definitions for Race and Ethnicity Categories",
               width = 12,
+              title = "Race and Ethnicity Reporting Defintions",
+              collapsible = TRUE,
+              collapsed = TRUE,
               span(
                 tags$div(class = "lrg-bold",
                          includeMarkdown("text/ipeds_text.md"))
               ), # EO span tag
               background = "green"
           ), # EO info box
-          # remove title from box
-          tags$head(tags$style('#ipeds_def .box-header{ display: none}')),
           
-          box(
-            id = "race_ethnicity_text",
-            width = 12,
-            includeMarkdown("text/race_ethnicity_text.md")
-          ), # EO race / category / ethnicity plots text
-          tags$head(tags$style('#race_ethnicity_text .box-header{ display: none}')),
+          # box(
+          #   id = "race_ethnicity_text",
+          #   width = 12,
+          #   includeMarkdown("text/race_ethnicity_text.md")
+          # ), # EO race / category / ethnicity plots text
+          # tags$head(tags$style('#race_ethnicity_text .box-header{ display: none}')),
         ), # EO FR fourth row
         
         ## * race & ethnicity plots ----
@@ -254,16 +254,24 @@ ui <- dashboardPage(
                                  or American Indian, which is consistent 
                                  with the UC definition of URM.")
                 ), # EO urm distribution tabpanel
-                tabPanel("Race / Category Trends",
+                tabPanel("Race / Category Trends (IPEDS)",
                          plotly::plotlyOutput(outputId = "race_trends_pltly") %>% 
                            withSpinner(color = "#003660", type = 1),
                          radioButtons(inputId = "race_trends",
                                       label = NULL,
                                       choices = c("MEDS", "MESM", "PhD", "All Programs"),
                                       selected = "All Programs",
-                                      inline = TRUE)
+                                      inline = TRUE),
+                         tags$p(class = "italic_sector",
+                                "Integrated Postsecondary Education Data System 
+                                (IPEDS) defines race by first designating ethnicity
+                                as Hispanic or Latino or Not Hispanic or Latino. 
+                                Then, an individual can apply one or more of the 
+                                following categories: American Indian or 
+                                Alaska Native, Asian, Black or African American, 
+                                Native Hawaiian or Other Pacific Islander, White.")
                 ), # EO race / category over time tabpanel
-                tabPanel("Race / Category",
+                tabPanel("Race / Category (IPEDS)",
                          plotly::plotlyOutput(outputId = "race_pltly") %>% 
                            withSpinner(color = "#003660", type = 1),
                          radioButtons(inputId = "race",
@@ -278,11 +286,19 @@ ui <- dashboardPage(
           # ethnicity / background
           box(id = "background_box",
               width = 6,
-              title = "IPEDS Backgrounds and Distribution of selected Race / Category",
+              title = "IPEDS Backgrounds and Distribution of Selected Race / Category",
               solidHeader = TRUE,
               status = "navy",
               plotly::plotlyOutput(outputId = "background_pltly") %>% 
-                withSpinner(color = "#003660", type = 1)
+                withSpinner(color = "#003660", type = 1),
+              tags$p(class = "italic_sector",
+                     "Integrated Postsecondary Education Data System 
+                                (IPEDS) defines race by first designating ethnicity
+                                as Hispanic or Latino or Not Hispanic or Latino. 
+                                Then, an individual can apply one or more of the 
+                                following categories: American Indian or 
+                                Alaska Native, Asian, Black or African American, 
+                                Native Hawaiian or Other Pacific Islander, White.")
           ) # EO box
         ) # EO FR fifth row
         

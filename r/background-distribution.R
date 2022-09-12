@@ -96,7 +96,7 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
     scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
     theme_minimal() +
     theme(legend.position = "none") +
-    labs(title = paste0(race_str, " Category ", "(", prog_input, ")"),
+    labs(title = paste0(race_str, " Category ", "\n", "Backgrounds (", prog_input, ")"),
          x = NULL,
          y = NULL,
          fill = NULL)
