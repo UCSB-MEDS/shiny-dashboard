@@ -40,15 +40,6 @@ all_programs_color <- "#09847a"
 # VARIABLES ----
 curr_year <- 2022
 
-races_var <- c("American Indian or Alaska Native",
-               "Asian",
-               "Black or African American",
-               "Hispanic or Latino",
-               "Native Hawaiian or Other Pacific Islander",
-               "White",
-               "Two or more races",
-               "Unknown race and ethnicity")
-
 # DATA FRAMES ----
 # program sizes 2017-curr_year
 program_size <- enrolled %>% 
