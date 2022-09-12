@@ -28,6 +28,7 @@ mesm_status <- readRDS("data/status_data.rds")
 # SOURCE FUNCTIONS ----
 source("r/age_plot.R")
 source("r/race_plot.R")
+source("r/background-distribution.R")
 source("r/urm_trends_plot.R")
 
 # STYLING ----
@@ -39,6 +40,15 @@ all_programs_color <- "#09847a"
 # VARIABLES ----
 curr_year <- 2022
 
+races_var <- c("American Indian or Alaska Native",
+               "Asian",
+               "Black or African American",
+               "Hispanic or Latino",
+               "Native Hawaiian or Other Pacific Islander",
+               "White",
+               "Two or more races",
+               "Unknown race and ethnicity")
+
 # DATA FRAMES ----
 # program sizes 2017-curr_year
 program_size <- enrolled %>% 
@@ -49,7 +59,7 @@ program_size <- enrolled %>%
            objective1) %>% 
   summarize(size = n())
 
-# total number of students per program from 2016-2021
+# 5 year total number of students per program
 tot_5yr <- enrolled %>% 
   select(c("ay_year",
            "application_id",
