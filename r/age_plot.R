@@ -1,7 +1,7 @@
 #' AGE PLOTLY
 #'
 #' @param df data frame used to create age_program_groups 
-#' @param color program color used to fill bar plots 
+#' @param color program color used to fill bars in plot
 #' @param year_str chr string of years data comes from 
 #' @param prog_input input id 
 #'

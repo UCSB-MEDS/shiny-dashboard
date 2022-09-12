@@ -79,7 +79,9 @@ race_plot <- function(df, prog_input){
     )
   
   # plotly
-  p <- plotly::ggplotly(ipeds_gg, tooltip = "text") %>% 
+  p <- plotly::ggplotly(ipeds_gg, 
+                        source = "race_plot",
+                        tooltip = "text") %>% 
     config(
       modeBarButtonsToRemove = list(
         "pan",
