@@ -79,9 +79,9 @@ race_plot <- function(df, prog_input){
     )
   
   # plotly
-  p <- plotly::ggplotly(ipeds_gg, 
-                        source = "race_plot",
-                        tooltip = "text") %>% 
+  plotly::ggplotly(ipeds_gg, 
+                   source = "race_plot",
+                   tooltip = "text") %>% 
     config(
       modeBarButtonsToRemove = list(
         "pan",
@@ -91,9 +91,8 @@ race_plot <- function(df, prog_input){
         "hoverClosestCartesian",
         "hoverCompareCartesian"
       )
-    )
-  
-  return(p)
-  
+    ) %>% 
+    # had to add event_register to register source "race_plot"
+    event_register("plotly_click")
   
 } # EO race plot function
