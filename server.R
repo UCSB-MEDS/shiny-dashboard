@@ -4,8 +4,6 @@ server <- function(input, output, session){
   # WELCOME / LANDING PAGE -----
   
   
-  
-  
   # CAREER DB ----
   
   ## SO career valuebox stats ----
@@ -1420,18 +1418,105 @@ server <- function(input, output, session){
   
   
   ## SO race / category ----
+  
+  ## DATA WRANGLING ##
+  # 2017-curr_year
+  # reactive
+  category_ipeds_stats <- reactive({
+    if (input$race == "All Programs") {
+      ipeds %>% 
+        group_by(category_ipeds) %>% 
+        summarize(count = n()) %>% 
+        # total number of enrolled students in the past 5 years
+        # MEDS(57) + MESM(508) + PHD(62)
+        mutate(size = 627) %>% 
+        mutate(percent = round((count / size) * 100, 1))
+      
+    } # EO if statement
+    
+    else {
+      ipeds %>% 
+        group_by(objective1,
+                 category_ipeds) %>% 
+        summarize(count = n()) %>% 
+        left_join(tot_5yr, by = "objective1") %>% 
+        mutate(percent = round((count / size) * 100, 1)) %>% 
+        filter(objective1 == input$race)
+      
+    } # EO else statement
+  }) # EO reactive category_ipeds_stats df
 
   ## PLOTTING ##
   output$race_pltly <- plotly::renderPlotly({
-
-    # race plot function
-    race_plot(
-      df = ipeds,
-      prog_input = input$race
-    ) # EO race plot function
-
+    
+    # NOTE(HD): could not plotly_click and source to work from a script / function
+    # NOTE(CONT): so had to pull race plot function out of script
+    # # race plot function
+    # race_plot(
+    #   df = ipeds,
+    #   prog_input = input$race
+    # ) # EO race plot function
+    
+    
+    ## PLOTTING ##
+    # ggplot
+    ipeds_gg <- ggplot(data = category_ipeds_stats(),
+                       aes(x = category_ipeds,
+                           y = percent,
+                           fill = category_ipeds,
+                           text = paste0(category_ipeds, " (", percent, "%", ")", "\n",
+                                         "Sample size: ", size))
+    ) +
+      geom_bar(stat = "identity") +
+      coord_flip() +
+      theme_minimal() +
+      theme(
+        panel.grid.minor = element_blank(),
+        legend.position = "none",
+        plot.subtitle = element_text(face = "italic")
+      ) +
+      scale_x_discrete(limits = rev(levels(category_ipeds_stats()$category_ipeds)),
+                       labels = function(x)
+                         str_wrap(x, width = 35)) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      scale_fill_manual(
+        values = c(
+          "American Indian or Alaska Native" = "#003660", # ucsb navy
+          "Asian" = "#047c91", # ucsb aqua
+          "Black or African American" = "#dcd6cc", # ucsb clay
+          "Hispanic or Latino" = "#6d7d33", # ucsb moss
+          "Native Hawaiian or Other Pacific Islander" = "#9cbebe", # ucsb mist
+          "White" = "#dce1e5", # ucsb light grey
+          "Two or more races" = "#79a540", # bren leaf green
+          "Unknown race and ethnicity" = "#09847a" # ucsb sea green
+        )
+      ) +
+      labs(
+        title = paste0("IPEDS Categories and Distribution", "\n",
+                       "(", input$race, ")"),
+        x = NULL,
+        y = NULL
+      )
+    
+    # plotly
+    plotly::ggplotly(ipeds_gg, 
+                     source = "race_plot",
+                     tooltip = "text") %>% 
+      config(
+        modeBarButtonsToRemove = list(
+          "pan",
+          "select",
+          "lasso2d",
+          "autoScale2d",
+          "hoverClosestCartesian",
+          "hoverCompareCartesian"
+        )
+      ) %>% 
+      # had to add event_register to register source "race_plot"
+      event_register("plotly_click")
   }) # EO race plotly
 
+  
   
   ## SO background distribution ----
   output$background_pltly <- renderPlotly({

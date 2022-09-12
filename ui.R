@@ -276,6 +276,9 @@ ui <- dashboardPage(
           # ethnicity / background
           box(id = "background_box",
               width = 6,
+              title = "IPEDS Backgrounds and Distribution of selected Race / Category",
+              solidHeader = TRUE,
+              status = "navy",
               plotly::plotlyOutput(outputId = "background_pltly") %>% 
                 withSpinner(color = "#003660", type = 1)
           ) # EO box
