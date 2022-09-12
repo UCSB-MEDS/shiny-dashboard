@@ -1,10 +1,49 @@
 /* DASHBOARD STYLES*/
 
-/* image resizing */
+/* image resizing for banner img */
 img.banner {
   display:block;
   max-width: 100%;
   width: auto; 
+  margin-bottom: 1rem;
+}
+
+/* increase font size of tabs on sidebar */
+#sidebarItemExpanded ul {
+  font-size: medium;
+}
+
+/* image resizing for program hexes on welcome pg */
+img.meds_hex {
+  max-width: 100px;
+}
+img.mesm_hex {
+  max-width: 100px;
+}
+img.phd_hex {
+  max-width: 100px;
+}
+
+/* reduce margin in text boxes on welcome page */
+.intro_box_title p {
+  margin: 0;
+  font-size: large !important;
+}
+
+/* increase margin btwn title and icon on welcome page */
+.intro_box_title i {
+  margin-right: 0.5rem;
+}
+
+/* increase font size in text boxes on welcome page */
+#intro_what_box p {
+  font-size: medium;
+}
+#intro_data_box p {
+  font-size: medium;
+}
+#intro_data_box ul {
+  font-size: medium;
 }
 
 /* image resizing bren hex sidebar */
