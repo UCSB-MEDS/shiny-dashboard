@@ -14,7 +14,7 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
   
   # reactive element based on plotly click in race plot
   background_click <- reactive({
-    event_data("plotly_click", source = "race_plot")
+    plotly::event_data("plotly_click", source = "race_plot")
   }) # EO background_click reactive
   
   ## KEY-VALUE PAIRS FOR `background_click` REACTIVE ELEMENT AND RACE VALUE ##
@@ -96,8 +96,7 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
     scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
     theme_minimal() +
     theme(legend.position = "none") +
-    labs(title = paste0("IPEDS Backgrounds and Distribution of ", "\n",
-                        race_str, " Category ", "(", prog_input, ")"),
+    labs(title = paste0(race_str, " Category ", "(", prog_input, ")"),
          x = NULL,
          y = NULL,
          fill = NULL)
