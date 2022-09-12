@@ -197,7 +197,6 @@ ui <- dashboardPage(
                           ), # EO residency tabPanel
                           ## * international unis tbl ----
                           tabPanel("International",
-                                   #tags$p("International Universities Bren Alumni Attended"),
                                    DT::dataTableOutput(outputId = "intl_unis"))
                    ) # EO demographics tabBox
                  ) # EO FR 2 in column 2
@@ -277,8 +276,8 @@ ui <- dashboardPage(
           # ethnicity / background
           box(id = "background_box",
               width = 6,
-              "Plot will go here"
-            
+              plotly::plotlyOutput(outputId = "background_pltly") %>% 
+                withSpinner(color = "#003660", type = 1)
           ) # EO box
         ) # EO FR fifth row
         
