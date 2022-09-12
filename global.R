@@ -10,20 +10,18 @@ library(lubridate)
 library(tmap)
 library(sf)
 library(plotly)
-library(treemap)
-library(d3treeR) # interactive tree map
 library(shinycssloaders) # loading icon
 library(fontawesome) # icons
+library(giscoR) # get world country polygons
 
-#"MEDS data is limited since program began in 2021"
 
 # IMPORT DATA ----
 admissions <- readRDS("data/admissions.rds")
 enrolled <- readRDS("data/enrolled.rds")
+ipeds <- readRDS("data/ipeds.rds")
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-ipeds <- readRDS("data/ipeds.rds")
 mesm_placement <- readRDS("data/placement_data.rds")
 mesm_status <- readRDS("data/status_data.rds")
 
@@ -38,8 +36,11 @@ meds_color <- "#047C91"
 phd_color <- "#005AA3"
 all_programs_color <- "#09847a"
 
-# REUSABLE DFS
-# program sizes 2016-2021
+# VARIABLES ----
+curr_year <- 2022
+
+# DATA FRAMES ----
+# program sizes 2017-curr_year
 program_size <- enrolled %>% 
   select(c("ay_year",
            "application_id",
