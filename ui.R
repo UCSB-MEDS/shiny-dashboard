@@ -63,13 +63,14 @@ ui <- dashboardPage(
         tabName = "welcome",
         #h2("Welcome to the Bren Dashboard!"),
         tags$img(class = "banner",
-                 src = "images/bren.png"),
+                 src = "images/bren-banner.jpeg"),
         
         
         # * intro text ----
         fluidRow(
           column(width = 6,
-            box(title = 
+            box(id = "intro_what_box",
+                title = 
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-users"),
@@ -83,17 +84,18 @@ ui <- dashboardPage(
               ) # EO what box
           ), # EO column 1
           column(width = 6,
-            box(title = 
+            box(id = "intro_data_box",
+                title = 
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-database"),
-                             tags$p("Where the Data Comes From")
+                             tags$p("About the Data and the App")
                            ), # EO span
                   ), # EO div
                 width = NULL,
                 solidHeader = TRUE,
                 status = "navy",
-                includeMarkdown("text/welcome_data_text.md")
+                includeMarkdown("text/welcome_data_text.html")
             ) # EO why box
             ) # EO column 2
         ), # EO FR first row
