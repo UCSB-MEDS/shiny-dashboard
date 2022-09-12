@@ -213,7 +213,7 @@ ui <- dashboardPage(
               width = 12,
               title = "Race and Background Reporting Defintions",
               collapsible = TRUE,
-              collapsed = TRUE,
+              collapsed = FALSE,
               span(
                 tags$div(class = "lrg-bold",
                          includeMarkdown("text/ipeds_text.md"))
