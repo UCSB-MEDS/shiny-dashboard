@@ -15,13 +15,13 @@ img.banner {
 
 /* image resizing for program hexes on welcome pg */
 img.meds_hex {
-  max-width: 100px;
+  max-width: 22px;
 }
 img.mesm_hex {
-  max-width: 100px;
+  max-width: 22px;
 }
 img.phd_hex {
-  max-width: 100px;
+  max-width: 22px;
 }
 
 /* reduce margin in text boxes on welcome page */
@@ -37,6 +37,9 @@ img.phd_hex {
 
 /* increase font size in text boxes on welcome page */
 #intro_what_box p {
+  font-size: medium;
+}
+#intro_what_box ul {
   font-size: medium;
 }
 #intro_data_box p {

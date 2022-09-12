@@ -74,7 +74,7 @@ ui <- dashboardPage(
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-users"),
-                             tags$p("Learn More About Students at Bren")
+                             tags$p("Learn About Students at the Bren School")
                            ), # EO span
                   ), # EO div
                 width = NULL,
@@ -101,7 +101,7 @@ ui <- dashboardPage(
         ), # EO FR first row
         
         # * footer----
-        hr(),
+        #hr(),
         includeHTML("text/footer.html")
         #print("This Shiny application was developed by MEDS 2022 Alum, Halina Do-Linh, and will be updated annually. You can find the source code on GitHub. If you see mistakes or want to suggest changes, please submit an issue on the source repository.")
         ), # EO curr yr tabItem
