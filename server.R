@@ -1539,7 +1539,7 @@ server <- function(input, output, session){
     print(paste0("Y INFO: ", background_click()$y))
 
     # validate plotly click
-    validate(need(!is.null(background_click()), "Click a bar in the IPEDS Categories and Distribution plot to see the background distribution of the selected racial category"))
+    validate(need(!is.null(background_click()), "Click a bar in the IPEDS Categories and Distribution plot to see the background distribution of the selected racial category. If nothing appears after clicking, try refreshing the page."))
 
     # empty vars
     race_num <- NULL
