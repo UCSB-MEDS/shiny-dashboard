@@ -1253,13 +1253,14 @@ server <- function(input, output, session){
                                                     "international"),
                               labels = c("CA Resident",
                                          "Nonresident",
-                                         "International")))
+                                         "International"))) 
+  # EO residency data wrangling
   
   ## PLOTTING ##
   output$residency_all <- renderPlotly({
     residency_all <- ggplot(data = residency_stats,
                             aes(x = ay_year,
-                                y = percent,
+                                y = percent, 
                                 fill = reorder(residency, percent),
                                 text = paste0(residency, " (", percent, "%", ")", "\n",
                                               "Sample size: ", size)
@@ -1287,7 +1288,6 @@ server <- function(input, output, session){
                                            "autoScale2d", 
                                            "hoverClosestCartesian", 
                                            "hoverCompareCartesian"))
-    
   }) # EO residency plotly
   
   
@@ -1300,7 +1300,7 @@ server <- function(input, output, session){
            ug1_name) %>%
     filter(str_detect(ug1_location, "US - ") == FALSE) %>% 
     mutate(ug1_location = case_when(
-      ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "Republic of Korea",
+      ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "South Korea",
       ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
       ug1_location == "District Of Columbia" ~ "District of Columbia",
       TRUE ~ ug1_location
@@ -1331,6 +1331,7 @@ server <- function(input, output, session){
       ug1_name %in% c("TSINGHUA UNIV", "TSINGHUA UNIVERSITY") ~ "Tsinghua University",
       ug1_name == "UNIV AUTONOMA DE BAJA CALIFORNIA" ~ "Autonomous University of Baja California",
       ug1_name == "UNIV DE SAO PAULO" ~ "University of São Paulo",
+      ug1_name == "University of Sao Paulo - Sao Carlos" ~ "University of São Paulo at São Carlos School of Engineering",
       ug1_name == "UNIV DEL PACIFICO" ~ "Universidad del Pacífico",
       ug1_name == "UNIV DEL SALVADOR" ~ "Universidad de El Salvador",
       ug1_name == "UNIV LAS PALMAS DE GRAN CANARIA" ~ "Universidad de Las Palmas de Gran Canaria",
@@ -1345,6 +1346,15 @@ server <- function(input, output, session){
       ug1_name == "UNIVERSITY OF BELIZE" ~ "University of Belize",
       ug1_name == "UNIVERSITY OF HONG KONG" ~ "University of Hong Kong",
       ug1_name == "WUHAN UNIVERSITY" ~ "Wuhan University",
+      ug1_name == "UNIV FEDERAL DE SANTA MARIA" ~ "Federal University of Santa Maria",
+      ug1_name == "AMERICAN UNIVERSITY OF PARIS" ~ "American University of Paris",
+      ug1_name == "ITM UNIV- GURGAON" ~ "NorthCap University",
+      ug1_name == "U MUMBAI" ~ "University of Mumbai",
+      ug1_name == "VISVESVARAYA NATL INST TECHLGY" ~ "Visvesvaraya National Institute of Technology",
+      ug1_name == "UNIV IBEROAMERICANA" ~ "Universidad Iberoamericana Ciudad de México",
+      ug1_name == "UNIV PHILIPPINES" ~ "University of the Philippines",
+      ug1_name == "UNIVERSITY OF SAINT ANDREWS" ~ "University of St Andrews",
+      ug1_name == "MAKERERE UNIV" ~ "Makerere University",
       TRUE ~ ug1_name
     )) %>% 
     group_by(ug1_location,
