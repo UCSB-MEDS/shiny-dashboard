@@ -211,7 +211,7 @@ ui <- dashboardPage(
           ## * definitions ----
           box(id = "ipeds_def",
               width = 12,
-              title = "Race and Ethnicity Reporting Defintions",
+              title = "Race and Background Reporting Defintions",
               collapsible = TRUE,
               collapsed = TRUE,
               span(
@@ -355,15 +355,76 @@ ui <- dashboardPage(
               ), # EO column 1
               
               column(8,
-                     # ** info box ----
-                     box(
-                       title = "Initial Employers and Sectors (Over 3 Years)",
-                       width = 12,
-                       solidHeader = TRUE,
-                       status = "navy",
-                       DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
-                         withSpinner(color = "#003660", type = 1)
-                     ) # EO employers and sectors box
+                     # ** career plots ----
+                     tabBox(width = 12,
+                            
+                            tabPanel("Placement Status",
+                                     plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
+                                       withSpinner(color = "#003660", type = 1)
+                            ), # EO tabPanel placement status in box 2
+                            
+                            tabPanel("Job Source",
+                                     plotly::plotlyOutput(outputId = "mesm_job_source") %>%
+                                       withSpinner(color = "#003660", type = 1)
+                            ), # EO tabPanel placement source in box 2
+                            
+                            tabPanel("Sector Trends",
+                                     plotly::plotlyOutput(outputId = "sector_trends") %>% 
+                                       withSpinner(color = "#003660", type = 1),
+                                     tags$p(class = "italic_sector",
+                                            "Private = Consulting and Corporate | 
+                                           Public = Federal, Local & State Government & Research/Education | 
+                                           Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
+                                           Eco-Entrepreneurship & New Business")
+                            ), # EO tabPanel sector over time
+                            
+                            tabPanel("Sector Satisfaction",
+                                     plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
+                                       withSpinner(color = "#003660", type = 1),
+                                     radioButtons(inputId = "sector_types",
+                                                  label = NULL,
+                                                  choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
+                                                              "Federal Government", "Foreign Government", 
+                                                              "Local Government", "Non-Profit", 
+                                                              "Research/Education", "State Government"),
+                                                  selected = "Consulting",
+                                                  inline = TRUE)
+                            ), # EO tabPanel placement sector satisfaction in box 2
+                            
+                            tabPanel("Salary",
+                                     plotlyOutput(outputId = "compensation"),
+                                     tags$p(class = "italic_sector",
+                                            "Data includes Full-Time Career positions only."),
+                                     radioButtons(inputId = "compensation_year",
+                                                  label = NULL,
+                                                  choices = c(2019, 2020, 2021, "All Years"),
+                                                  selected = "All Years",
+                                                  inline = TRUE)
+                            ), # EO tabPanel compensation in box 2
+                            
+                            tabPanel("Salary by Sector",
+                                     plotlyOutput(outputId = "comp_sector"),
+                                     tags$p(class = "italic_sector",
+                                            "Data includes Full-Time Career positions only."),
+                                     radioButtons(inputId = "compSector_year",
+                                                  label = NULL,
+                                                  choices = c(2019, 2020, 2021, "All Years"),
+                                                  selected = "All Years",
+                                                  inline = TRUE)
+                            ), # EO tabPanel compensation sector in box 2
+                            
+                            tabPanel("Salary by Specialization",
+                                     plotlyOutput(outputId = "comp_specialization"),
+                                     tags$p(class = "italic_sector",
+                                            "Data includes Full-Time Career positions only."),
+                                     radioButtons(inputId = "compSpecialization_year",
+                                                  label = NULL,
+                                                  choices = c(2019, 2020, 2021, "All Years"),
+                                                  selected = "All Years",
+                                                  inline = TRUE)
+                            ) # EO tabPanel compensation specialization in box 2
+                     ) # EO tabBox career second plot
+
               ) # EO column 2
               
             ), # EO FR first row
@@ -389,84 +450,26 @@ ui <- dashboardPage(
                      ) # EO tabPanel bar plot location of MESM alumni
               ), # EO tabBox employers map / info
               
-              # ** career plots ----
-              tabBox(width = 6,
-                     tabPanel("Placement Status",
-                              plotly::plotlyOutput(outputId = "mesm_placement_status") %>%
-                                withSpinner(color = "#003660", type = 1)
-                     ), # EO tabPanel placement status in box 2
-                     
-                     tabPanel("Job Source",
-                              plotly::plotlyOutput(outputId = "mesm_job_source") %>%
-                                withSpinner(color = "#003660", type = 1)
-                     ), # EO tabPanel placement source in box 2
-                     
-                     tabPanel("Sector Trends",
-                              plotly::plotlyOutput(outputId = "sector_trends") %>% 
-                                withSpinner(color = "#003660", type = 1),
-                              tags$p(class = "italic_sector",
-                                     "Private = Consulting and Corporate | 
-                                           Public = Federal, Local & State Government & Research/Education | 
-                                           Non-Profit = Non-Profit & NGO | Other = Foreign Government, 
-                                           Eco-Entrepreneurship & New Business")
-                     ), # EO tabPanel sector over time
-                     
-                     tabPanel("Sector Satisfaction",
-                              plotly::plotlyOutput(outputId = "sector_satisfaction") %>%
-                                withSpinner(color = "#003660", type = 1),
-                              radioButtons(inputId = "sector_types",
-                                           label = NULL,
-                                           choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
-                                                       "Federal Government", "Foreign Government", 
-                                                       "Local Government", "Non-Profit", 
-                                                       "Research/Education", "State Government"),
-                                           selected = "Consulting",
-                                           inline = TRUE)
-                     ), # EO tabPanel placement sector satisfaction in box 2
-                     
-                     tabPanel("Salary",
-                              plotlyOutput(outputId = "compensation"),
-                              tags$p(class = "italic_sector",
-                                     "Data includes Full-Time Career positions only."),
-                              radioButtons(inputId = "compensation_year",
-                                           label = NULL,
-                                           choices = c(2019, 2020, 2021, "All Years"),
-                                           selected = "All Years",
-                                           inline = TRUE)
-                     ), # EO tabPanel compensation in box 2
-                     
-                     tabPanel("Salary by Sector",
-                              plotlyOutput(outputId = "comp_sector"),
-                              tags$p(class = "italic_sector",
-                                     "Data includes Full-Time Career positions only."),
-                              radioButtons(inputId = "compSector_year",
-                                           label = NULL,
-                                           choices = c(2019, 2020, 2021, "All Years"),
-                                           selected = "All Years",
-                                           inline = TRUE)
-                     ), # EO tabPanel compensation sector in box 2
-                     
-                     tabPanel("Salary by Specialization",
-                              plotlyOutput(outputId = "comp_specialization"),
-                              tags$p(class = "italic_sector",
-                                     "Data includes Full-Time Career positions only."),
-                              radioButtons(inputId = "compSpecialization_year",
-                                           label = NULL,
-                                           choices = c(2019, 2020, 2021, "All Years"),
-                                           selected = "All Years",
-                                           inline = TRUE)
-                     ) # EO tabPanel compensation specialization in box 2
-              ) # EO tabBox career second plot
-              
-            )# EO FR second row
+              # ** employers & sectors tbl ----
+              box(
+                title = "Initial Employers and Sectors (Over 3 Years)",
+                width = 6,
+                solidHeader = TRUE,
+                status = "navy",
+                DT::dataTableOutput(outputId = "career_employ_sector_tbl") %>%
+                  withSpinner(color = "#003660", type = 1)
+              ) # EO employers and sectors box
+            ) # EO FR second row
           ), # EO tabPanel MESM
           
           # * MEDS tabPanel ----
           tabPanel(
+            id = "meds_career_tab",
             title = "MEDS Initial Career Placements",
-            "Data for MEDS 2022 will be added in January/February of 2023.
-                If you have any immediate questions please reach out to
-                bren-admissions@ucsb.edu."
+            tags$p(class = "meds_career_update_text",
+                   "Data for MEDS 2022 will be added in January/February of 2023.
+                   If you have any immediate questions please reach out to 
+                   admissions@bren.ucsb.edu.")
           ) # EO tabPanel MEDS
           
         ) # EO tabsetPanel career_db

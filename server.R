@@ -135,7 +135,7 @@ server <- function(input, output, session){
       class = "cell-border stripe",
       rownames = FALSE,
       options = list(
-        pageLength = 10,
+        pageLength = 8,
         dom = 'Bftipr'
       ) # EO options
       
