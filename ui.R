@@ -144,7 +144,7 @@ ui <- dashboardPage(
                                   width = 4), 
                    valueBoxOutput(outputId = "mesm_curr_size",
                                   width = 4),
-                   valueBoxOutput(outputId = "PhD_curr_size",
+                   valueBoxOutput(outputId = "phd_curr_size",
                                   width = 4)
                  ), # EO FR 1 in column 2
                  fluidRow(
@@ -177,7 +177,7 @@ ui <- dashboardPage(
                           ), # EO tabPanel previous admissions
                           ## * gender ----
                           tabPanel("Sex",
-                                   plotly::plotlyOutput(outputId = "gender_all") %>%
+                                   plotly::plotlyOutput(outputId = "sex_all") %>%
                                      withSpinner(color = "#003660", type = 1)
                           ), # EO gender tabPanel
                           ## * age ----
