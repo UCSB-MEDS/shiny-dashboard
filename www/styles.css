@@ -187,22 +187,13 @@ img.phd_hex {
   border-top-color: #07528c;
 }
 
-/* top border color for boxes with tabpanels 
-.box-body .tabbable .nav.nav-tabs.shiny-tab-input.shiny-bound-input li {
-  border-top-color: #74a1c4;
-  border-top-width: medium;
-}*/
-/* top border color for boxes with tabpanels when tab is selected 
-.box-body .tabbable .nav.nav-tabs.shiny-tab-input.shiny-bound-input li.active {
-  border-top-color: #07528c;
-  border-top-width: medium;
-}*/
-
-#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li {
+/* top border color for boxes with tabpanels */
+#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li a {
   border-top-color: #74a1c4;
   border-top-width: medium;
 }
-#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li {
+/* top border color for boxes with tabpanels when tab is selected */
+#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li.active a {
   border-top-color: #07528c;
   border-top-width: medium;
 }
