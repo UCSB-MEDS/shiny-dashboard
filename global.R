@@ -12,7 +12,6 @@ library(sf)
 library(plotly)
 library(shinycssloaders) # loading icon
 library(fontawesome) # icons
-library(giscoR) # get world country polygons
 
 
 # IMPORT DATA ----
