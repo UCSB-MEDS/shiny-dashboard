@@ -34,7 +34,7 @@ The [Bren Dashboard](https://shinyapps.bren.ucsb.edu/dashboard/) is an interacti
     ├── ui.R                          # layout and appearance of app
     ├── shiny-dashboard.Rproj
     ├── .DS_store                     
-    ├── .gitignore                    # files to ignore when committig project  
+    ├── .gitignore                    # files to ignore when committing project  
     └── README.md
 
 ## Contributors
