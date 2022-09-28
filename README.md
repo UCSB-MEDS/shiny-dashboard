@@ -1,7 +1,7 @@
-# R Shiny [Bren Dashboard App](https://shinyapps.bren.ucsb.edu/dashboard/)
+# R Shiny [Bren Student Data Exporer](https://shinyapps.bren.ucsb.edu/dashboard/)
 
 ## Purpose
-The [Bren Dashboard](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactive application that showcases the Bren School admissions and career outcomes data of current students and recent alumni. It was developed with the intention of supporting:
+The [Data Explorer](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactive dashboard that showcases the Bren School admissions and career outcomes data of current students and recent alumni. It was developed with the intention of supporting:
 
 * Prospective students in their decision-making as they explore the different degree programs at the Bren School
 * Bren departments and staff with their reporting requirements
