@@ -6,7 +6,7 @@ ui <- dashboardPage(
                     span(tags$a(img(src = "logos/bren_hex.png"),
                                          href = "https://bren.ucsb.edu/",
                                          target = "_blank"), # _blank opens link in a new tab
-                                  "Bren Dashboard"
+                                  "Bren Student Data Explorer"
                          ) # EO span
                   ), # EO dashboardHeader title
 
@@ -27,7 +27,7 @@ ui <- dashboardPage(
       # student demographics ----
       menuItem(
         tabName = "demo_db",
-        text = "Student Demographics",
+        text = "Demographics",
         icon = icon("user", lib = "glyphicon")
       ), # EO student demographics menuItem
       
@@ -61,9 +61,9 @@ ui <- dashboardPage(
       # tabs welcome ----
       tabItem(
         tabName = "welcome",
-        #h2("Welcome to the Bren Dashboard!"),
+        #h2("Welcome to the Bren Student Data Explorer!"),
         tags$img(class = "banner",
-                 src = "images/bren-banner.jpeg"),
+                 src = "images/Bren-hi-res.jpg"),
         
         
         # * intro text ----
@@ -74,7 +74,7 @@ ui <- dashboardPage(
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-users"),
-                             tags$p("Learn About Students at the Bren School")
+                             tags$p("Learn about students at the Bren School")
                            ), # EO span
                   ), # EO div
                 width = NULL,
@@ -89,7 +89,7 @@ ui <- dashboardPage(
                   tags$div(class = "intro_box_title",
                            span(
                              tags$i(class="fa-solid fa-database"),
-                             tags$p("About the Data and the App")
+                             tags$p("About the data")
                            ), # EO span
                   ), # EO div
                 width = NULL,

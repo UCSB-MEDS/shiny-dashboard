@@ -1,4 +1,4 @@
-Learn more about the students of the <a href="https://bren.ucsb.edu/" target="_blank">Bren School of Environmental Science & Management's</a> graduate programs: 
+The <a href="https://bren.ucsb.edu/" target="_blank">Bren School of Environmental Science & Management</a> has three graduate programs: 
 
  <a href="https://bren.ucsb.edu/masters-programs/master-environmental-data-science" target="_blank"> <img class="meds_hex" src="logos/bren_meds_hex.png" alt="MEDS hex in blue-green"> Master of Environmental Data Science (MEDS)</a>
  
