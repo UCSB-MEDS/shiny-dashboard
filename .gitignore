@@ -24,8 +24,8 @@
 *data/
 
 # image files
-*images/
-*logos/
+#*images/
+#*logos/
 
 # produced vignettes
 vignettes/*.html
