@@ -1,306 +1,43 @@
-# server instructions
+####  server  #### 
+
 server <- function(input, output, session){
 
-  # WELCOME / LANDING PAGE -----
+#..................career tabPanel (career_db)...................
   
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ MESM valueBoxes  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  # CAREER DB ----
+  # MESM placement percentage valueBox ----
+  output$placement_stat <- employmentStatus_stat_valueBox(input)
   
-  ## SO career valuebox stats ----
-  ## * placement status stat ----
+  # MESM bren network stat valueBox ----
+  output$brenNet_stat <- brenNet_stat_valueBox(input)
   
-  ## DATA WRANGLING ##
-  # status df for valuebox stat
-  status_stat <- mesm_status %>% 
-    select(mesm_class_year,
-           member_status) %>% 
-    # assign placement status label
-    mutate(status = case_when(
-      member_status %in% c("FT Career",
-                           "FT Temporary Career",
-                           "PT Temporary Career",
-                           "FT Career-Sponsored",
-                           "PT Career",
-                           "FT Career-Sponsored") ~ "Career",
-      member_status %in% c("Time Off",
-                           "Searching") ~ "Searching or Time Off",
-      member_status %in% c("FT New Business",
-                           "FT Eco-E") ~ "New Business",
-      member_status %in% c("Internship/Fellowship",
-                           "Continuing Internship",
-                           "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
-      TRUE ~ member_status
-    )) %>% 
-    # assign placed vs not placed
-    mutate(placed = case_when(
-      status == "Searching or Time Off" ~ "Not Placed",
-      TRUE ~ "Placed"
-    )) %>% 
-    # calculate totals
-    group_by(placed) %>% 
-    summarize(count = n()) %>% 
-    # calculate percentage
-    # used tot mesm_responses (79+74+82)
-    mutate(percent = round((count / 235) * 100)) %>% 
-    filter(placed == "Placed")
+  # MESM satisfaction initial placement stat ----
+  output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input)
+
+  ##~~~~~~~~~~~~~~~~~~~~
+  ##  ~ MESM table  ----
+  ##~~~~~~~~~~~~~~~~~~~~
   
-  ## VALUEBOX ##
-  output$placement_stat <- renderValueBox({
+  # MESM initial employers & sectors table ----
+  output$career_employ_sector_tbl <- initialEmployers_table(input)
+  
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ MESM geography tabBox  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  # MESM domestic placement map ----
+  output$car_alumniMap <- domesticPlacement_map(input)
+  
+  # MESM international placement table ----
+  output$international_place <- internationalPlacement_table(input)
     
-    shinydashboard::valueBox(
-      "of graduates were employed 6 months after graduation",
-      value = paste0(status_stat$percent, "%"),
-      icon = icon("house"),
-      color = "green"
-    ) # EO valueBox
-  }) # EO MESM valueBox prog size
+  # MESM geographic comparison plot ----
+  output$mesm_location <- geographicComparison_plot(input)
   
-  ## * bren network stat ----
-  ## DATA WRANGLING ##
-  mesm_brenNet <- mesm_placement %>% 
-    group_by(job_source) %>% 
-    summarize(count = n()) %>% 
-    # calculate percentages
-    # total responses (196)
-    mutate(percent = round((count / 196) * 100)) %>% 
-    filter(job_source == "Bren School Network")
-  
-  ## VALUEBOX ##
-  output$brenNet_stat <- renderValueBox({
-    
-    valueBox(
-      "of graduates found their jobs through the Bren School Network",
-      value = paste0(mesm_brenNet$percent, "%"),
-      icon = icon("briefcase"),
-      color = "blue"
-    ) # EO valueBox
-  }) # EO MESM bren network stat
-  
-  
-  ## * MESM satisfaction initial placement stat ----
-  ## DATA WRANGLING ##
-  mesm_satisfaction_stat <- mesm_placement %>% 
-    group_by(placement_satisfaction) %>% 
-    summarize(count = n()) %>% 
-    # calculate percentages
-    # total responses (196)
-    mutate(percent = round((count / 196) * 100)) %>% 
-    filter(placement_satisfaction %in% c("Satisfied", "Very Satisfied"))
-  
-  # isolate just satisfied percent
-  satisfied_num <- mesm_satisfaction_stat %>% filter(placement_satisfaction == "Satisfied") %>% 
-    select(percent)
-  # isolate just very satisfied percent
-  verySatisfied_num <- mesm_satisfaction_stat %>% filter(placement_satisfaction == "Very Satisfied") %>% 
-    select(percent)
-  # add percentages together for valueBox
-  total_satisfied <- satisfied_num$percent + verySatisfied_num$percent
-  
-  ## VALUEBOX ##
-  output$mesm_satisfied_stat <- renderValueBox({
-    
-    valueBox("of graduates ranked being “satisfied” or “very satisfied” with their initial job placement",
-             value = paste0(total_satisfied, "%"),
-             icon = icon("heart"),
-             color = "light-blue"
-    ) # EO valueBox overall satisfaction stat
-  }) # EO MESM satisfaction initial placement stat
-  
-  
-  
-  
-  ## SO career placements table  ----
-  ## DATA WRANGLING ##
-  employer <- mesm_placement %>% 
-    select(c(employer_account_name,
-             employer_sector)) %>%
-    mutate(employer_account_name = case_when(
-      employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
-      employer_account_name == "Clean, Renewable and Environmental Opportunities (CREO)CREO" ~ "Clean, Renewable and Environmental Opportunities (CREO)",
-      employer_account_name == "Environmental Incentives. LLC" ~ "Environmental Incentives, LLC",
-      TRUE ~ employer_account_name
-    )) %>% 
-    mutate(employer_account_name = str_replace_all(employer_account_name, "Formerly", "formerly")) %>% 
-    group_by(employer_account_name,
-             employer_sector) %>% 
-    summarize(freq = n())
-  
-  ## TABLE ##
-  output$career_employ_sector_tbl <- DT::renderDataTable({
-    DT::datatable(
-      employer,
-      colnames = c("Employer", "Sector", "# of alumni"),
-      # caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
-      #                                   htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
-      class = "cell-border stripe",
-      rownames = FALSE,
-      options = list(
-        pageLength = 8,
-        dom = 'Bftipr'
-      ) # EO options
-      
-    ) # EO datatable
-  }) # EO renderDataTable
-  
-  ## SO mesm location ----
-  ## DATA WRANGLING ##
-  # ca / out of state / international
-  us_names <- c("USA", "US", "Usa")
-  ca_names <- c("Ca", "CALIFORNIA")
-  
-  placement_location <- mesm_placement %>% 
-    select(c(
-      employer_account_name,
-      work_location_city,
-      mesm_class_year,
-      work_location_state,
-      work_location_country
-    )) %>% 
-    # standardize state abbreviation values
-    mutate(work_location_state = case_when(
-      work_location_state %in% ca_names ~ "CA",
-      work_location_state == "Maryland" ~ "MD",
-      work_location_state == "Washington" ~ "WA",
-      work_location_state == "District of Columbia" ~ "DC",
-      work_location_state == "N/A" ~ NA_character_, 
-      work_location_state == "michoacan" ~ "Michoacan",
-      # specifically assign correct work location state
-      work_location_city == "Washington DC" ~ "DC",
-      work_location_city == "Oxnard" ~ "CA",
-      work_location_city == "Santa Cruz" ~ "CA",
-      work_location_city == "Fort Collins" ~ "CO",
-      work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
-      TRUE ~ work_location_state
-    )) %>% 
-    # standardize united states values
-    mutate(work_location_country = case_when(
-      work_location_country %in% us_names ~ "United States",
-      # specificallly assign correct country values
-      work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
-      work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
-      TRUE ~ work_location_country
-    )) %>% 
-    # assign ca / out of state / international
-    mutate(location = case_when(
-      work_location_state == "CA" ~ "Domestic (California)",
-      work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
-      work_location_country != "United States" ~ "International"
-    )) %>% 
-    group_by(mesm_class_year,
-             location) %>%
-    summarize(location_count = n())
-  
-  # calculating percentages
-  placement_location_stats <- placement_location %>% 
-    left_join(placement_size, by = "mesm_class_year") %>%
-    mutate(percent = round((location_count / mesm_responses) * 100, 1))
-  
-  ## PLOTTING ##
-  output$mesm_location <- plotly::renderPlotly({
-    # ggplot
-    location_gg <- ggplot(data = placement_location_stats,
-                          aes(x = mesm_class_year,
-                              y = percent,
-                              fill = reorder(location, percent),
-                              text = paste0(location, " (", percent, "%", ")", 
-                                            "\n",
-                                            "Number of respondents: ", mesm_responses)
-                              )) +
-      geom_bar(position = "dodge",
-               stat = "identity") +
-      scale_x_continuous(breaks = seq(min(placement_location_stats$mesm_class_year),
-                                      max(placement_location_stats$mesm_class_year))) +
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-      theme_minimal() +
-      theme(panel.grid.minor = element_blank()) +
-      labs(title = "Where MESM alumni are working 6 months after graduating",
-           x = NULL,
-           y = "Percent of Respondents",
-           fill = NULL) +
-      scale_fill_manual(values = c("Domestic (California)" = "#9cbebe",
-                                   "Domestic (Out of State)" = "#003660",
-                                   "International" = "#dcd6cc"))
-    
-    # plotly
-    plotly::ggplotly(location_gg, tooltip = "text") %>%
-      layout(legend = list(orientation = "h",
-                           y = -0.1),
-             title = list(font = list(size = 15.5))) %>% 
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select",
-                                           "lasso2d",
-                                           "autoScale2d",
-                                           "hoverClosestCartesian",
-                                           "hoverCompareCartesian"))
-    
-  }) # EO mesm location
-  
-  ## SO mesm map ----
-  ## DATA WRANGLING ##
-  # domestic map polygons
-  mesm_domestic <- mesm_map %>% 
-    filter(work_location_country == "United States") %>% 
-    select(-c(lat, long)) %>% 
-    left_join(us_state_geoms, by = c("work_location_state" = "state_abbrev")) %>% 
-    select(-c(fips, work_location_state)) %>% 
-    st_as_sf() %>% 
-    st_transform(crs = 4326)
-  
-  mesm_domestic_stats <- mesm_domestic %>% 
-    group_by(state) %>% 
-    summarize(count = n()) %>% 
-    mutate(state = paste0(state, " (", count, ")"))
-  
-  ## PLOTTING MAP ##
-  output$car_alumniMap <- tmap::renderTmap({ 
-    
-    tmap_mode("view")
-    
-    tm_shape(mesm_domestic_stats) +
-      tm_tiles(leaflet::providers$CartoDB.PositronNoLabels) +
-      tm_polygons(
-        col = "count",
-        style = "jenks",
-        n = 4,
-        palette = "YlGn",
-        popup.vars = c("Number of alumni: " = "count"),
-        legend.show = FALSE
-      ) +
-      tm_view(set.view = c(-117, 37, 3)) # long, lat, zoom
-    
-  }) # EO alumni map
-  
-  
-  ## SO international placements table ----
-  ## DATA WRANGLING ##
-  international_tbl <- mesm_placement %>% 
-    filter(!work_location_country %in% c("US", "Usa", "USA", "United States"),
-           !is.na(work_location_country)) %>% 
-    mutate(employer_account_name = case_when(
-      employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
-      TRUE ~ employer_account_name
-    )) %>% 
-    group_by(employer_account_name,
-             employer_sector,
-             work_location_country) %>% 
-    summarize(count = n())
-  
-  ## TABLE ##
-  output$international_place <- DT::renderDataTable({
-    DT::datatable(
-      international_tbl,
-      colnames = c("Employer", "Sector", "Location", "# of alumni"),
-      # caption = htmltools::tags$caption(style = "caption-side: top; text-align: left",
-      #                                   htmltools::em("Bren MESM Alumni Employers and Sectors since 2019")),
-      class = "cell-border stripe",
-      rownames = FALSE,
-      options = list(
-        pageLength = 9,
-        dom = 'Btipr'
-      ) # EO options
-    ) # EO datatable
-  
-  }) # EO renderDataTable
+
   
   ## SO job source ----
   ## DATA WRANGLING ##
@@ -1715,4 +1452,4 @@ server <- function(input, output, session){
     
   }) # EO urm trends plotly
   
-} # EO server
+} # END server
