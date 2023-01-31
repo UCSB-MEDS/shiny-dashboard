@@ -33,10 +33,6 @@ body <- dashboardBody(
   # call shinyjs; Note(HD): initially added to use hidden() ----
   useShinyjs(),
   
-  ###########################################################
-  #### THREE tabItems below: welcome, demo_db, career_db ####
-  ###########################################################
-  
   # tabItems ----
   tabItems(
     
@@ -56,7 +52,7 @@ body <- dashboardBody(
                      
                      # intro box ----
                      box(width = NULL, id = "intro_what_box",
-                         title = tags$div(class = "intro_box_title", span(tags$i(class="fa-solid fa-users"), tags$p("Learn about students at the Bren School"))), 
+                         title = tagList(icon("users"), "Learn about students at the Bren School"),
                          solidHeader = TRUE, status = "navy",
                          includeMarkdown("text/welcome_what_text.md")) # END intro box
                      
@@ -67,7 +63,7 @@ body <- dashboardBody(
                      
                      # about the data box ----
                      box(width = NULL, id = "intro_data_box",
-                         title = tags$div(class = "intro_box_title", span(tags$i(class="fa-solid fa-database"), tags$p("About the data"))), 
+                         title = tagList(icon("database"), "About the data"),
                          solidHeader = TRUE, status = "navy",
                          includeMarkdown("text/welcome_data_text.html")) # END about the data box 
                      
@@ -135,10 +131,7 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "overall_diversity") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       radioButtons(inputId = "diversity_stats_all", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD"),
-                                                    selected = "MESM",
-                                                    inline = TRUE), 
+                                       program_radioButtons(inputId = "diversity_stats_all", selected = "MESM"),
                                        
                                        # urm definition caption ----
                                        includeMarkdown("text/urm_definition.md")
@@ -152,10 +145,7 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "admit_stats_all") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       radioButtons(inputId = "admit_stats_all", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD"),
-                                                    selected = "MESM",
-                                                    inline = TRUE)
+                                       program_radioButtons(inputId = "admit_stats_all", selected = "MESM")
                                        
                               ), # END (TAB 2) admissions tabPanel
                               
@@ -174,11 +164,8 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "age_all") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ---
-                                       radioButtons(inputId = "age_prog", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD"),
-                                                    selected = "MESM",
-                                                    inline = TRUE)
-                                       
+                                       program_radioButtons(inputId = "age_prog", selected = "MESM")
+                                      
                               ), # END (TAB 4) age tabPanel
                               
                               # (TAB 5) residency tabPanel ----
@@ -233,11 +220,8 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "urm_trends_pltly") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButton input ----
-                                       radioButtons(inputId = "urm_trends", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD", "All Programs"),
-                                                    selected = "All Programs",
-                                                    inline = TRUE),
-                                       
+                                       program_radioButtons(inputId = "urm_trends", selected = "All Programs", include_all = TRUE),
+                                      
                                        # urm definition caption ----
                                        includeMarkdown("text/urm_definition.md")
                                        
@@ -250,10 +234,7 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "race_trends_pltly") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       radioButtons(inputId = "race_trends", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD", "All Programs"),
-                                                    selected = "All Programs",
-                                                    inline = TRUE),
+                                       program_radioButtons(inputId = "race_trends", selected = "All Programs", include_all = TRUE),
                                        
                                        # IPEDS definition caption ----
                                        includeMarkdown("text/ipeds_definition.md")
@@ -267,10 +248,7 @@ body <- dashboardBody(
                                        plotly::plotlyOutput(outputId = "race_pltly") |> withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       radioButtons(inputId = "race", label = NULL,
-                                                    choices = c("MEDS", "MESM", "PhD", "All Programs"),
-                                                    selected = "All Programs",
-                                                    inline = TRUE)
+                                       program_radioButtons(inputId = "race", selected = "All Programs", include_all = TRUE)
                                        
                               ) # END (TAB 3) IPEDS tabPanel
                               
