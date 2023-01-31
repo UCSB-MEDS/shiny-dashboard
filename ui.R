@@ -1,5 +1,4 @@
-# shiny dashboard has three main components:
-# header, sidebar, body
+#### user interface ####
 
 #.............................header.............................
 header <- dashboardHeader(
@@ -227,7 +226,7 @@ body <- dashboardBody(
                   # race/category box tabsetPanel ----
                   tabsetPanel(id = "race_tabsetPanel",
                               
-                              # URM trends tabPanel -----
+                              # (TAB 1) URM trends tabPanel -----
                               tabPanel("URM Trends",
                                        
                                        # urm trends plotly output ----
@@ -242,9 +241,9 @@ body <- dashboardBody(
                                        # urm definition caption ----
                                        includeMarkdown("text/urm_definition.md")
                                        
-                              ), # END URM trends tabPanel
+                              ), # END (TAB 1) URM trends tabPanel
                               
-                              # IPEDS trends tabPanel ----
+                              # (TAB 2) IPEDS trends tabPanel ----
                               tabPanel(title = "Race / Category Trends (IPEDS)",
                                        
                                        # IPEDS trends plotly output
@@ -259,9 +258,9 @@ body <- dashboardBody(
                                        # IPEDS definition caption ----
                                        includeMarkdown("text/ipeds_definition.md")
                                        
-                              ), # END IPEDS trends tabPanel
+                              ), # END (TAB 2) IPEDS trends tabPanel
                               
-                              # IPEDS tabPanel ----
+                              # (TAB 3) IPEDS tabPanel ----
                               tabPanel(title = "Race / Category (IPEDS)",
                                        
                                        # IPEDS plotly output ----
@@ -273,7 +272,7 @@ body <- dashboardBody(
                                                     selected = "All Programs",
                                                     inline = TRUE)
                                        
-                              ) # END IPEDS tabPanel
+                              ) # END (TAB 3) IPEDS tabPanel
                               
                   ) # END race/category box tabsetPanel
                   
@@ -339,13 +338,17 @@ body <- dashboardBody(
                                           
                                           # fluidRow (valueBoxes 1) ----
                                           fluidRow(
+                                            
                                             valueBoxOutput(outputId = "brenNet_stat", width = 6),
                                             valueBoxOutput(outputId = "placement_stat", width = 6)
+                                            
                                           ), # END fluidRow (valuBoxes 1)
                                           
                                           # fluidRow (valueBoxes 2) ----
                                           fluidRow(
+                                            
                                             valueBoxOutput(outputId = "mesm_satisfied_stat", width = 12)
+                                            
                                           ) # END fluidRow (valueBoxes 2)
                                           
                                    ), # END left-hand column
@@ -353,115 +356,166 @@ body <- dashboardBody(
                                    # right-hand column ----
                                    column(width = 8,
                                           
-                                          # career data visualizations tabBox ----
+                                          # mesm career data visualizations tabBox ----
                                           tabBox(width = 12,
                                                  
-                                                 # placement status tabPanel ----
+                                                 # (TAB 1) mesm placement status tabPanel ----
                                                  tabPanel(title = "Placement Status",
-                                                          plotly::plotlyOutput(outputId = "mesm_placement_status") |> withSpinner(color = "#003660", type = 1)), 
+                                                          
+                                                          # mesm placement plotly output ----
+                                                          plotly::plotlyOutput(outputId = "mesm_placement_status") |> withSpinner(color = "#003660", type = 1)
+                                                          
+                                                          ), # END (TAB 1) mesm placement status tabPanel 
                                                  
-                                                 # job source tabPanel ----
+                                                 # (TAB 2) mesm job source tabPanel ----
                                                  tabPanel(title = "Job Source",
-                                                          plotly::plotlyOutput(outputId = "mesm_job_source") |> withSpinner(color = "#003660", type = 1)), 
+                                                          
+                                                          # mesm job source plotly output ---
+                                                          plotly::plotlyOutput(outputId = "mesm_job_source") |> withSpinner(color = "#003660", type = 1)
+                                                          
+                                                          ), # END (TAB 2) mesm job source tabPanel
                                                  
-                                                 # sector trends tabPanel ----
+                                                 # (TAB 3) mesm sector trends tabPanel ----
                                                  tabPanel(title = "Sector Trends",
+                                                          
+                                                          # mesm sector trends plotly output ----
                                                           plotly::plotlyOutput(outputId = "sector_trends") |> withSpinner(color = "#003660", type = 1),
-                                                          includeMarkdown("text/sector_definitions.md")),
+                                                          
+                                                          # sector definitions caption ----
+                                                          includeMarkdown("text/sector_definitions.md")
+                                                          
+                                                          ), # END (TAB 3) mesm sector trends tabPanel 
                                                  
-                                                 # sector satisfaction tabPanel -----
+                                                 # (TAB 4) mesm sector satisfaction tabPanel -----
                                                  tabPanel(title = "Sector Satisfaction",
+                                                          
+                                                          # mesm sector satisfaction plotly output ----
                                                           plotly::plotlyOutput(outputId = "sector_satisfaction") |> withSpinner(color = "#003660", type = 1),
+                                                          
+                                                          # sector type radioButtons input ----
                                                           radioButtons(inputId = "sector_types", label = NULL,
                                                                        choices = c("Consulting", "Corporate", "Eco-Entrepreneurship/New Business",
                                                                                    "Federal Government", "Foreign Government", 
                                                                                    "Local Government", "Non-Profit", 
                                                                                    "Research/Education", "State Government"),
                                                                        selected = "Consulting",
-                                                                       inline = TRUE)), 
+                                                                       inline = TRUE)
+                                                          
+                                                          ), # END (TAB 4) mesm sector satisfaction tabPanel 
                                                  
-                                                 # salary tabPanel ----
+                                                 # (TAB 5) mesm salary tabPanel ----
                                                  tabPanel(title = "Salary",
+                                                          
+                                                          # mesm salary plotly output ----
                                                           plotlyOutput(outputId = "compensation"),
+                                                          
+                                                          # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
-                                                          radioButtons(inputId = "compensation_year",
-                                                                       label = NULL,
+                                                          
+                                                          # year radioButtons input ----
+                                                          radioButtons(inputId = "compensation_year", label = NULL,
                                                                        choices = c(2019, 2020, 2021, "All Years"),
                                                                        selected = "All Years",
                                                                        inline = TRUE)
-                                                 ), # EO tabPanel compensation in box 2
+                                                          
+                                                 ), # END (TAB 5) mesm salary tabPanel 
                                                  
-                                                 # salary by sector tabPanel ----
+                                                 # (TAB 6) mesm salary by sector tabPanel ----
                                                  tabPanel(title = "Salary by Sector",
+                                                          
+                                                          # mesm salary by sector plotly output ----
                                                           plotlyOutput(outputId = "comp_sector"),
-                                                          tags$p(class = "italic_sector",
-                                                                 "Data includes Full-Time Career positions only."),
+                                                          
+                                                          # caption ----
+                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
+                                                          
+                                                          # year radioButtons input ----
                                                           radioButtons(inputId = "compSector_year", label = NULL,
                                                                        choices = c(2019, 2020, 2021, "All Years"),
                                                                        selected = "All Years",
                                                                        inline = TRUE)
-                                                 ), # EO tabPanel compensation sector in box 2
+                                                          
+                                                 ), # END (TAB 6) mesm salary by sector tabPanel 
                                                  
-                                                 # salary by specialization tabPanel ----
+                                                 # (TAB 7) mesm salary by specialization tabPanel ----
                                                  tabPanel(title = "Salary by Specialization",
+                                                          
+                                                          # mesm salary by specialization plotly output ----
                                                           plotlyOutput(outputId = "comp_specialization"),
-                                                          tags$p(class = "italic_sector",
-                                                                 "Data includes Full-Time Career positions only."),
+                                                          
+                                                          # caption ----
+                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
+                                                          
+                                                          # year radioButtons input ----
                                                           radioButtons(inputId = "compSpecialization_year", label = NULL,
                                                                        choices = c(2019, 2020, 2021, "All Years"),
                                                                        selected = "All Years",
                                                                        inline = TRUE)
-                                                 ) # EO tabPanel compensation specialization in box 2
-                                          ) # EO tabBox career second plot
+                                                          
+                                                 ) # END (TAB 7) mesm salary by specialization tabPanel 
+                                                 
+                                          ) # END mesm career data visualizations tabBox
                                           
-                                   ) # EO column 2
+                                   ) # END right-hand column
                                    
-                                 ), # EO FR first row
-                                 
-                                 
-                                 
+                                 ), # END fluidRow
+  
+                                 # fluidRow (contains location info & initial employers table) ----
                                  fluidRow(
-                                   # ** career maps ----
-                                   tabBox(width = 6,
-                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
-                                                   tmap::tmapOutput(outputId = "car_alumniMap") |> withSpinner(color = "#003660", type = 1)#,
-                                                   # tags$p(class = "italic_sector",
-                                                   #        "Click a state to see the number of alumni at each location.")
-                                          ), # EO tabPanel leaflet map
-                                          tabPanel(title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
-                                                   DT::dataTableOutput(outputId = "international_place") |> withSpinner(color = "#003660", type = 1)
-                                          ), # EO tabPanel international placements
-                                          tabPanel("Geographic Comparison",
-                                                   plotly::plotlyOutput(outputId = "mesm_location") |> withSpinner(color = "#003660", type = 1)
-                                          ) # EO tabPanel bar plot location of MESM alumni
-                                   ), # EO tabBox employers map / info
                                    
-                                   # ** employers & sectors tbl ----
+                                   # mesm career location tabBox ----
+                                   tabBox(width = 6,
+                                          
+                                          # (TAB 1) mesm domestic placement map tabPanel ----
+                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
+                                                   
+                                                   # mesm tmap output ----
+                                                   tmap::tmapOutput(outputId = "car_alumniMap") |> withSpinner(color = "#003660", type = 1)
+                                               
+                                          ), # END (TAB 1) mesm domestic placement map tabPanel
+                                          
+                                          # (TAB 2) mesm international placement tabPanel ----
+                                          tabPanel(title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
+                                                   
+                                                   # DT datatable output ----
+                                                   DT::dataTableOutput(outputId = "international_place") |> withSpinner(color = "#003660", type = 1)
+                                                   
+                                          ), # END (TAB 2) mesm international placement tabPanel
+                                          
+                                          # (TAB 3) mesm geographic comparison tabPanel ----
+                                          tabPanel("Geographic Comparison",
+                                                   
+                                                   # mesm geographic comparison plotly output ----
+                                                   plotly::plotlyOutput(outputId = "mesm_location") |> withSpinner(color = "#003660", type = 1)
+                                                   
+                                          ) # (TAB 3) mesm geographic comparison tabPanel
+                                          
+                                   ), # END mesm career location tabBox
+                                   
+                                   # employers & sectors tbl box ----
                                    box(width = 6,
                                        title = "Initial Employers and Sectors (Over 3 Years)",
                                        solidHeader = TRUE, status = "navy",
-                                       DT::dataTableOutput(outputId = "career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)
-                                   ) # EO employers and sectors box
-                                 ) # EO FR second row
+                                       DT::dataTableOutput(outputId = "career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
+                                   
+                                 ) # END fluidRow (contains location info & initial employers table) 
                                  
                         ), # END MESM career tabPanel
                         
-                        # * MEDS tabPanel ----
-                        tabPanel(
-                          id = "meds_career_tab",
+                        # MEDS tabPanel ----
+                        tabPanel(id = "meds_career_tab",
                           title = "MEDS Initial Career Placements",
                           tags$p(class = "meds_career_update_text",
-                                 "Data for MEDS 2022 will be added in January/February of 2023.
-                   If you have any immediate questions please reach out to 
-                   admissions@bren.ucsb.edu.")
-                        ) # EO tabPanel MEDS
+                                 "Data for MEDS 2022 will be added in January/February of 2023. If you have any immediate questions please reach out to admissions@bren.ucsb.edu.")
+                        ) # END tabPanel MEDS
                         
-            ) # EO tabsetPanel career_db
-    ) # EO tabItem career_db
+            ) # END tabsetPanel career_db
+            
+    ) # END tabItem career_db
     
-  ) # EO tabItems
+  ) # END tabItems
   
-) # EO dashboardBody
+) # END dashboardBody
 
 
 #.................combine all into dashboardPage.................
