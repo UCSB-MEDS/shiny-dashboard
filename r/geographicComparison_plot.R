@@ -82,7 +82,7 @@ geographicComparison_plot <- function(input) {
                                    "Domestic (Out of State)" = "#003660",
                                    "International" = "#dcd6cc"))
     
-    # conver to plotly
+    # convert to plotly
     plotly::ggplotly(location_gg, tooltip = "text") %>%
       layout(legend = list(orientation = "h",
                            y = -0.1),
