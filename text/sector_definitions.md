@@ -1,0 +1,1 @@
+*Private = Consulting and Corporate | Public = Federal, Local & State Government & Research/Education | Non-Profit = Non-Profit & NGO | Other = Foreign Government, Eco-Entrepreneurship & New Business*

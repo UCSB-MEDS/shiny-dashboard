@@ -12,7 +12,7 @@ library(sf)
 library(plotly)
 library(shinycssloaders) # loading icon
 library(fontawesome) # icons
-
+library(naniar)
 
 # IMPORT DATA ----
 admissions <- readRDS("data/admissions.rds")
