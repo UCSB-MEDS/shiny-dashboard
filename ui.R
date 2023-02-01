@@ -357,7 +357,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Trends",
                                                           
                                                           # mesm sector trends plotly output ----
-                                                          plotly::plotlyOutput(outputId = "sector_trends") |> withSpinner(color = "#003660", type = 1),
+                                                          plotly::plotlyOutput(outputId = "mesm_sector_trends") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # sector definitions caption ----
                                                           includeMarkdown("text/sector_definitions.md")
@@ -368,7 +368,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Satisfaction",
                                                           
                                                           # mesm sector satisfaction plotly output ----
-                                                          plotly::plotlyOutput(outputId = "sector_satisfaction") |> withSpinner(color = "#003660", type = 1),
+                                                          plotly::plotlyOutput(outputId = "mesm_sector_satisfaction") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # sector type radioButtons input ----
                                                           radioButtons(inputId = "sector_types", label = NULL,
@@ -385,7 +385,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # mesm salary plotly output ----
-                                                          plotlyOutput(outputId = "compensation"),
+                                                          plotlyOutput(outputId = "mesm_salary"),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -402,7 +402,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # mesm salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "comp_sector"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_sector"),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -419,7 +419,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Specialization",
                                                           
                                                           # mesm salary by specialization plotly output ----
-                                                          plotlyOutput(outputId = "comp_specialization"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_specialization"),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),

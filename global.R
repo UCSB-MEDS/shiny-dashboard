@@ -23,30 +23,24 @@ us_state_geoms <- readRDS("data/us_state_geoms.rds")
 mesm_placement <- readRDS("data/placement_data.rds")
 mesm_status <- readRDS("data/status_data.rds")
 
-# SOURCE FUNCTIONS ----
-# source("r/age_plot.R")
-# source("r/race_plot.R")
-# source("r/background-distribution.R")
-# source("r/urm_trends_plot.R")
-
 # STYLING ----
-mesm_color <- "#6D7D33" 
-meds_color <- "#047C91"
-phd_color <- "#005AA3"
+phd_color <- "#78A540"#6D7D33" 
+meds_color <- "#027D92" #"#047C91"
+mesm_color <- "#003660" #005AA3"
 all_programs_color <- "#09847a"
 
 # VARIABLES ----
-curr_year <- 2022
+curr_year <- 2022 # MANUALLY UPDATE ANNUALLY
 
 # DATA FRAMES ----
-# program sizes 2017-curr_year
-program_size <- enrolled %>% 
-  select(c("ay_year",
-           "application_id",
-           "objective1")) %>% 
-  group_by(ay_year,
-           objective1) %>% 
+# program sizes 2017-curr_year (used in *_programSize_valueBox() functions)
+program_size <- enrolled %>%
+  select(c("ay_year", "application_id", "objective1")) %>%
+  group_by(ay_year, objective1) %>%
   summarize(size = n())
+
+# program size for current year (used in *_programSize_valueBox() functions)
+program_size_curr_year <- program_size %>% filter(ay_year == curr_year)
 
 # 5 year total number of students per program
 tot_5yr <- enrolled %>% 
