@@ -73,21 +73,15 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
   
   # validate data in background_stats df
   validate(
-    need(nrow(background_stats()) > 0,
-         paste0("There are no data on ", race_str, " racial category for ", prog_input, " degree program."))
-  ) # EO validate
+    need(nrow(background_stats()) > 0, paste0("There are no data on ", race_str, " racial category for ", prog_input, " degree program."))
+  )
   
   
   ## PLOTTING ##
   background_gg <- ggplot(data = background_stats(),
-                          aes(x = background,
-                              y = percent,
-                              text = paste0(background, " (", percent, "%", ")", "\n",
-                                            "Sample size: ", size
-                              )
-                          )) +
-    geom_bar(stat = "identity",
-             fill = color) +
+                          aes(x = background, y = percent,
+                              text = paste0(background, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
+    geom_bar(stat = "identity", fill = color) +
     coord_flip() +
     scale_x_discrete(
       labels = function(x)
@@ -97,21 +91,12 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
     theme_minimal() +
     theme(legend.position = "none") +
     labs(title = paste0(race_str, " Category ", "\n", "Backgrounds (", prog_input, ")"),
-         x = NULL,
-         y = NULL,
-         fill = NULL)
+         x = NULL, y = NULL, fill = NULL)
   
+  # convert to plotly
   plotly::ggplotly(background_gg, tooltip = "text") %>% 
     layout(title = list(font = list(size = 15))) %>% 
     config(
-      modeBarButtonsToRemove = list(
-        "pan",
-        "select",
-        "lasso2d",
-        "autoScale2d",
-        "hoverClosestCartesian",
-        "hoverCompareCartesian"
-      )
-    )
+      modeBarButtonsToRemove = list("pan","select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
   
-} # EO function
+} 
