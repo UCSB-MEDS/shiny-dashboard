@@ -73,8 +73,7 @@ background_distribution <- function(prog_input, race_num, df, race_str, color){
   
   # validate data in background_stats df
   validate(
-    need(nrow(background_stats()) > 0, paste0("There are no data on ", race_str, " racial category for ", prog_input, " degree program."))
-  )
+    need(nrow(background_stats()) > 0,paste0("There are no data on ", race_str, " racial category for ", prog_input, " degree program."))) # EO validate
   
   
   ## PLOTTING ##
