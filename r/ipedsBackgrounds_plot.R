@@ -1,98 +1,104 @@
-ipedsBackgrounds_plot <- function(input) {
+
+ipedsBackground_plot <- function(input) { 
   
+  # plot params (title & color) based on category clicked ----
+  plot_params <- list(
+    list("Unknown race and ethnicity", "#09847a"),
+    list("Two or more races", "#79a540"),
+    list("Hispanic or Latino", "#6d7d33"),
+    list("White", "#dce1e5"),
+    list("Native Hawaiian or Other Pacific Islander", "#9cbebe"),
+    list("Black or African American", "#dcd6cc"),
+    list("Asian", "#047c91"),
+    list("American Indian or Alaska Native", "#003660"))
+  
+  
+  # render plotly ----
   renderPlotly({
     
-    # reactive element based on plotly click in race plot ----
+    # reactive event based on plotly click in race plot ----
     background_click <- reactive({
-      event_data("plotly_click", source = "race_plot")
+      event_data(event = "plotly_click", source = "race_plot")
     }) 
     
-    ## KEY-VALUE PAIRS FOR `background_click` REACTIVE ELEMENT AND RACE VALUE ##
-    # "American Indian or Alaska Native", = 8
-    # "Asian", = 7
-    # "Black or African American", = 6
-    # "Native Hawaiian or Other Pacific Islander", = 5
-    # "White", = 4
-    # "Hispanic or Latino", = 3
-    # "Two or more races", = 2
-    # "Unknown race and ethnicity" = 1
+    # initial validation message with instructions to click on race plot bars ----
+    validation_message <- "Click a bar in the IPEDS Categories and Distribution plot to see the background distribution of the selected racial category. If nothing appears after clicking, try refreshing the page."
+    validate(need(!is.null(background_click()), validation_message))
     
-    print(paste0("Y INFO: ", background_click()$y))
+    # get plot params based on choice ----
+    race_num <- background_click()$y
+    race_str <- plot_params[[race_num]][[1]]
+    color <- plot_params[[race_num]][[2]]
     
-    # validate plotly click ----
-    validate(need(!is.null(background_click()), "Click a bar in the IPEDS Categories and Distribution plot to see the background distribution of the selected racial category. If nothing appears after clicking, try refreshing the page."))
+    # wrangle data & create reactive df
+    background_stats <- reactive({
+      
+      if (background_click()$y == race_num && input$race == "All Programs") {
+        
+        # breakdown of background all programs
+        ipeds %>% 
+          filter(category_ipeds == race_str) %>% 
+          mutate(background = case_when(
+            is.na(background) == TRUE ~ "Unknown race and ethnicity",
+            TRUE ~ background
+          )) %>%
+          mutate(background = str_split(background, "; ")) %>% 
+          unnest(background) %>% 
+          group_by(background) %>% 
+          summarize(count = n()) %>% 
+          # total number of enrolled students in the past 5 years
+          mutate(size = 604) %>% 
+          mutate(percent = round((count / size) * 100, 1))
+        
+      }
+      
+      else {
+        
+        # breakdown of background by program
+        ipeds %>% 
+          filter(category_ipeds == race_str) %>% 
+          mutate(background = case_when(
+            is.na(background) == TRUE ~ "Unknown race and ethnicity",
+            TRUE ~ background
+          )) %>%
+          mutate(background = str_split(background, "; ")) %>% 
+          unnest(background) %>% 
+          group_by(objective1,
+                   background) %>% 
+          summarize(count = n()) %>% 
+          # join with df with tot of enrolled students (5 yrs) by degree program
+          left_join(tot_5yr, by = "objective1") %>% 
+          mutate(percent = round((count / size) * 100, 1)) %>% 
+          filter(objective1 == input$race)
+        
+      } 
+      
+    }) # END reactive df
     
-    # empty vars ----
-    race_num <- NULL
-    race_str <- NULL
-    color <- NULL
+    # validation message appears when no background data available for particular program and/or category ----
+    validate(need(nrow(background_stats()) > 0, paste0("There are no data on ", race_str, " racial category for ", input$race, " degree program."))) 
     
-    # if American Indian or Alaska Native
-    if (background_click()$y == 8) {
-      race_num <- 8
-      race_str <- "American Indian or Alaska Native"
-      color <- "#003660" # ucsb navy
-    } 
+    # create ggplot ----
+    background_gg <- ggplot(data = background_stats(),
+                            aes(x = background, y = percent,
+                                text = paste0(background, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
+      geom_bar(stat = "identity", fill = color) +
+      coord_flip() +
+      scale_x_discrete(
+        labels = function(x)
+          str_wrap(x, width = 35)
+      ) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      theme_minimal() +
+      theme(legend.position = "none") +
+      labs(title = paste0(race_str, " Category ", "\n", "Backgrounds (", input$race, ")"),
+           x = NULL, y = NULL, fill = NULL)
     
-    # if Asian
-    else if (background_click()$y == 7) {
-      race_num <- 7
-      race_str <- "Asian"
-      color <- "#047c91" # ucsb aqua
-    } 
+    # convert to plotly
+    plotly::ggplotly(background_gg, tooltip = "text") %>% 
+      layout(title = list(font = list(size = 15))) %>% 
+      config(modeBarButtonsToRemove = list("pan","select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
     
-    # if Black or African American
-    else if (background_click()$y == 6) {
-      race_num <- 6
-      race_str <- "Black or African American"
-      color <- "#dcd6cc" # ucsb clay
-    } 
-    
-    # if Native Hawaiian or Other Pacific Islander
-    else if (background_click()$y == 5) {
-      race_num <- 5
-      race_str <- "Native Hawaiian or Other Pacific Islander"
-      color <- "#9cbebe" # ucsb mist
-    } 
-    
-    # if White
-    else if (background_click()$y == 4) {
-      race_num <- 4
-      race_str <- "White"
-      color <- "#dce1e5" # ucsb light grey
-    } 
-    
-    # if Hispanic or Latino
-    else if (background_click()$y == 3) {
-      race_num <- 3
-      race_str <- "Hispanic or Latino"
-      color <- "#6d7d33" # ucsb moss
-    } 
-    
-    # if Two or more races
-    else if (background_click()$y == 2) {
-      race_num <- 2
-      race_str <- "Two or more races"
-      color <- "#79a540" # bren leaf green
-    } 
-    
-    # if Unknown race and ethnicity
-    else if (background_click()$y == 1) {
-      race_num <- 1
-      race_str <- "Unknown race and ethnicity"
-      color <- "#09847a" # ucsb sea green
-    } 
-    
-    
-    # background distribution function
-    background_distribution(
-      prog_input = input$race,
-      race_num = race_num,
-      df = ipeds,
-      race_str = race_str,
-      color = color
-    ) # EO background_distribution()
-    
-  }) 
+  }) # END renderPlotly 
   
-}
+} 
