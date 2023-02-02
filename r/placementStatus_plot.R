@@ -3,6 +3,17 @@
 
 placementStatus_plot <- function(input) {
   
+  # wrangle data (program sizes + tot mesm responsdees) ----
+  status_size <- mesm_status %>% 
+    select(mesm_class_year) %>% 
+    group_by(mesm_class_year) %>% 
+    summarize(mesm_responses = n()) %>% 
+    mutate(program_size = case_when(
+      mesm_class_year == 2021 ~ 83,
+      mesm_class_year == 2020 ~ 92,
+      mesm_class_year == 2019 ~ 93
+    ))
+  
   # wrangle data for placement status plot ----
   status <- mesm_status %>% 
     select(mesm_class_year, member_status) %>% 
