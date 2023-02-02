@@ -1,5 +1,10 @@
 ipedsTrends_plot <- function(input) {
   
+  # wrangle data (total number of students in each year NOT broken down by program) SC NOTE: removed this from global.R----
+  total_students_yr <- enrolled %>% 
+    group_by(ay_year) %>% 
+    summarize(size = n())
+  
   # wrangle data & create reactive df ----
   category_ipeds_stats_time <- reactive({
     
