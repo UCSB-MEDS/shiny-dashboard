@@ -5,7 +5,7 @@ sectorTrends_plot <- function(input) {
   
   # data wrangling for sector trends plot ----
   sector <- mesm_placement %>% 
-    select(c(mesm_class_year, employer_sector)) %>% 
+    select(c(class_year, employer_sector)) %>% 
     mutate(sector_type = case_when(
       employer_sector %in% c("Consulting", "Corporate") ~ "Private",
       employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
@@ -13,11 +13,11 @@ sectorTrends_plot <- function(input) {
       TRUE ~ employer_sector
     )) %>% 
     mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) %>%
-    group_by(mesm_class_year, sector_type) %>% 
+    group_by(class_year, sector_type) %>% 
     summarize(count = n())
   
   sector_time <- sector %>% 
-    left_join(placement_size, by = "mesm_class_year") %>% 
+    left_join(placement_size, by = "class_year") %>% 
     mutate(percent = round((count / mesm_responses) * 100, 1))
   
   
@@ -25,7 +25,7 @@ sectorTrends_plot <- function(input) {
   plotly::renderPlotly({
     
     # create ggplot 
-    sector_time_gg <- ggplot(data = sector_time, aes(x = mesm_class_year, y = percent, fill = sector_type,
+    sector_time_gg <- ggplot(data = sector_time, aes(x = class_year, y = percent, fill = sector_type,
                                  text = paste0(sector_type, " (", percent, "%", ")", "\n", "Number of respondents: ", mesm_responses))) +
       geom_bar(stat = "identity", position = "dodge") +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +

@@ -12,7 +12,7 @@ geographicComparison_plot <- function(input) {
     select(c(
       employer_account_name,
       work_location_city,
-      mesm_class_year,
+      class_year,
       work_location_state,
       work_location_country
     )) %>%
@@ -46,13 +46,13 @@ geographicComparison_plot <- function(input) {
       work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
       work_location_country != "United States" ~ "International"
     )) %>%
-    group_by(mesm_class_year,
+    group_by(class_year,
              location) %>%
     summarize(location_count = n())
   
   # calculating percentages
   placement_location_stats <- placement_location %>%
-    left_join(placement_size, by = "mesm_class_year") %>%
+    left_join(placement_size, by = "class_year") %>%
     mutate(percent = round((location_count / mesm_responses) * 100, 1))
   
   # render plotly ----
@@ -60,7 +60,7 @@ geographicComparison_plot <- function(input) {
     
     # make ggplot
     location_gg <- ggplot(data = placement_location_stats,
-                          aes(x = mesm_class_year,
+                          aes(x = class_year,
                               y = percent,
                               fill = reorder(location, percent),
                               text = paste0(location, " (", percent, "%", ")",
@@ -69,8 +69,8 @@ geographicComparison_plot <- function(input) {
                           )) +
       geom_bar(position = "dodge",
                stat = "identity") +
-      scale_x_continuous(breaks = seq(min(placement_location_stats$mesm_class_year),
-                                      max(placement_location_stats$mesm_class_year))) +
+      scale_x_continuous(breaks = seq(min(placement_location_stats$class_year),
+                                      max(placement_location_stats$class_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +

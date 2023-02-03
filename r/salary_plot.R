@@ -10,7 +10,7 @@ salary_plot <- function(input) {
       
       # chose All Years
       mesm_placement %>% 
-        select(mesm_class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
@@ -34,7 +34,7 @@ salary_plot <- function(input) {
       
       # chose 2019, 2020, 2021
       mesm_placement %>% 
-        select(mesm_class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
@@ -44,7 +44,7 @@ salary_plot <- function(input) {
         # remove stipend compensation_frequency
         filter(compensation_frequency != "Stipend") %>% 
         # filter for year 
-        filter(mesm_class_year %in% input$compensation_year) %>% 
+        filter(class_year %in% input$compensation_year) %>% 
         # 3 year Median
         mutate(Median = median(estimated_annual_compensation_us)) %>% 
         mutate(Low = min(estimated_annual_compensation_us)) %>% 
@@ -52,7 +52,7 @@ salary_plot <- function(input) {
         select(-estimated_annual_compensation_us) %>% 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") %>% 
-        left_join(placement_size, by = "mesm_class_year")
+        left_join(placement_size, by = "class_year")
       
     } # END else statement
     

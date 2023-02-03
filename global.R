@@ -22,7 +22,8 @@ ipeds <- readRDS("data/ipeds.rds")
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/placement_data.rds")
+mesm_placement <- readRDS("data/mesm_placement.rds")
+meds_placement <- readRDS("data/meds_placement.rds")
 mesm_status <- readRDS("data/status_data.rds")
 
 # STYLING ----
@@ -39,11 +40,11 @@ curr_year <- 2022 # MANUALLY UPDATE ANNUALLY
 # program sizes + tot mesm responsdees 
 # used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
 placement_size <- mesm_placement %>% 
-  select(mesm_class_year) %>% 
-  group_by(mesm_class_year) %>% 
+  select(class_year) %>% 
+  group_by(class_year) %>% 
   summarize(mesm_responses = n()) %>% 
   mutate(program_size = case_when(
-    mesm_class_year == 2021 ~ 83,
-    mesm_class_year == 2020 ~ 92,
-    mesm_class_year == 2019 ~ 93
+    class_year == 2021 ~ 83,
+    class_year == 2020 ~ 92,
+    class_year == 2019 ~ 93
   ))

@@ -8,7 +8,7 @@ salaryBySector_plot <- function(input) {
     
     if (input$compSector_year == "All Years") {
       mesm_placement %>% 
-        select(mesm_class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # assign private, public, and other
         mutate(sector_type = case_when(
           employer_sector %in% c("Consulting", "Corporate") ~ "Private",
@@ -38,7 +38,7 @@ salaryBySector_plot <- function(input) {
     else {
       
       mesm_placement %>% 
-        select(mesm_class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # assign private, public, and other
         mutate(sector_type = case_when(
           employer_sector %in% c("Consulting", "Corporate") ~ "Private",
@@ -56,14 +56,14 @@ salaryBySector_plot <- function(input) {
         # remove stipend compensation_frequency
         filter(compensation_frequency != "Stipend") %>%
         # filter for year
-        filter(mesm_class_year == input$compSector_year) %>%
-        group_by(mesm_class_year, sector_type) %>% 
+        filter(class_year == input$compSector_year) %>%
+        group_by(class_year, sector_type) %>% 
         summarize(Median = median(estimated_annual_compensation_us),
                   Low = min(estimated_annual_compensation_us),
                   High = max(estimated_annual_compensation_us)) %>% 
         pivot_longer(cols = c("Median", "Low", "High"),
                      names_to = "range", values_to = "values") %>%
-        left_join(placement_size, by = "mesm_class_year")
+        left_join(placement_size, by = "class_year")
       
     } # END else statement
     

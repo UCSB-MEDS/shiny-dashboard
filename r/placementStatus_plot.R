@@ -9,7 +9,7 @@ placementStatus_plot <- function(input) {
     group_by(mesm_class_year) %>% 
     summarize(mesm_responses = n()) %>% 
     mutate(program_size = case_when(
-      mesm_class_year == 2021 ~ 83,
+      mesm_class_year == 2021 ~ 83, # SC NOTE 2023-02-03: would be better to not hard-code this
       mesm_class_year == 2020 ~ 92,
       mesm_class_year == 2019 ~ 93
     ))

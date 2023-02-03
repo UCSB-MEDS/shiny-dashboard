@@ -8,7 +8,7 @@ domesticPlacement_map <- function(input) {
     select(c(
       employer_account_name,
       work_location_city,
-      mesm_class_year,
+      class_year,
       work_location_state,
       work_location_country
     )) %>% 

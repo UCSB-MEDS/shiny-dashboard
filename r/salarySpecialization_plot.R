@@ -9,7 +9,7 @@ salarySpecialization_plot <- function(input) {
     if (input$compSpecialization_year == "All Years") {
       # chose All Years
       mesm_placement %>% 
-        select(mesm_class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
@@ -34,7 +34,7 @@ salarySpecialization_plot <- function(input) {
     else {
       # chose 2019, 2020, 2021
       mesm_placement %>% 
-        select(mesm_class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+        select(class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
@@ -44,17 +44,17 @@ salarySpecialization_plot <- function(input) {
         # remove stipend compensation_frequency
         filter(compensation_frequency != "Stipend") %>%
         # filter for year
-        filter(mesm_class_year == input$compSpecialization_year) %>% 
+        filter(class_year == input$compSpecialization_year) %>% 
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
         unnest(mesm_program_enrollment_specializations) %>% 
-        group_by(mesm_class_year, mesm_program_enrollment_specializations) %>% 
+        group_by(class_year, mesm_program_enrollment_specializations) %>% 
         summarize(Median = median(estimated_annual_compensation_us),
                   Low = min(estimated_annual_compensation_us),
                   High = max(estimated_annual_compensation_us)) %>% 
         pivot_longer(cols = c("Median", "Low", "High"),
                      names_to = "range", values_to = "values") %>% 
         mutate(range = factor(range, levels = c("High", "Median", "Low"))) %>%
-        left_join(placement_size, by = "mesm_class_year")
+        left_join(placement_size, by = "class_year")
     } # END else statement
     
   }) 
