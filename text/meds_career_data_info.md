@@ -1,0 +1,2 @@
+<br>
+At this time, all visuals, charts, and statistics displayed here reflect initial placement data collected from the MEDS graduating class of 2022 (the first MEDS cohort). Data for 2023 will be added in January/February of 2024.
