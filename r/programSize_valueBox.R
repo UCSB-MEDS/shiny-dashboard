@@ -1,7 +1,7 @@
 #' programSize_valueBox
 #'
 #' @param input 
-#' @param program_acronym character; "MEDS", "MESM", or "PhD"
+#' @param program_acronym chr str; "MEDS", "MESM", or "PhD"
 #' @param color color of valueBox
 #'
 #' @return valueBox

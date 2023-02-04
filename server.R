@@ -50,7 +50,7 @@ server <- function(input, output, session){
   output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
   
   # MEDS valueBoxes ----
-  # output$meds_placement_stat (WAITING STATUS DATA)
+  # output$meds_placement_stat (WAITING FOR STATUS DATA)
   output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
   output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
   
@@ -75,7 +75,7 @@ server <- function(input, output, session){
   
   # MEDS geography tabBox ----
   output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
-  # NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN NECESSARY)
+  # NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
   output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,8 +83,8 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # MESM data viz tabBox ----
-  output$mesm_placement_status <- placementStatus_plot(input)
-  output$mesm_job_source <- jobSource_plot(input)
+  output$mesm_placement_status <- placementStatus_plot(input) # NEED STATUS DATA
+  output$mesm_job_source <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_sector_trends <- sectorTrends_plot(input)
   output$mesm_sector_satisfaction <- sectorSatisfaction_plot(input)
   output$mesm_salary <- salary_plot(input)
@@ -92,6 +92,8 @@ server <- function(input, output, session){
   output$mesm_salary_by_specialization <- salarySpecialization_plot(input)
   
   # MEDS data viz tabBox ----
+  # output$meds_placement_status (WAITING FOR STATUS DATA)
+  output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   
 } # END server
 
