@@ -1,10 +1,16 @@
-
-# may abstract this more so it can be used for both MESM & MEDS #
-
-internationalPlacement_table <- function(input) {
+#' Title
+#'
+#' @param input input
+#' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
+#'
+#' @return
+#' @export
+#'
+#' @examples
+internationalPlacement_table <- function(input, data) {
   
   # wrangle international placement data ----
-  international_tbl <- mesm_placement %>% 
+  international_tbl <- data %>% 
     filter(!work_location_country %in% c("US", "Usa", "USA", "United States"),
            !is.na(work_location_country)) %>% 
     mutate(employer_account_name = case_when(

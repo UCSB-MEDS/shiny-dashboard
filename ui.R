@@ -433,7 +433,7 @@ body <- dashboardBody(
                                           tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
                                                    # mesm tmap output ----
-                                                   tmap::tmapOutput(outputId = "car_alumniMap") |> withSpinner(color = "#003660", type = 1)
+                                                   tmap::tmapOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                
                                           ), # END (TAB 1) mesm domestic placement map tabPanel
                                           
@@ -441,7 +441,7 @@ body <- dashboardBody(
                                           tabPanel(title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
                                                    # DT datatable output ----
-                                                   DT::dataTableOutput(outputId = "international_place") |> withSpinner(color = "#003660", type = 1)
+                                                   DT::dataTableOutput(outputId = "mesm_internationalPlacement_tbl") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 2) mesm international placement tabPanel
                                           
@@ -449,7 +449,7 @@ body <- dashboardBody(
                                           tabPanel("Geographic Comparison",
                                                    
                                                    # mesm geographic comparison plotly output ----
-                                                   plotly::plotlyOutput(outputId = "mesm_location") |> withSpinner(color = "#003660", type = 1)
+                                                   plotly::plotlyOutput(outputId = "mesm_geogComparison_plot") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ) # (TAB 3) mesm geographic comparison tabPanel
                                           
@@ -599,20 +599,18 @@ body <- dashboardBody(
                                    tabBox(width = 6,
                                           
                                           # (TAB 1) meds domestic placement map tabPanel ----
-                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
+                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 1 Year)", sep = "<br/>")),
                                                    
                                                    # meds tmap output ----
-                                                   tmap::tmapOutput(outputId = "meds_car_alumniMap") |> withSpinner(color = "#003660", type = 1)
+                                                   tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
                                           # (TAB 2) meds international placement tabPanel ----
                                           tabPanel(title = HTML(paste("International Placement", "(Over 1 Year)", sep = "<br/>")),
                                                    
+                                                   # SC NOTE 2022-02-03: no international MEDS alumni yet; add in table when appropriate
                                                    includeMarkdown("text/meds_internationalPlacement.md")
-                                                   
-                                                   # DT datatable output ----
-                                                   # DT::dataTableOutput(outputId = "meds_international_place") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 2) meds international placement tabPanel
                                           
@@ -620,7 +618,7 @@ body <- dashboardBody(
                                           tabPanel("Geographic Comparison",
                                                    
                                                    # meds geographic comparison plotly output ----
-                                                   plotly::plotlyOutput(outputId = "meds_location") |> withSpinner(color = "#003660", type = 1)
+                                                   plotly::plotlyOutput(outputId = "meds_geogComparison_plot") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ) # (TAB 3) meds geographic comparison tabPanel
                                           

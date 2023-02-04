@@ -11,14 +11,14 @@ jobSource_plot <- function(input) {
     # 2 NAs 2019; 3 NAs 2021
     drop_na() %>% 
     left_join(placement_size, by = "class_year") %>% 
-    mutate(percent = round((count / mesm_responses) * 100, 1))  
+    mutate(percent = round((count / responses) * 100, 1))  
   
   # render plotly ----
   plotly::renderPlotly({
     
     # make ggplot
     source_gg <- ggplot(data = mesm_source, aes(x = class_year, y = percent, fill = reorder(job_source, percent),
-                                                text = paste0(job_source, " (", percent, "%", ")", "\n", "Number of respondents: ", mesm_responses))) +
+                                                text = paste0(job_source, " (", percent, "%", ")", "\n", "Number of respondents: ", responses))) +
       geom_bar(position = "dodge", stat = "identity") +
       scale_x_continuous(breaks = seq(min(mesm_source$class_year), max(mesm_source$class_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +

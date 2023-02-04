@@ -18,7 +18,7 @@ sectorTrends_plot <- function(input) {
   
   sector_time <- sector %>% 
     left_join(placement_size, by = "class_year") %>% 
-    mutate(percent = round((count / mesm_responses) * 100, 1))
+    mutate(percent = round((count / responses) * 100, 1))
   
   
   # render plotly ----
@@ -26,7 +26,7 @@ sectorTrends_plot <- function(input) {
     
     # create ggplot 
     sector_time_gg <- ggplot(data = sector_time, aes(x = class_year, y = percent, fill = sector_type,
-                                 text = paste0(sector_type, " (", percent, "%", ")", "\n", "Number of respondents: ", mesm_responses))) +
+                                 text = paste0(sector_type, " (", percent, "%", ")", "\n", "Number of respondents: ", responses))) +
       geom_bar(stat = "identity", position = "dodge") +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
