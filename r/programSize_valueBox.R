@@ -12,10 +12,10 @@
 programSize_valueBox <- function(input, program_acronym, color) {
   
   # program sizes 2017-curr_year; SC NOTE: removed this from global.R
-  program_size <- enrolled %>%
-    select(c("ay_year", "application_id", "objective1")) %>%
-    group_by(ay_year, objective1) %>%
-    summarize(size = n())
+  # program_size <- enrolled %>%
+  #   select(c("ay_year", "application_id", "objective1")) %>%
+  #   group_by(ay_year, objective1) %>%
+  #   summarize(size = n())
   
   # program size for current year; SC NOTE: removed this from global.R
   program_size_curr_year <- program_size %>% filter(ay_year == curr_year)

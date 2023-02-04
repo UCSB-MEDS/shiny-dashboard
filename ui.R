@@ -317,7 +317,7 @@ body <- dashboardBody(
                                           # fluidRow (valueBoxes 1) ----
                                           fluidRow(
                                             
-                                            valueBoxOutput(outputId = "brenNet_stat", width = 6),
+                                            valueBoxOutput(outputId = "mesm_brenNet_stat", width = 6),
                                             valueBoxOutput(outputId = "placement_stat", width = 6)
                                             
                                           ), # END fluidRow (valuBoxes 1)

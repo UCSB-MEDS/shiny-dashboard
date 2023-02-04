@@ -40,32 +40,45 @@ server <- function(input, output, session){
   
   #..................career tabPanel (career_db)...................
   
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##  ~ MESM valueBoxes  ----
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##~~~~~~~~~~~~~~~~~~~~
+  ##  ~ valueBoxes  ----
+  ##~~~~~~~~~~~~~~~~~~~~
   
+  # MESM valueboxes ----
   output$placement_stat <- employmentStatus_stat_valueBox(input)
-  output$brenNet_stat <- brenNet_stat_valueBox(input)
-  output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input)
+  output$mesm_brenNet_stat <- brenNet_stat_valueBox(input, data = mesm_placement)
+  output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
   
-  ##~~~~~~~~~~~~~~~~~~~~
-  ##  ~ MESM table  ----
-  ##~~~~~~~~~~~~~~~~~~~~
+  # MEDS valueBoxes ----
+  # output$meds_placement_stat (WAITING STATUS DATA)
+  output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
+  output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
   
+  ##~~~~~~~~~~~~~~~
+  ##  ~ table  ----
+  ##~~~~~~~~~~~~~~~
+  
+  # MESM table ----
   output$career_employ_sector_tbl <- initialEmployers_table(input)
   
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##  ~ MESM geography tabBox  ----
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # MEDS table ----
   
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ geography tabBox  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  # MESM geography tabBox ----
   output$car_alumniMap <- domesticPlacement_map(input)
   output$international_place <- internationalPlacement_table(input)
   output$mesm_location <- geographicComparison_plot(input)
   
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##  ~ MESM data viz tabBox  ----
-  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # MEDS geography tabBox ----
   
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ data viz tabBox  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  # MESM data viz tabBox ----
   output$mesm_placement_status <- placementStatus_plot(input)
   output$mesm_job_source <- jobSource_plot(input)
   output$mesm_sector_trends <- sectorTrends_plot(input)
@@ -73,6 +86,8 @@ server <- function(input, output, session){
   output$mesm_salary <- salary_plot(input)
   output$mesm_salary_by_sector <- salaryBySector_plot(input)
   output$mesm_salary_by_specialization <- salarySpecialization_plot(input)
+  
+  # MEDS data viz tabBox ----
   
 } # END server
 

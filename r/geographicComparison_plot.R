@@ -3,10 +3,6 @@
 
 geographicComparison_plot <- function(input) {
   
-  # set name spelling options for US & CA
-  us_names <- c("USA", "US", "Usa")
-  ca_names <- c("Ca", "CALIFORNIA")
-  
   # wrangle geographic comparison data ----
   placement_location <- mesm_placement %>%
     select(c(
