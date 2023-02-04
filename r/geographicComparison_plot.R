@@ -1,9 +1,16 @@
-
-# may abstract this more so it can be used for both MESM & MEDS #
-
+#' geographicComparison_plot
+#'
+#' @param input input
+#' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
+#' @param program_acronym chr str; "MEDS" or "MESM"
+#'
+#' @return renderPlotly object
+#' @export
+#'
+#' @examples
 geographicComparison_plot <- function(input, data, program_acronym) {
   
-  # determine which *_placement_size df (see global.R) to use based on program_acronym supplied
+  # determine which *_placement_size df (see global.R) to use based on program_acronym supplied ----
   if (program_acronym == "MESM") {
     
     placement_size <- mesm_placement_size
