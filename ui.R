@@ -371,7 +371,7 @@ body <- dashboardBody(
                                                           plotly::plotlyOutput(outputId = "mesm_sector_satisfaction") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # sector type radioButtons input ----
-                                                          sectorType_radioButtons(inputId = "sector_types", selected = "Consulting")
+                                                          sectorType_radioButtons(inputId = "mesm_sector_types", selected = "Consulting")
                                                           
                                                           ), # END (TAB 4) mesm sector satisfaction tabPanel 
                                                  
