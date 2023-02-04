@@ -34,7 +34,13 @@ mesm_color <- "#003660" #005AA3"
 all_programs_color <- "#09847a"
 
 # VARIABLES ----
-curr_year <- 2022 # MANUALLY UPDATE ANNUALLY
+# current year (MANUALLY UPDATE ANNUALLY)
+curr_year <- 2022 
+
+# set name spelling options for US & CA
+# used in domesticPlacement_map(), geographicComparison_plot()
+us_names <- c("USA", "US", "Usa")
+ca_names <- c("Ca", "CALIFORNIA")
 
 # DATA FRAMES ----
 # program sizes + tot mesm responsdees 
@@ -48,3 +54,10 @@ placement_size <- mesm_placement %>%
     class_year == 2020 ~ 92,
     class_year == 2019 ~ 93
   ))
+
+# program sizes 2017-curr_year
+# used in programSize_valueBox(), sex_plot()
+program_size <- enrolled %>%
+  select(c("ay_year", "application_id", "objective1")) %>%
+  group_by(ay_year, objective1) %>%
+  summarize(size = n())
