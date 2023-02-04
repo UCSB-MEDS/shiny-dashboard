@@ -40,20 +40,40 @@ curr_year <- 2022
 # set name spelling options for US & CA
 # used in domesticPlacement_map(), geographicComparison_plot()
 us_names <- c("USA", "US", "Usa")
-ca_names <- c("Ca", "CALIFORNIA")
+ca_names <- c("Ca", "CALIFORNIA", "California")
 
 # DATA FRAMES ----
 # program sizes + tot mesm responsdees 
 # used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
-placement_size <- mesm_placement %>% 
-  select(class_year) %>% 
-  group_by(class_year) %>% 
-  summarize(mesm_responses = n()) %>% 
+# placement_size <- mesm_placement %>% 
+#   select(class_year) %>% 
+#   group_by(class_year) %>% 
+#   summarize(mesm_responses = n()) %>% 
+#   mutate(program_size = case_when(
+#     class_year == 2021 ~ 83,
+#     class_year == 2020 ~ 92,
+#     class_year == 2019 ~ 93
+#   ))
+
+# program sizes + total respondants 
+mesm_placement_size <- mesm_placement %>%
+  select(class_year) %>%
+  group_by(class_year) %>%
+  summarize(responses = n()) %>% # was 'mesm_responses'
   mutate(program_size = case_when(
     class_year == 2021 ~ 83,
     class_year == 2020 ~ 92,
     class_year == 2019 ~ 93
   ))
+
+meds_placement_size <- meds_placement %>%
+  select(class_year) %>%
+  group_by(class_year) %>%
+  summarize(responses = n()) %>%
+  mutate(program_size = case_when(
+    class_year == 2022 ~ 25
+  ))
+
 
 # program sizes 2017-curr_year
 # used in programSize_valueBox(), sex_plot()
