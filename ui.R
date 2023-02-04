@@ -459,7 +459,7 @@ body <- dashboardBody(
                                    box(width = 6,
                                        title = "Initial Employers and Sectors (Over 3 Years)",
                                        solidHeader = TRUE, status = "navy",
-                                       DT::dataTableOutput(outputId = "career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
+                                       DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
                                  
@@ -628,7 +628,7 @@ body <- dashboardBody(
                                    
                                    # employers & sectors tbl box ----
                                    box(width = 6,
-                                       title = "Initial Employers and Sectors (Over 3 Years)",
+                                       title = "Initial Employers and Sectors (Over 1 Year)",
                                        solidHeader = TRUE, status = "navy",
                                        DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    

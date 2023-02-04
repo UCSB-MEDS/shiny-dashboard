@@ -59,9 +59,10 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~
   
   # MESM table ----
-  output$career_employ_sector_tbl <- initialEmployers_table(input)
+  output$mesm_career_employ_sector_tbl <- initialEmployers_table(input, data = mesm_placement)
   
   # MEDS table ----
+  output$meds_career_employ_sector_tbl <- initialEmployers_table(input, data = meds_placement)
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ geography tabBox  ----
