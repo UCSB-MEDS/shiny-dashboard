@@ -1,14 +1,5 @@
 ipedsCategories_plot <- function(input) {
   
-  # wrangle data (5 year total number of students per program) SC NOTE: removed this from global.R ----
-  tot_5yr <- enrolled %>% 
-    select(c("ay_year",
-             "application_id",
-             "objective1",
-             "dob")) %>% 
-    group_by(objective1) %>%
-    summarize(size = n())
-  
   # observe event ----
   observeEvent(input$race_tabsetPanel, {
     

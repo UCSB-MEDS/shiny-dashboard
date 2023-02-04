@@ -43,19 +43,8 @@ us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
 # DATA FRAMES ----
-# program sizes + tot mesm responsdees 
-# used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
-# placement_size <- mesm_placement %>% 
-#   select(class_year) %>% 
-#   group_by(class_year) %>% 
-#   summarize(mesm_responses = n()) %>% 
-#   mutate(program_size = case_when(
-#     class_year == 2021 ~ 83,
-#     class_year == 2020 ~ 92,
-#     class_year == 2019 ~ 93
-#   ))
-
 # program sizes + total respondants 
+# used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
 mesm_placement_size <- mesm_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
@@ -74,10 +63,25 @@ meds_placement_size <- meds_placement %>%
     class_year == 2022 ~ 25
   ))
 
-
 # program sizes 2017-curr_year
 # used in programSize_valueBox(), sex_plot()
 program_size <- enrolled %>%
   select(c("ay_year", "application_id", "objective1")) %>%
   group_by(ay_year, objective1) %>%
+  summarize(size = n())
+
+# total number of students in each year NOT broken down by program
+# used in urmTrends_plot(), ipedsTrends_plot()
+total_students_yr <- enrolled %>% 
+  group_by(ay_year) %>% 
+  summarize(size = n())
+
+# 5 year total number of students per program
+# used in ipedsCategories_plot(), ipedsBackgrounds_plot()
+tot_5yr <- enrolled %>% 
+  select(c("ay_year",
+           "application_id",
+           "objective1",
+           "dob")) %>% 
+  group_by(objective1) %>%
   summarize(size = n())
