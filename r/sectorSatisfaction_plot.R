@@ -1,6 +1,13 @@
-
-# may abstract this more so it can be used for both MESM & MEDS #
-
+#' sectorSatisfaction_plot
+#'
+#' @param input input
+#' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
+#' @param program_acronym chr str; "MEDS" or "MESM"
+#'
+#' @return a renderPlotly object
+#' @export
+#'
+#' @examples
 sectorSatisfaction_plot <- function(input, data, program_acronym) {
 
   # data wrangling for sector satisfaction plot ----

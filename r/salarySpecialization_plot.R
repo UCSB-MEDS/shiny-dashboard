@@ -6,8 +6,8 @@ salarySpecialization_plot <- function(input) {
   # data wrangling/create reactive df for salary specialization plot ----
   salary_special <- reactive({
     
-    if (input$compSpecialization_year == "All Years") {
-      # chose All Years
+    # if "All Years" chosen
+    if (input$mesm_salary_by_specialization_year == "All Years") {
       mesm_placement %>% 
         select(class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
@@ -31,8 +31,8 @@ salarySpecialization_plot <- function(input) {
       
     } # END if statement
     
+    # if an individual year is chosen (e.g. 2019, 2020, or 2021)
     else {
-      # chose 2019, 2020, 2021
       mesm_placement %>% 
         select(class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)

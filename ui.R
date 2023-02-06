@@ -385,7 +385,7 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "compensation_year")
+                                                          year_radioButtons(inputId = "mesm_salary_year")
                                                           
                                                  ), # END (TAB 5) mesm salary tabPanel 
                                                  
@@ -399,7 +399,7 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "compSector_year")
+                                                          year_radioButtons(inputId = "mesm_salarySector_year")
                                                           
                                                  ), # END (TAB 6) mesm salary by sector tabPanel 
                                                  
@@ -413,7 +413,7 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "compSpecialization_year")
+                                                          year_radioButtons(inputId = "mesm_salary_by_specialization_year")
                                                           
                                                  ) # END (TAB 7) mesm salary by specialization tabPanel 
                                                  
@@ -562,7 +562,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # meds salary plotly output ----
-                                                          plotlyOutput(outputId = "eds_salary"),
+                                                          plotlyOutput(outputId = "meds_salary"),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),

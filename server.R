@@ -87,15 +87,17 @@ server <- function(input, output, session){
   output$mesm_job_source <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_sector_trends <- sectorTrends_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_sector_satisfaction <- sectorSatisfaction_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_salary <- salary_plot(input)
-  output$mesm_salary_by_sector <- salaryBySector_plot(input)
+  output$mesm_salary <- salary_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_salary_by_sector <- salaryBySector_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_salary_by_specialization <- salarySpecialization_plot(input)
   
   # MEDS data viz tabBox ----
   # output$meds_placement_status (WAITING FOR STATUS DATA)
   output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKSK WEIRD
+  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
+  output$meds_salary <- meds_salary_plot(data = meds_placement) # FXN ONLY FOR 2022
+  output$meds_salary_by_sector <- meds_salaryBySector_plot(data = meds_placement) # FXN ONLY FOR 2022
   
 } # END server
 
