@@ -2,7 +2,7 @@
 #'
 #' @param inputId inputId
 #'
-#' @return
+#' @return radioButtons widget with year choices
 #' @export
 #'
 #' @examples
