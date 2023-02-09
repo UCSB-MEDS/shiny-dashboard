@@ -86,12 +86,12 @@ salary_plot <- function(input, data, program_acronym) {
     if (program_acronym == "MESM") {
       
       radioButton_yearInput <- input$mesm_salary_year
-      response_num <- sum(placement_size$responses)
+      response_num <- sum(mesm_placement_size$responses)
       
     } else if (program_acronym == "MEDS") {
       
       radioButton_yearInput <- input$meds_salary_year
-      response_num <- sum(placement_size$responses)
+      response_num <- sum(meds_placement_size$responses)
       
     }
     

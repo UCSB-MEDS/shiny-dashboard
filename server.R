@@ -45,12 +45,12 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~
   
   # MESM valueboxes ----
-  output$placement_stat <- employmentStatus_stat_valueBox(input)
+  output$placement_stat <- employmentStatus_stat_valueBox(input, data = mesm_status)
   output$mesm_brenNet_stat <- brenNet_stat_valueBox(input, data = mesm_placement)
   output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
   
   # MEDS valueBoxes ----
-  # output$meds_placement_stat (WAITING FOR STATUS DATA)
+  output$meds_placement_stat <- employmentStatus_stat_valueBox(input, data = meds_status)
   output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
   output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
   
@@ -75,7 +75,7 @@ server <- function(input, output, session){
   
   # MEDS geography tabBox ----
   output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
-  # NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
+  # SC NOTE 2022-02-08: NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
   output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,21 +83,21 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # MESM data viz tabBox ----
-  output$mesm_placement_status <- placementStatus_plot(input) # NEED STATUS DATA
+  output$mesm_placement_status <- placementStatus_plot(input, data = mesm_status, program_acronym = "MESM") 
   output$mesm_job_source <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_sector_trends <- sectorTrends_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_sector_satisfaction <- sectorSatisfaction_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_salary <- salary_plot(input, data = mesm_placement, program_acronym = "MESM")
   output$mesm_salary_by_sector <- salaryBySector_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_salary_by_specialization <- salarySpecialization_plot(input)
+  output$mesm_salary_by_specialization <- salarySpecialization_plot(input, data = mesm_placement)
   
   # MEDS data viz tabBox ----
-  # output$meds_placement_status (WAITING FOR STATUS DATA)
+  # output$meds_placement_status <- placementStatus_plot(input, data = meds_stats, program_acronym = "MEDS")
   output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
-  output$meds_salary <- meds_salary_plot(data = meds_placement) # FXN ONLY FOR 2022
-  output$meds_salary_by_sector <- meds_salaryBySector_plot(data = meds_placement) # FXN ONLY FOR 2022
+  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # SC NOTE 2022-02-08: NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
+  output$meds_salary <- meds_salary_plot(data = meds_placement) # SC NOTE 2022-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salary_plot()`
+  output$meds_salary_by_sector <- meds_salaryBySector_plot(data = meds_placement) # SC NOTE 2022-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salaryBySector_plot()`
   
 } # END server
 
