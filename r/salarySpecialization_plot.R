@@ -9,8 +9,11 @@
 #' @examples
 salarySpecialization_plot <- function(input, data) {
   
+  # get mesm placement size df from global.R
+  placement_size <- mesm_placement_size
+  
   # calculate reponse # for All Years
-  response_num <- sum(mesm_placement_size$responses)
+  response_num <- sum(placement_size$responses)
   
   # data wrangling/create reactive df for salary specialization plot ----
   salary_special <- reactive({
@@ -42,7 +45,7 @@ salarySpecialization_plot <- function(input, data) {
     
     # if an individual year is chosen (e.g. 2019, 2020, or 2021)
     else {
-      mesm_placement %>% 
+      data %>% 
         select(class_year, mesm_program_enrollment_specializations, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
