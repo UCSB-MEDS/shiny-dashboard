@@ -1,6 +1,6 @@
 diversityDemographics_plot <- function(input) {
   
-  # wrangle data & create reactive df for diversity demographics plot (2017 - curr_year) ----
+  # wrangle data & create reactive df for diversity demographics plot (all available years) ----
   diversity_overall <- reactive({
     
     diversity_stats %>%  

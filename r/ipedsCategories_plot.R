@@ -30,7 +30,7 @@ ipedsCategories_plot <- function(input) {
         summarize(count = n()) %>% 
         # total number of enrolled students in the past 5 years
         # MEDS(57) + MESM(508) + PHD(62)
-        mutate(size = 627) %>% 
+        mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 627
         mutate(percent = round((count / size) * 100, 1))
       
     } # END if statement
