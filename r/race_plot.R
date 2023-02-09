@@ -1,4 +1,4 @@
-#' RACE PLOTLY
+#' race_plot
 #'
 #' @param df data frame used to create category_ipeds
 #' @param prog_input input id 
@@ -18,8 +18,7 @@ race_plot <- function(df, prog_input){
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
         # total number of enrolled students in the past 5 years
-        # MEDS(57) + MESM(508) + PHD(62)
-        mutate(size = 627) %>% 
+        mutate(size = totalStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 627
         mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement
@@ -71,28 +70,15 @@ race_plot <- function(df, prog_input){
         "Unknown race and ethnicity" = "#09847a" # ucsb sea green
       )
     ) +
-    labs(
-      title = paste0("IPEDS Categories and Distribution", "\n",
-                     "(", prog_input, ")"),
-      x = NULL,
-      y = NULL
-    )
+    labs(title = paste0("IPEDS Categories and Distribution", "\n", "(", prog_input, ")"),
+         x = NULL, y = NULL)
   
   # plotly
   plotly::ggplotly(ipeds_gg, 
                    source = "race_plot",
                    tooltip = "text") %>% 
-    config(
-      modeBarButtonsToRemove = list(
-        "pan",
-        "select",
-        "lasso2d",
-        "autoScale2d",
-        "hoverClosestCartesian",
-        "hoverCompareCartesian"
-      )
-    ) %>% 
+    config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>% 
     # had to add event_register to register source "race_plot"
     event_register("plotly_click")
   
-} # EO race plot function
+} # END race plot function

@@ -92,7 +92,7 @@ server <- function(input, output, session){
   output$mesm_salary_by_specialization <- salarySpecialization_plot(input, data = mesm_placement)
   
   # MEDS data viz tabBox ----
-  # output$meds_placement_status <- placementStatus_plot(input, data = meds_stats, program_acronym = "MEDS")
+  output$meds_placement_status <- placementStatus_plot(input, data = meds_status, program_acronym = "MEDS")
   output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # SC NOTE 2022-02-08: NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD

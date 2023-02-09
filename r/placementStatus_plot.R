@@ -12,23 +12,30 @@ placementStatus_plot <- function(input, data, program_acronym) {
   
   if (program_acronym == "MESM") {
     
+    # wrangle data (program sizes + tot respondents) ----
+    status_size <- data %>%
+      select(class_year) %>%
+      group_by(class_year) %>%
+      summarize(responses = n()) %>%
+      mutate(program_size = case_when(
+        class_year == 2021 ~ 93, # gradClass_mesm2021 = 93 (SC NOTE 2022-02-08: was originally coded as 83)
+        class_year == 2020 ~ 77, # gradClass_mesm2020 = 77 (SC NOTE 2022-02-08: was originally coded as 92)
+        class_year == 2019 ~ 85 # gradClass_mesm2019 = 85 (SC NOTE 2022-02-08: was originally coded as 93)
+      ))
     
     
   } else if (program_acronym == "MEDS") {
     
+    # wrangle data (program sizes + tot respondents) ----
+    status_size <- data %>%
+      select(class_year) %>%
+      group_by(class_year) %>%
+      summarize(responses = n()) %>%
+      mutate(program_size = case_when(
+        class_year == 2022 ~ 25, # gradClass_meds2022 = 25 
+      ))
     
   }
-  
-  # wrangle data (program sizes + tot responsdees) ----
-  status_size <- data %>% 
-    select(class_year) %>% 
-    group_by(class_year) %>% 
-    summarize(responses = n()) %>% 
-    mutate(program_size = case_when(
-      class_year == 2021 ~ 83, # SC NOTE 2023-02-03: would be better to not hard-code this here
-      class_year == 2020 ~ 92,
-      class_year == 2019 ~ 93
-    ))
   
   # wrangle data for placement status plot ----
   status <- data %>% 
@@ -56,7 +63,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
-      labs(title = paste0(program_acronym, "Alumni Placement Status 6 months after graduation"),
+      labs(title = paste0(program_acronym, " Alumni Placement Status 6 months after graduation"),
            x = NULL, y = "Percent of Respondents", fill = NULL) +
       scale_fill_manual(values = c("Advanced Degree/Another Degree" = "#003660", "Career" = "#047c91", 
                                    "Internship, Fellowship, or Short-term Project" = "#9cbebe", 

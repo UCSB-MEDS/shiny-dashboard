@@ -65,7 +65,7 @@ body <- dashboardBody(
                      box(width = NULL, id = "intro_data_box",
                          title = tagList(icon("database"), "About the data"),
                          solidHeader = TRUE, status = "navy",
-                         includeMarkdown("text/welcome_data_text.html")) # END about the data box 
+                         includeMarkdown("text/welcome_data_text.md")) # END about the data box 
                      
               ) # END right-hand column
               

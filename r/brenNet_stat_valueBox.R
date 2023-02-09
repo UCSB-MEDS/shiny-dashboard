@@ -3,7 +3,7 @@
 #' @param input input
 #' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
 #'
-#' @return
+#' @return valueBox object
 #' @export
 #'
 #' @examples
