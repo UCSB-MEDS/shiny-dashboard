@@ -19,7 +19,6 @@ ipedsCategories_plot <- function(input) {
     
   }) # END observe event
   
-
   # create reactive df (2017 - curr_year) ----
   category_ipeds_stats <- reactive({
     
@@ -28,8 +27,6 @@ ipedsCategories_plot <- function(input) {
       ipeds %>% 
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
-        # total number of enrolled students in the past 5 years
-        # MEDS(57) + MESM(508) + PHD(62)
         mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 627
         mutate(percent = round((count / size) * 100, 1))
       

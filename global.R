@@ -1,5 +1,15 @@
 #### global ####
 
+# ---- SC REMINDERS (2022-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
+# update year_radioButtons() with new year choices as career data are added
+# update curr_year, below 
+# once MEDS hits 3 years, use salary_plot() & salaryBySector_plot() fxns for generating plots (until then, add 2023 to meds_salary_plot() & meds_salaryBySector_plot())
+# clean work locations names in domesticPlacement_map() & geographicComparison_plot()
+# clean employer_account_name in initialEmployers_table() & internationalPlacement_table()
+# clean ug1_name & ug1_location in internationalUniversities_table()
+# update class sizes by year in placementStatus_plot()
+# update num_years for MEDS in sectorSatisfaction_plot()
+
 # PACKAGES ----
 library(tidyverse)
 library(bslib)
@@ -16,16 +26,16 @@ library(fontawesome) # icons
 library(naniar)
 
 # IMPORT DATA ----
-admissions <- readRDS("data/admissions.rds")
-enrolled <- readRDS("data/enrolled.rds")
-ipeds <- readRDS("data/ipeds.rds")
+admissions <- readRDS("data/admissions.rds") # years 2017 - 2022
+enrolled <- readRDS("data/enrolled.rds") # years 2017 - 2022
+ipeds <- readRDS("data/ipeds.rds") # years 2017 - 2022
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds") # |> filter(class_year != 2019) # SC NOTE 2022-02-08: still waiting on updated data (will need to update inputs to reflect 3 most recent years (2020, 2021, 2022 i.e. drop 2019))
-mesm_status <- readRDS("data/status_data.rds") |> rename(class_year = mesm_class_year) # |> filter(class_year != 2019) # UPDATE WITH `mesm_status` once we have new mesm placement data that includes 2022
-meds_placement <- readRDS("data/meds_placement.rds")
-meds_status <- readRDS("data/meds_status.rds")
+mesm_placement <- readRDS("data/mesm_placement.rds") # |> filter(class_year != 2019) # years 2019 - 2021 # SC NOTE 2022-02-08: still waiting on updated data (will need to update inputs to reflect 3 most recent years (2020, 2021, 2022 i.e. drop 2019))
+mesm_status <- readRDS("data/status_data.rds") |> rename(class_year = mesm_class_year) # |> filter(class_year != 2019) # years 2019 - 2021 # UPDATE WITH `mesm_status` once we have new mesm placement data that includes 2022
+meds_placement <- readRDS("data/meds_placement.rds") # year 2022
+meds_status <- readRDS("data/meds_status.rds") # year 2022
 
 # STYLING ----
 # SC NOTE 2022-02-08: updated colors to match those of the hex stickers
@@ -35,8 +45,21 @@ mesm_color <- "#003660" # was "#005AA3"
 all_programs_color <- "#09847a"
 
 # VARIABLES ----
-# current year (MANUALLY UPDATE ANNUALLY)
+# current year 
+# used in programSize_valueBox()
 curr_year <- 2022 
+
+# class sizes (for reference); ay_year = year applied/enrolled
+#### MESM (graduate 2 years after enrollment year) ####
+gradClass_mesm2019 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2017) |> count() |> pull() # 85; enrolled ay_year 2017
+gradClass_mesm2020 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2018) |> count() |> pull() # 77; enrolled ay_year 2018
+gradClass_mesm2021 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2019) |> count() |> pull() # 93; enrolled ay_year 2019
+gradClass_mesm2022 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2020) |> count() |> pull() # 92; enrolled ay_year 2020
+gradClass_mesm2023 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2021) |> count() |> pull() # 83; enrolled ay_year 2021 
+gradClass_mesm2024 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2022) |> count() |> pull() # 73; enrolled ay_year 2022
+#### MEDS (graduate 1 year after enrollment year) ####
+gradClass_meds2022 <- enrolled |> filter(objective1 == "MEDS" & ay_year == 2021) |> count() |> pull() - 1 # 25; enrolled ay_year 2021; removed student who dropped out during summer quarter
+gradClass_meds2023 <- enrolled |> filter(objective1 == "MEDS" & ay_year == 2022) |> count() |> pull() # 31; enrolled ay_year 2022
 
 # set name spelling options for US & CA
 # used in domesticPlacement_map(), geographicComparison_plot()
@@ -44,14 +67,13 @@ us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
 # DATA FRAMES ----
-# program sizes + total respondants 
+# program sizes + total respondents to initial placement survey
 # used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
 mesm_placement_size <- mesm_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>% 
   mutate(program_size = case_when(
-    class_year == 2022 ~ 69,
     class_year == 2021 ~ 83,
     class_year == 2020 ~ 92,
     class_year == 2019 ~ 93 
@@ -62,6 +84,7 @@ meds_placement_size <- meds_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
+    class_year == 2023 ~ 31, # SC NOTE 2022-02-08: don't have data for this yet, just adding so it's here 
     class_year == 2022 ~ 25
   ))
 
@@ -78,7 +101,7 @@ total_students_yr <- enrolled %>%
   group_by(ay_year) %>% 
   summarize(size = n())
 
-# 5 year total number of students per program
+# 5 year (currently 2017 - 2022) total number of students per program
 # used in ipedsCategories_plot(), ipedsBackgrounds_plot()
 tot_5yr <- enrolled %>% 
   select(c("ay_year",
@@ -87,3 +110,7 @@ tot_5yr <- enrolled %>%
            "dob")) %>% 
   group_by(objective1) %>%
   summarize(size = n())
+
+# 5 year (currently 2017 - 2022) total number of students across all programs 
+# used in ipedsCategories_plot()
+totStudents_allPrograms_5yr <- sum(tot_5yr$size)
