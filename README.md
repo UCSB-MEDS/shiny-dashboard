@@ -59,7 +59,7 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactiv
     │   ├── undergrad_map_caption.md       # caption for undergrad origin map
     │   ├── urm_definition.md              # urm definition 
     │   ├── welcome_data_text.md           # landing page info about the data used in the app and who created it 
-    │   └── welcome_what_text.md          # landing page info introducing the app
+    │   └── welcome_what_text.md           # landing page info introducing the app
     ├── www                           # special directory in shiny for images and logos
     │   ├── logos                        # hex png files
     │   ├── images                       # jpg or png images used in app (this directory is in .gitignore and will not appear in github repo)
