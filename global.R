@@ -22,15 +22,16 @@ ipeds <- readRDS("data/ipeds.rds")
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds")
+mesm_placement <- readRDS("data/mesm_placement.rds") # |> filter(class_year != 2019) # SC NOTE 2022-02-08: still waiting on updated data (will need to update inputs to reflect 3 most recent years (2020, 2021, 2022 i.e. drop 2019))
+mesm_status <- readRDS("data/status_data.rds") |> rename(class_year = mesm_class_year) # |> filter(class_year != 2019) # UPDATE WITH `mesm_status` once we have new mesm placement data that includes 2022
 meds_placement <- readRDS("data/meds_placement.rds")
-mesm_status <- readRDS("data/status_data.rds")
+meds_status <- readRDS("data/meds_status.rds")
 
 # STYLING ----
-# SC NOTE: updated colors to match those fo the hex stickers
-phd_color <- "#78A540" #6D7D33" 
-meds_color <- "#027D92" #"#047C91"
-mesm_color <- "#003660" #005AA3"
+# SC NOTE 2022-02-08: updated colors to match those of the hex stickers
+phd_color <- "#78A540" # was "#6D7D33" 
+meds_color <- "#027D92" # was "#047C91"
+mesm_color <- "#003660" # was "#005AA3"
 all_programs_color <- "#09847a"
 
 # VARIABLES ----
@@ -48,11 +49,12 @@ ca_names <- c("Ca", "CALIFORNIA", "California")
 mesm_placement_size <- mesm_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
-  summarize(responses = n()) %>% # was 'mesm_responses'
+  summarize(responses = n()) %>% 
   mutate(program_size = case_when(
+    class_year == 2022 ~ 69,
     class_year == 2021 ~ 83,
     class_year == 2020 ~ 92,
-    class_year == 2019 ~ 93
+    class_year == 2019 ~ 93 
   ))
 
 meds_placement_size <- meds_placement %>%

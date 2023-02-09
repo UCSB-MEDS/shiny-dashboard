@@ -27,7 +27,7 @@ meds_salaryBySector_plot <- function(data) {
               High = max(estimated_annual_compensation_us)) %>% 
     pivot_longer(cols = c("Median", "Low", "High"),
                  names_to = "range", values_to = "values") %>%
-    left_join(placement_size, by = "class_year")
+    left_join(meds_placement_size, by = "class_year")
   
   # render plotly ----
   plotly::renderPlotly({

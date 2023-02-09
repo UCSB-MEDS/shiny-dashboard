@@ -1,6 +1,13 @@
-
-# may abstract this more so it can be used for both MESM & MEDS #
-
+#' salaryBySector_plot
+#'
+#' @param input input
+#' @param data df; either 'mesm_placement' or 'meds_placement' (see 'global.R')
+#' @param program_acronym chr str; either "MESM" or "MEDS"
+#'
+#' @return
+#' @export
+#'
+#' @examples
 salaryBySector_plot <- function(input, data, program_acronym) {
   
   # wrangle data/create reactive df for salary by sector plot ----
@@ -11,14 +18,14 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       
       radioButton_yearInput <- input$mesm_salarySector_year
       placement_size <- mesm_placement_size
-      response_num <- sum(placement_size$responses)
+      response_num <- sum(mesm_placement_size$responses)
       
       ## SC NOTE 2023-02-06: eventually will use this fxn for MEDS, but currently only 1 year data, so will make static plot using ____
     } else if (program_acronym == "MEDS") {
       
       # radioButton_yearInput <- input$meds_salarySector_year
       # placement_size <- meds_placement_size
-      # response_num <- sum(placement_size$responses)
+      # response_num <- sum(meds_placement_size$responses)
       
     }
     
@@ -92,7 +99,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     if (program_acronym == "MESM") {
       
       # radioButton_yearInput <- input$mesm_salarySector_year
-      # placement_size <- mesm_placement_size
+      placement_size <- mesm_placement_size
       response_num <- sum(placement_size$responses)
       
       ## SC NOTE 2023-02-06: eventually will use this fxn for MEDS, but currently only 1 year data, so will make static plot using ____
