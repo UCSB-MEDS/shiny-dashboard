@@ -33,8 +33,8 @@ ipeds <- readRDS("data/ipeds.rds")
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(class_year != 2019) 
-mesm_status <- readRDS("data/mesm_status.rds") |> filter(class_year != 2019)
+mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(class_year != 2019) # remove 2019 to maintain 3 years of data
+mesm_status <- readRDS("data/mesm_status.rds") |> filter(class_year != 2019) # remove 2019 to maintain 3 years of data
 meds_placement <- readRDS("data/meds_placement.rds") 
 meds_status <- readRDS("data/meds_status.rds") 
 
