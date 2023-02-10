@@ -17,9 +17,7 @@ internationalPlacement_table <- function(input, data) {
       employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
       TRUE ~ employer_account_name
     )) %>% 
-    group_by(employer_account_name,
-             employer_sector,
-             work_location_country) %>% 
+    group_by(employer_account_name, employer_sector, work_location_country) %>% 
     summarize(count = n())
   
   # render DT datatable ----

@@ -95,9 +95,9 @@ server <- function(input, output, session){
   output$meds_placement_status <- placementStatus_plot(input, data = meds_status, program_acronym = "MEDS")
   output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # SC NOTE 2022-02-08: NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
-  output$meds_salary <- meds_salary_plot(data = meds_placement) # SC NOTE 2022-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salary_plot()`
-  output$meds_salary_by_sector <- meds_salaryBySector_plot(data = meds_placement) # SC NOTE 2022-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salaryBySector_plot()`
+  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # SC NOTE 2023-02-08: NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
+  output$meds_salary <- meds_salary_plot(data = meds_placement) # SC NOTE 2023-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salary_plot()`
+  output$meds_salary_by_sector <- meds_salaryBySector_plot(data = meds_placement) # SC NOTE 2023-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salaryBySector_plot()`
   
 } # END server
 

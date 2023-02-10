@@ -27,7 +27,7 @@ ipedsCategories_plot <- function(input) {
       ipeds %>% 
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
-        mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 627
+        mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2023-02-08: was hardcoded as 627
         mutate(percent = round((count / size) * 100, 1))
       
     } # END if statement

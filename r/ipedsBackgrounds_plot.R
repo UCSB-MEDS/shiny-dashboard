@@ -47,7 +47,7 @@ ipedsBackground_plot <- function(input) {
           group_by(background) %>% 
           summarize(count = n()) %>% 
           # total number of enrolled students in the past 5 years
-          mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 604
+          mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2023-02-08: was hardcoded as 604
           mutate(percent = round((count / size) * 100, 1))
         
       }

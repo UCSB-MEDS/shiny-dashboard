@@ -1,6 +1,6 @@
 #### global ####
 
-# ---- SC REMINDERS (2022-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
+# ---- SC REMINDERS (2023-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
 # update year_radioButtons() with new year choices as career data are added
 # update curr_year, below 
 # once MEDS hits 3 years, use salary_plot() & salaryBySector_plot() fxns for generating plots (until then, add 2023 to meds_salary_plot() & meds_salaryBySector_plot())
@@ -9,6 +9,7 @@
 # clean ug1_name & ug1_location in internationalUniversities_table()
 # update class sizes by year in placementStatus_plot()
 # update num_years for MEDS in sectorSatisfaction_plot()
+# assess/adjust as needed the x-axis ticks in urmTrends_plot() -- updated during Feb 2023 because 2022 data for PhDs not showing up as originally coded (no URM PhDs in 2022)
 
 # PACKAGES ----
 library(tidyverse)
@@ -26,19 +27,19 @@ library(fontawesome) # icons
 library(naniar)
 
 # IMPORT DATA ----
-admissions <- readRDS("data/admissions.rds") # years 2017 - 2022
-enrolled <- readRDS("data/enrolled.rds") # years 2017 - 2022
-ipeds <- readRDS("data/ipeds.rds") # years 2017 - 2022
+admissions <- readRDS("data/admissions.rds")
+enrolled <- readRDS("data/enrolled.rds")
+ipeds <- readRDS("data/ipeds.rds") 
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds") # |> filter(class_year != 2019) # years 2019 - 2021 # SC NOTE 2022-02-08: still waiting on updated data (will need to update inputs to reflect 3 most recent years (2020, 2021, 2022 i.e. drop 2019))
-mesm_status <- readRDS("data/status_data.rds") |> rename(class_year = mesm_class_year) # |> filter(class_year != 2019) # years 2019 - 2021 # UPDATE WITH `mesm_status` once we have new mesm placement data that includes 2022
-meds_placement <- readRDS("data/meds_placement.rds") # year 2022
-meds_status <- readRDS("data/meds_status.rds") # year 2022
+mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(class_year != 2019) 
+mesm_status <- readRDS("data/mesm_status.rds") |> filter(class_year != 2019)
+meds_placement <- readRDS("data/meds_placement.rds") 
+meds_status <- readRDS("data/meds_status.rds") 
 
 # STYLING ----
-# SC NOTE 2022-02-08: updated colors to match those of the hex stickers
+# SC NOTE 2023-02-08: updated colors to match those of the hex stickers
 phd_color <- "#78A540" # was "#6D7D33" 
 meds_color <- "#027D92" # was "#047C91"
 mesm_color <- "#003660" # was "#005AA3"
@@ -69,14 +70,16 @@ ca_names <- c("Ca", "CALIFORNIA", "California")
 # DATA FRAMES ----
 # program sizes + total respondents to initial placement survey
 # used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
+# SC NOTE 2023-02-10: I think these class sizes were incorrect before; updated below and left original class sizes as comments
 mesm_placement_size <- mesm_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>% 
   mutate(program_size = case_when(
-    class_year == 2021 ~ 83,
-    class_year == 2020 ~ 92,
-    class_year == 2019 ~ 93 
+    class_year == 2022 ~ 92,
+    class_year == 2021 ~ 93, # was 83
+    class_year == 2020 ~ 77 # was 92
+    #class_year == 2019 ~ 85 # was 93; REMOVED AT FEB 2023 UPDATE
   ))
 
 meds_placement_size <- meds_placement %>%
@@ -84,8 +87,31 @@ meds_placement_size <- meds_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
-    class_year == 2023 ~ 31, # SC NOTE 2022-02-08: don't have data for this yet, just adding so it's here 
+    class_year == 2023 ~ 31, # SC NOTE 2023-02-08: don't have data for this yet, just adding so it's here 
     class_year == 2022 ~ 25
+  ))
+
+# program sizes + tot respondents to active status survey
+# used in placementStatus_plot()
+# SC NOTE 2023-02-10: I think these class sizes were incorrect before; updated below and left original class sizes as comments
+mesm_status_size <- mesm_status %>%
+  select(class_year) %>%
+  group_by(class_year) %>%
+  summarize(responses = n()) %>%
+  mutate(program_size = case_when(
+    class_year == 2022 ~ 92,
+    class_year == 2021 ~ 93, # was 82
+    class_year == 2020 ~ 77 # was 92
+    #class_year == 2019 ~ 85 # was 93; REMOVED AT FEB 2023 UPDATE
+  ))
+
+meds_status_size <- meds_status %>%
+  select(class_year) %>%
+  group_by(class_year) %>%
+  summarize(responses = n()) %>%
+  mutate(program_size = case_when(
+    class_year == 2023 ~ 31, # SC NOTE 2023-02-10: won't get these data until winter 2024, but adding now for when we do
+    class_year == 2022 ~ 25 
   ))
 
 # program sizes 2017-curr_year

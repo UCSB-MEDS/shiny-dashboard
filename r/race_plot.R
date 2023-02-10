@@ -18,7 +18,7 @@ race_plot <- function(df, prog_input){
         group_by(category_ipeds) %>% 
         summarize(count = n()) %>% 
         # total number of enrolled students in the past 5 years
-        mutate(size = totalStudents_allPrograms_5yr) %>% # SC NOTE 2022-02-08: was hardcoded as 627
+        mutate(size = totalStudents_allPrograms_5yr) %>% # SC NOTE 2023-02-08: was hardcoded as 627
         mutate(percent = round((count / size) * 100, 1))
       
     } # EO if statement

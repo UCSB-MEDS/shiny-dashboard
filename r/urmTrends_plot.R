@@ -23,11 +23,9 @@ urmTrends_plot <- function(input) {
           # permanent residents are hispanic/latino
           hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
           # us citizens identify as urms
-          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-          & citizenship_country == "US" ~ "Y",
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE & citizenship_country == "US" ~ "Y",
           # permanent residents identify as urms
-          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-          & visa %in% visa_urms ~ "Y",
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else
           TRUE ~ "N")) %>%
         group_by(ay_year, urm_status) %>%
@@ -54,11 +52,9 @@ urmTrends_plot <- function(input) {
           # permanent residents are hispanic/latino
           hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
           # us citizens identify as urms
-          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-          & citizenship_country == "US" ~ "Y",
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE & citizenship_country == "US" ~ "Y",
           # permanent residents identify as urms
-          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE
-          & visa %in% visa_urms ~ "Y",
+          TRUE %in% str_detect(string = category, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else
           TRUE ~ "N")) %>%
         group_by(ay_year, urm_status, objective1) %>%
@@ -67,7 +63,7 @@ urmTrends_plot <- function(input) {
         left_join(program_size, by = c("ay_year", "objective1")) %>%
         mutate(percent = round((count / size) * 100, 1)) %>%
         filter(objective1 == input$urm_trends)
-      
+
     } # END else statement
     
   }) # END reactive
@@ -103,8 +99,9 @@ urmTrends_plot <- function(input) {
       theme_minimal() +
       theme(legend.position = "none",
             panel.grid.minor = element_blank()) +
-      scale_x_continuous(breaks = seq(max(urm_trends_df()$ay_year),
-                                      min(urm_trends_df()$ay_year))) +
+      coord_cartesian(xlim = c(2017, 2022), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
+      # scale_x_continuous(breaks = seq(max(urm_trends_df()$ay_year),
+      #                                 min(urm_trends_df()$ay_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       labs(title = paste0("Underrepresented Minority Trends", " (", input$urm_trends, ")"),
            y = NULL, x = NULL)
@@ -116,4 +113,5 @@ urmTrends_plot <- function(input) {
   })
   
 }
+
 

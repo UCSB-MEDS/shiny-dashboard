@@ -11,7 +11,7 @@
 
 programSize_valueBox <- function(input, program_acronym, color) {
   
-  # program size for current year; SC NOTE: removed this from global.R
+  # program size for current year; SC NOTE 2023-03-06: removed this from global.R
   program_size_curr_year <- program_size %>% filter(ay_year == curr_year)
   
   # filter for individual program (see 'program_size_curr_year' in 'global.R') ----

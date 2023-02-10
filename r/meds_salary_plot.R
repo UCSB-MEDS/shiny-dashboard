@@ -1,4 +1,12 @@
-## SC NOTE 2023-02-04: use this fxn to create static plot for MEDS salary since only 1 year of data (no need for radioButtons)
+#' meds_salary_plot
+#'
+#' @param data MUST be 'meds_placement' df
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' ## SC NOTE 2023-02-04: use this fxn to create static plot for MEDS salary since only 1 year of data (no need for radioButtons)
 meds_salary_plot <- function(data) {
   
   # wrangle data/create reactive df for salary plot ----
