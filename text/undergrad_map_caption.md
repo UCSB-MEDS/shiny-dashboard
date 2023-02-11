@@ -1,1 +1,1 @@
-*In the last 5 years, students have come from 200+ U.S. universities across 41 states, and 59 international universities from 29 countries. See International tab to view table of international universities.*
+*In the last 6 years, students have come from 200+ U.S. universities across 41 states, and 58 international universities from 29 countries. See International tab to view table of international universities.*
