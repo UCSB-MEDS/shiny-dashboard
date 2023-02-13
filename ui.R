@@ -194,7 +194,7 @@ body <- dashboardBody(
             fluidRow(
               
               # definitions box ----
-              box(width = 12, id = "ipeds_def",
+              box(width = 12, id = "ipeds_def", 
                   title = "Race and Background Reporting Defintions",
                   collapsible = TRUE, collapsed = FALSE,
                   span(tags$div(class = "lrg-bold", includeMarkdown("text/ipeds_text.md"))), 
@@ -293,25 +293,14 @@ body <- dashboardBody(
                                           
                                           # fluidRow ----
                                           fluidRow(
-                                            
+
                                             # explore MESM career info box ----
                                             box(width = 12,
-                                                title = "Explore MESM Alumni Career Outcomes",
+                                                title = "About the MESM Career Data",  
                                                 solidHeader = TRUE, status = "success",
-                                                
-                                                # explore MESM career info tabsetPanel ----
-                                                tabsetPanel(
-                                                  
-                                                  # welcome tabPanel ----
-                                                  tabPanel(title = "Welcome!", includeMarkdown("text/mesm_career_about.md")), 
-                                                  
-                                                  # about MESM career data tabPanel ----
-                                                  tabPanel(title = "About the Data", includeMarkdown("text/mesm_career_data_info.md")) 
-                                                
-                                                  ) # END explore MESM career info tabsetPanel
-                                                
-                                            ) # END explore MESM career info box
-                                            
+                                                includeMarkdown("text/mesm_career_data_info.md")
+                                                ) # END explore MESM career info box
+
                                           ), # END fluidRow
                                           
                                           # fluidRow (valueBoxes 1) ----
@@ -422,7 +411,7 @@ body <- dashboardBody(
                                    ) # END right-hand column
                                    
                                  ), # END fluidRow
-  
+                                 
                                  # fluidRow (contains location info & initial employers table) ----
                                  fluidRow(
                                    
@@ -479,19 +468,9 @@ body <- dashboardBody(
                                             
                                             # explore MEDS career info box ----
                                             box(width = 12,
-                                                title = "Explore MEDS Alumni Career Outcomes",
+                                                title = "About the MEDS Career Data",
                                                 solidHeader = TRUE, status = "success",
-                                                
-                                                # explore MEDS career info tabsetPanel ----
-                                                tabsetPanel(
-                                                  
-                                                  # welcome tabPanel ----
-                                                  tabPanel(title = "Welcome!", includeMarkdown("text/meds_career_about.md")),
-                                                  
-                                                  # about MESM career data tabPanel ----
-                                                  tabPanel(title = "About the Data", includeMarkdown("text/meds_career_data_info.md")) 
-                                                  
-                                                ) # END explore MEDS career info tabsetPanel
+                                                includeMarkdown("text/meds_career_data_info.md")
                                                 
                                             ) # END explore MEDS career info box
                                             
