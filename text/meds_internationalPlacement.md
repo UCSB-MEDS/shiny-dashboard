@@ -1,0 +1,1 @@
+*We have not yet had any MEDS alumni accept jobs at international organizations for their initial placements. Check back next year!*
