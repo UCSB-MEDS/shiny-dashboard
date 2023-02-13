@@ -38,7 +38,7 @@ urmTrends_plot <- function(input) {
     
     else {
       
-      enrolled %>%
+     enrolled %>%
         select("ay_year", "application_id", "objective1", "citizenship_country",
                "residency_country", "birth_country", "visa", "background",
                "category", "hispanic_latino") %>%
@@ -95,7 +95,7 @@ urmTrends_plot <- function(input) {
     urm_trends_gg <- ggplot(data = urm_trends_df(),
                             aes(x = ay_year, y = percent,
                                 text = paste0("URM ", "(", percent, "%", ")", "\n", "Sample size: ", size))) +
-      geom_bar(stat = "identity", fill = color) +
+      geom_bar(stat = "identity", fill = color, width = 0.9) +
       theme_minimal() +
       theme(legend.position = "none",
             panel.grid.minor = element_blank()) +

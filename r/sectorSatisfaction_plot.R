@@ -73,7 +73,7 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     # create ggplot
     sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), aes(x = placement_satisfaction, y = percent, fill = reorder(placement_satisfaction, percent),
                                          text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count)))+
-      geom_bar(position = "dodge", stat = "identity") +
+      geom_bar(position = "dodge", stat = "identity", width = 0.9) +
       coord_flip(ylim = c(0, 100)) +
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
