@@ -37,7 +37,7 @@ age_plot <- function(input){
     
     if (input$age_prog == "MESM") {
       color <- mesm_color
-      year_str <- "2017-2022"
+      year_str <- "2018-2022"
     } 
     
     else if (input$age_prog == "MEDS") {
@@ -47,7 +47,7 @@ age_plot <- function(input){
     
     else if (input$age_prog == "PhD") {
       color <- phd_color
-      year_str <- "2017-2022"
+      year_str <- "2018-2022"
     } 
     
     # create ggplot 

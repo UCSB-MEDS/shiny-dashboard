@@ -10,6 +10,7 @@
 # update class sizes by year in placementStatus_plot()
 # update num_years for MEDS in sectorSatisfaction_plot()
 # assess/adjust as needed the x-axis ticks in urmTrends_plot() -- updated during Feb 2023 because 2022 data for PhDs not showing up as originally coded (no URM PhDs in 2022)
+# update plot title (year ranges) in age_plot() whenever years are added/removed
 
 # PACKAGES ----
 library(tidyverse)
@@ -27,14 +28,14 @@ library(fontawesome) # icons
 library(naniar)
 
 # IMPORT DATA ----
-admissions <- readRDS("data/admissions.rds")
-enrolled <- readRDS("data/enrolled.rds")
-ipeds <- readRDS("data/ipeds.rds") 
+admissions <- readRDS("data/admissions.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
+enrolled <- readRDS("data/enrolled.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
+ipeds <- readRDS("data/ipeds.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(class_year != 2019) # remove 2019 to maintain 3 years of data
-mesm_status <- readRDS("data/mesm_status.rds") |> filter(class_year != 2019) # remove 2019 to maintain 3 years of data
+mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data
+mesm_status <- readRDS("data/mesm_status.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data
 meds_placement <- readRDS("data/meds_placement.rds") 
 meds_status <- readRDS("data/meds_status.rds") 
 
@@ -50,9 +51,9 @@ all_programs_color <- "#09847a"
 # used in programSize_valueBox()
 curr_year <- 2022 
 
-# class sizes (for reference); ay_year = year applied/enrolled
+# class sizes (SC NOTE 2022-02-13: for reference only; vars not used anywhere in coce); ay_year = year applied/enrolled
 #### MESM (graduate 2 years after enrollment year) ####
-gradClass_mesm2019 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2017) |> count() |> pull() # 85; enrolled ay_year 2017
+# gradClass_mesm2019 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2017) |> count() |> pull() # 85; enrolled ay_year 2017
 gradClass_mesm2020 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2018) |> count() |> pull() # 77; enrolled ay_year 2018
 gradClass_mesm2021 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2019) |> count() |> pull() # 93; enrolled ay_year 2019
 gradClass_mesm2022 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2020) |> count() |> pull() # 92; enrolled ay_year 2020
