@@ -39,9 +39,9 @@ mesm_status <- readRDS("data/mesm_status.rds") |> filter(!class_year %in% c(2019
 meds_placement <- readRDS("data/meds_placement.rds") 
 meds_status <- readRDS("data/meds_status.rds") 
 
-# SOURCE SCRIPTS ----
-source_scripts = list.files(path = "shiny-dashboard/R", pattern = "*.R")
-map(source_scripts, source)
+# SOURCE SCRIPTS (don't need since shiny v1.5 will source any script in /r) ----
+# source_scripts = list.files(path = "shiny-dashboard/r", pattern = "*.R")
+# map(source_scripts, source)
 
 # STYLING ----
 # SC NOTE 2023-02-08: updated colors to match those of the hex stickers
