@@ -43,7 +43,6 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactiv
     │   ├── sex_plot.R 
     │   ├── urmTrends_plot.R 
     │   └── year_radioButtons.R             
-    ├── rsconnect/shinyapps.io/hdolinh # created after running `deployApp()` 
     ├── text                           # markdown and html files that contain text to be included in app
     │   ├── demo_about.md                  # introduces student demographic page
     │   ├── footer.html                    # landing page footer
