@@ -62,7 +62,7 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactiv
     │   └── welcome_what_text.md           # landing page info introducing the app
     ├── www                           # special directory in shiny for images and logos
     │   ├── logos                        # hex png files
-    │   ├── images                       # jpg or png images used in app (this directory is in .gitignore and will not appear in github repo)
+    │   ├── images                       # jpg or png images used in app (e.g. banner image)
     │   ├── .DS_Store                    
     │   └── styles.css                   # CSS styles applied to app `tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"))`
     ├── global.R                      # data frames, variables, functions, and libraries that are used repeatedly in app
