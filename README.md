@@ -75,11 +75,11 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/dashboard/) is an interactiv
 ## Contributors
 This dashboard was first completed in September 2022 and was presented to the Bren Staff on 13 September 2022. This dashboard will be updated anually by Bren Staff and a MEDS Fellow. 
 
-* Halina Do-Linh (Bren R Shiny Developer Fellow 2022)
-* Jamie Montgomery (MEDS Program Coordinator)
-* Sam Csik (NCEAS Data Training Coordinator)
-* Kristi Birney (Bren Career Team)
-* Kristine Duarte (Bren Student Affairs Team)
+* [Halina Do-Linh](https://github.com/hdolinh) (Bren R Shiny Developer Fellow 2022)
+* [Jamie Montgomery](https://github.com/jamiecmontgomery) (MEDS Program Coordinator)
+* [Sam Csik](https://github.com/samanthacsik) (NCEAS Data Training Coordinator)
+* [Kristi Birney](https://bren.ucsb.edu/people/kristi-birney) (Bren Career Team)
+* [Kristine Duarte](https://bren.ucsb.edu/people/kristine-duarte) (Bren Student Affairs Team)
 
 ## Application Updates
-* **February 2023, updates by Sam Csik:** refactored code base, added career data for MEDS and MESM graduating classes of 2022
+* **February 2023, updates by [Sam Csik](https://github.com/samanthacsik):** refactored code base, added career data for MEDS and MESM graduating classes of 2022
