@@ -81,5 +81,5 @@ This dashboard was first completed in September 2022 and was presented to the Br
 * Kristi Birney (Bren Career Team)
 * Kristine Duarte (Bren Student Affairs Team)
 
-## Updates
-* **February 2023:** refactored code base, added career data for MEDS and MESM graduating classes of 2022
+## Application Updates
+* **February 2023, updates by Sam Csik:** refactored code base, added career data for MEDS and MESM graduating classes of 2022
