@@ -9,9 +9,7 @@
 # assess/adjust as needed the x-axis ticks in urmTrends_plot() -- updated during Feb 2023 because 2022 data for PhDs not showing up as originally coded (no URM PhDs in 2022)
 # update plot title (year ranges) in age_plot() whenever years are added/removed
 # DATA CLEANING UPDATES SHOULD BE MADE TO FILES IN `/data_cleaning`
-  # clean work locations names used in domesticPlacement_map() & geographicComparison_plot()
-  # clean employer_account_name used in initialEmployers_table() & internationalPlacement_table()
-  # clean used ug1_name & ug1_location in internationalUniversities_table()
+  # TODO: MOVE ug1_name & ug1_location in internationalUniversities_table() to data-cleaning files
 
 # PACKAGES ----
 library(tidyverse)
