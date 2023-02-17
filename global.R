@@ -39,9 +39,9 @@ meds_placement <- readRDS("data/meds_placement_cleaned.rds") # SC NOTE 2022-02-1
 meds_status <- readRDS("data/meds_status.rds") 
 
 # SOURCE SCRIPTS (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----
-# file_path <- "r"
-# source_scripts = list.files(path = file_path, pattern = "*.R")
-# map(paste0(file_path, "/", source_scripts), source)
+file_path <- "r"
+source_scripts = list.files(path = file_path, pattern = "*.R")
+map(paste0(file_path, "/", source_scripts), source)
 
 # STYLING ----
 # SC NOTE 2023-02-08: updated colors to match those of the hex stickers
