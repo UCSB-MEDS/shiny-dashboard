@@ -4,13 +4,14 @@
 # update year_radioButtons() with new year choices as career data are added
 # update curr_year, below 
 # once MEDS hits 3 years, use salary_plot() & salaryBySector_plot() fxns for generating plots (until then, add 2023 to meds_salary_plot() & meds_salaryBySector_plot())
-# clean work locations names in domesticPlacement_map() & geographicComparison_plot()
-# clean employer_account_name in initialEmployers_table() & internationalPlacement_table()
-# clean ug1_name & ug1_location in internationalUniversities_table()
 # update class sizes by year in placementStatus_plot()
 # update num_years for MEDS in sectorSatisfaction_plot()
 # assess/adjust as needed the x-axis ticks in urmTrends_plot() -- updated during Feb 2023 because 2022 data for PhDs not showing up as originally coded (no URM PhDs in 2022)
 # update plot title (year ranges) in age_plot() whenever years are added/removed
+# DATA CLEANING UPDATES SHOULD BE MADE TO FILES IN `/data_cleaning`
+  # clean work locations names used in domesticPlacement_map() & geographicComparison_plot()
+  # clean employer_account_name used in initialEmployers_table() & internationalPlacement_table()
+  # clean used ug1_name & ug1_location in internationalUniversities_table()
 
 # PACKAGES ----
 library(tidyverse)
@@ -34,9 +35,9 @@ ipeds <- readRDS("data/ipeds.rds") |> filter(!ay_year %in% c(2017)) # years remo
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data
+mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data;  SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/mesm_placement_cleaned.R`
 mesm_status <- readRDS("data/mesm_status.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data
-meds_placement <- readRDS("data/meds_placement.rds") 
+meds_placement <- readRDS("data/meds_placement_cleaned.rds") # SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/meds_placement_cleaned.R`
 meds_status <- readRDS("data/meds_status.rds") 
 
 # SOURCE SCRIPTS (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----

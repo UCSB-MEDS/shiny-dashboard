@@ -1,3 +1,5 @@
+# SC NOTE 2023-02-16: should move this data wrangling to separate file & save new .rds file to read into global.R (see data/mesm_placement_cleaning.R as example)
+
 internationalUniversities_table <- function(input) {
   
   # wrangle data ----
