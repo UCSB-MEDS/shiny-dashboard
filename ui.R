@@ -27,8 +27,8 @@ body <- dashboardBody(
   
   # header (add stylesheet, google analytics, etc.) ----
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")#,
-    # includeHTML("google-analytics.html")
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+    includeHTML("google-analytics.html")
   ), # END header
   
   # call shinyjs; Note(HD): initially added to use hidden() ----
