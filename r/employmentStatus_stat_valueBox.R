@@ -7,6 +7,7 @@
 #' @export
 #'
 #' @examples
+# SC NOTE 2022-02-22: consider dividing by total class size (rather than respondees; ensure 6 month cutoff is accurate)
 employmentStatus_stat_valueBox <- function(input, data) {
   
   # calculate total responses (length of df) ----
