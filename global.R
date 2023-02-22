@@ -28,7 +28,7 @@ library(naniar)
 
 # IMPORT DATA ----
 admissions <- readRDS("data/admissions.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
-enrolled <- readRDS("data/enrolled.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
+enrolled <- readRDS("data/enrolled_cleaned.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
 ipeds <- readRDS("data/ipeds.rds") |> filter(!ay_year %in% c(2017)) # years removed to maintain 5-year avg
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
@@ -51,11 +51,11 @@ mesm_color <- "#003660" # was "#005AA3"
 all_programs_color <- "#09847a"
 
 # VARIABLES ----
-# current year 
-# used in programSize_valueBox()
-curr_year <- 2022 
+curr_year <- 2022 # recent graduated class year (used in programSize_valueBox() class size alculation)
+curr_admission_year <- 2023 # current admissions year (used in programSize_valueBox() subtitle)
+employmentStatus_curr_year <- 2021 # current year for employment status, based on enrollment year (used in employmentStatus_stat_valueBox())
 
-# class sizes (SC NOTE 2022-02-13: for reference only; vars not used anywhere in coce); ay_year = year applied/enrolled
+# class sizes (SC NOTE 2022-02-13: for reference only; vars not used anywhere in code); ay_year = year applied/enrolled
 #### MESM (graduate 2 years after enrollment year) ####
 # gradClass_mesm2019 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2017) |> count() |> pull() # 85; enrolled ay_year 2017
 gradClass_mesm2020 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2018) |> count() |> pull() # 77; enrolled ay_year 2018
@@ -64,7 +64,7 @@ gradClass_mesm2022 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2020)
 gradClass_mesm2023 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2021) |> count() |> pull() # 83; enrolled ay_year 2021 
 gradClass_mesm2024 <- enrolled |> filter(objective1 == "MESM" & ay_year == 2022) |> count() |> pull() # 73; enrolled ay_year 2022
 #### MEDS (graduate 1 year after enrollment year) ####
-gradClass_meds2022 <- enrolled |> filter(objective1 == "MEDS" & ay_year == 2021) |> count() |> pull() - 1 # 25; enrolled ay_year 2021; removed student who dropped out during summer quarter
+gradClass_meds2022 <- enrolled |> filter(objective1 == "MEDS" & ay_year == 2021) |> count() |> pull() # 25; enrolled ay_year 2021
 gradClass_meds2023 <- enrolled |> filter(objective1 == "MEDS" & ay_year == 2022) |> count() |> pull() # 31; enrolled ay_year 2022
 
 # set name spelling options for US & CA

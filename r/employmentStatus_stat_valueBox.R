@@ -2,21 +2,31 @@
 #'
 #' @param input input
 #' @param data df; either 'mesm_status' or 'meds_status' (see global.R)
+#' @param program_acroynm str; either "MESM" or "MEDS"
 #'
 #' @return a valueBox object
 #' @export
 #'
 #' @examples
-# SC NOTE 2022-02-22: consider dividing by total class size (rather than respondees; ensure 6 month cutoff is accurate)
-employmentStatus_stat_valueBox <- function(input, data) {
+employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   
-  # calculate total responses (length of df) ----
-  total_responses <- length(data$last_name)
+  # SC NOTE 2022-02-22: originally calculated stat based on total responses to survey, but really should use total class size ----
+  # total_responses <- length(data$last_name)
+  
+  # SC NOTE 2022-02-22: NEED TO UPDATE SO THAT MESM VALUE BOX DRAWS FROM CORRECT YEAR
+  
+  # total_num graduates in curr_year ----
+  total_grads_curr_year <- enrolled |> 
+    filter(objective1 == program_acronym) |> 
+    filter(ay_year == employmentStatus_curr_year) |> nrow()
   
   # wrangle data for employment status valueBox stat ----
   status_stat <- data %>% 
     select(class_year,
            member_status) %>% 
+    
+    # filter for most recent grad class year (curr_year)
+    filter(class_year == curr_year) |> 
     
     # assign placement status label
     mutate(status = case_when(
@@ -38,14 +48,13 @@ employmentStatus_stat_valueBox <- function(input, data) {
     summarize(count = n()) %>% 
     
     # calculate percentage
-    mutate(percent = round((count / total_responses) * 100)) %>% 
+    mutate(percent = round((count / total_grads_curr_year) * 100)) %>% 
     filter(placed == "Placed")
   
-  # render employment stat valueBox ----
   renderValueBox({
     
     shinydashboard::valueBox(
-      subtitle = "of graduates were employed 6 months after graduation",
+      subtitle = paste0("of graduates from the class of ", curr_year, " were employed 6 months after graduation"),
       value = paste0(status_stat$percent, "%"),
       icon = icon("handshake"),
       color = "green"
