@@ -14,11 +14,22 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   # total_responses <- length(data$last_name)
   
   # SC NOTE 2022-02-22: NEED TO UPDATE SO THAT MESM VALUE BOX DRAWS FROM CORRECT YEAR
-  
-  # total_num graduates in curr_year ----
-  total_grads_curr_year <- enrolled |> 
-    filter(objective1 == program_acronym) |> 
-    filter(ay_year == employmentStatus_curr_year) |> nrow()
+  # determine which year (see global.R) to use based on program_acronym supplied ----
+  if (program_acronym == "MESM") {
+    
+    # total_num graduates in curr_year ----
+    total_grads_curr_year <- enrolled |> 
+      filter(objective1 == program_acronym) |> 
+      filter(ay_year == mesm_employmentStatus_curr_year) |> nrow()
+    
+  } else if (program_acronym == "MEDS") {
+    
+    # total_num graduates in curr_year ----
+    total_grads_curr_year <- enrolled |> 
+      filter(objective1 == program_acronym) |> 
+      filter(ay_year == meds_employmentStatus_curr_year) |> nrow()
+    
+  }
   
   # wrangle data for employment status valueBox stat ----
   status_stat <- data %>% 
