@@ -10,26 +10,28 @@
 #' @examples
 employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   
-  # SC NOTE 2022-02-22: originally calculated stat based on total responses to survey, but really should use total class size ----
-  # total_responses <- length(data$last_name)
+  # total number of survey respondents for current year ----
+  total_responses <- data |> 
+    filter(class_year == curr_grad_year) |> 
+    nrow()
   
-  # SC NOTE 2022-02-22: NEED TO UPDATE SO THAT MESM VALUE BOX DRAWS FROM CORRECT YEAR
-  # determine which year (see global.R) to use based on program_acronym supplied ----
-  if (program_acronym == "MESM") {
-    
-    # total_num graduates in curr_year ----
-    total_grads_curr_year <- enrolled |> 
-      filter(objective1 == program_acronym) |> 
-      filter(ay_year == mesm_employmentStatus_curr_year) |> nrow()
-    
-  } else if (program_acronym == "MEDS") {
-    
-    # total_num graduates in curr_year ----
-    total_grads_curr_year <- enrolled |> 
-      filter(objective1 == program_acronym) |> 
-      filter(ay_year == meds_employmentStatus_curr_year) |> nrow()
-    
-  }
+  # # SC NOTE 2022-02-24: KB to keep out of survey respondents, NOT total graduates (leaving code here in case we decide to change later)
+  # # determine which year (see global.R) to use based on program_acronym supplied ----
+  # if (program_acronym == "MESM") {
+  #   
+  #   # total_num graduates in curr_year ----
+  #   total_grads_curr_year <- enrolled |> 
+  #     filter(objective1 == program_acronym) |> 
+  #     filter(ay_year == mesm_employmentStatus_curr_year) |> nrow()
+  #   
+  # } else if (program_acronym == "MEDS") {
+  #   
+  #   # total_num graduates in curr_year ----
+  #   total_grads_curr_year <- enrolled |> 
+  #     filter(objective1 == program_acronym) |> 
+  #     filter(ay_year == meds_employmentStatus_curr_year) |> nrow()
+  #   
+  # }
   
   # wrangle data for employment status valueBox stat ----
   status_stat <- data %>% 
@@ -59,13 +61,13 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
     summarize(count = n()) %>% 
     
     # calculate percentage
-    mutate(percent = round((count / total_grads_curr_year) * 100)) %>% 
+    mutate(percent = round((count / total_responses) * 100)) %>% 
     filter(placed == "Placed")
   
   renderValueBox({
     
     shinydashboard::valueBox(
-      subtitle = paste0("of graduates from the class of ", curr_grad_year, " were employed 6 months after graduation"),
+      subtitle = paste0("of survey respondents from the class of ", curr_grad_year, " were employed 6 months after graduation"),
       value = paste0(status_stat$percent, "%"),
       icon = icon("handshake"),
       color = "green"
