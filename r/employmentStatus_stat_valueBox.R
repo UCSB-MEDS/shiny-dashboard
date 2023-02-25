@@ -37,7 +37,7 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
            member_status) %>% 
     
     # filter for most recent grad class year (curr_year)
-    filter(class_year == curr_year) |> 
+    filter(class_year == curr_grad_year) |> 
     
     # assign placement status label
     mutate(status = case_when(
@@ -65,7 +65,7 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   renderValueBox({
     
     shinydashboard::valueBox(
-      subtitle = paste0("of graduates from the class of ", curr_year, " were employed 6 months after graduation"),
+      subtitle = paste0("of graduates from the class of ", curr_grad_year, " were employed 6 months after graduation"),
       value = paste0(status_stat$percent, "%"),
       icon = icon("handshake"),
       color = "green"
