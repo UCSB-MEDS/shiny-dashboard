@@ -26,7 +26,7 @@ brenNet_stat_valueBox <- function(input, data) {
   renderValueBox({
     
     valueBox(
-      "of graduates found their jobs through the Bren School Network",
+      paste0("of survey respondents from the graduating class of ", curr_grad_year, " found their jobs through the Bren School Network"),
       value = paste0(brenNet_stat, "%"),
       icon = icon("briefcase"),
       color = "blue"

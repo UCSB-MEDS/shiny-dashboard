@@ -33,7 +33,7 @@ initPlacementSatisfaction_stat_valueBox <- function(input, data) {
   # render initial placement satisfaction stat valueBox ----
   renderValueBox({
     
-    valueBox("of graduates ranked being “satisfied” or “very satisfied” with their initial job placement",
+    valueBox(paste0("of survey respondents from the graduating class of ", curr_grad_year, " ranked being “satisfied” or “very satisfied” with their initial job placement"),
              value = paste0(total_satisfied, "%"),
              icon = icon("heart"),
              color = "light-blue"

@@ -11,8 +11,8 @@
 
 programSize_valueBox <- function(input, program_acronym, color) {
   
-  # program size for current year; SC NOTE 2023-03-06: removed this from global.R
-  program_size_curr_year <- program_size %>% filter(ay_year == curr_year)
+  # program size for current year
+  program_size_curr_year <- program_size %>% filter(ay_year == curr_grad_year)
   
   # filter for individual program (see 'program_size_curr_year' in 'global.R') ----
   program_size_display <- program_size_curr_year |> filter(objective1 == program_acronym)
@@ -21,7 +21,7 @@ programSize_valueBox <- function(input, program_acronym, color) {
   renderValueBox({
     
     shinydashboard::valueBox(
-      subtitle = paste0(program_acronym, " students in the ", curr_year, " cohort"),
+      subtitle = paste0(program_acronym, " students in the ", curr_grad_year, " incoming cohort"), 
       value = program_size_display$size,
       icon = icon("users", lib = "font-awesome"),
       color = color)

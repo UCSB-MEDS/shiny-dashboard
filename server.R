@@ -45,12 +45,12 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~
   
   # MESM valueboxes ----
-  output$placement_stat <- employmentStatus_stat_valueBox(input, data = mesm_status)
+  output$placement_stat <- employmentStatus_stat_valueBox(input, data = mesm_status, program_acronym = "MESM")
   output$mesm_brenNet_stat <- brenNet_stat_valueBox(input, data = mesm_placement)
   output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
   
   # MEDS valueBoxes ----
-  output$meds_placement_stat <- employmentStatus_stat_valueBox(input, data = meds_status)
+  output$meds_placement_stat <- employmentStatus_stat_valueBox(input, data = meds_status, program_acronym = "MEDS")
   output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
   output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
   
