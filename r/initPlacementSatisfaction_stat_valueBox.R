@@ -7,28 +7,17 @@
 #' @export
 #'
 #' @examples
-initPlacementSatisfaction_stat_valueBox <- function(input, data, program_acronym) {
+initPlacementSatisfaction_stat_valueBox <- function(input, data) {
   
-  # THIS NEEDS TO BE FIXED
-  # >>>>>>>
-  # get appropriate class year ----
-  if (program_acronym == "MESM") {
-
-    data <- data |>
-      filter(mesm_class_year == 'MESM 2022') # DO THIS AUTOMATICALLY
-      # filter(str_detect(mesm_class_year, curr_grad_year))
-
-  } else if (program_acronym == "MEDS") {
-
-  }
-  
-  # <<<<<<<<
+  # filter data for only current grad year ----
+  data_curr_year <- data |> 
+    filter(year == curr_grad_year)
   
   # calculate total responses ----
-  total_responses <- length(data$placement_satisfaction)
+  total_responses <- length(data_curr_year$placement_satisfaction)
  
   # wrangle data for initial placement satisfaction valueBox stat ----
-  satisfaction_stat <- data %>% 
+  satisfaction_stat <- data_curr_year %>% 
     group_by(placement_satisfaction) %>% 
     summarize(count = n()) %>% 
     mutate(percent = round((count / total_responses) * 100)) %>% 

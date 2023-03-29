@@ -1,6 +1,7 @@
 # SC NOTE 2023-02-16: applying same cleaning workflow to both mesm_placement & meds_placement so I don't miss anything
 
 library(tidyverse)
+library(tidyr)
 
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
