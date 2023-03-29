@@ -9,11 +9,15 @@
 #' @examples
 brenNet_stat_valueBox <- function(input, data) {
   
+  # filter data for only current grad year ----
+  data_curr_year <- data |> 
+    filter(year == curr_grad_year)
+  
   # calculate total responses ----
-  total_responses <- length(data$job_source)
+  total_responses <- length(data_curr_year$job_source)
   
   # wrangle data for brenNet stat valueBox ----
-  brenNet <- data %>% 
+  brenNet <- data_curr_year %>% 
     group_by(job_source) %>% 
     summarize(count = n()) %>% 
     mutate(percent = round((count / total_responses) * 100)) %>% 

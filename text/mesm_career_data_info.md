@@ -2,7 +2,5 @@
 
 <p><strong>Please note that data represent alumni employment six months after graduation, rather than current employment.</strong></p>
 
-<p><strong><em>For the MESM graduating class of 2022, 69/92 students responded to the initial job placement survey.</em></strong></p>
-
 <p>To learn more about Bren Career Services, please visit the <a href="https://bren.ucsb.edu/career-services" target="_blank">Bren website</a>.</p>
 

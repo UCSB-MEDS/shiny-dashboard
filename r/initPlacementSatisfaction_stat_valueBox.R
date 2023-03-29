@@ -9,11 +9,15 @@
 #' @examples
 initPlacementSatisfaction_stat_valueBox <- function(input, data) {
   
+  # filter data for only current grad year ----
+  data_curr_year <- data |> 
+    filter(year == curr_grad_year)
+  
   # calculate total responses ----
-  total_responses <- length(data$placement_satisfaction)
+  total_responses <- length(data_curr_year$placement_satisfaction)
  
   # wrangle data for initial placement satisfaction valueBox stat ----
-  satisfaction_stat <- data %>% 
+  satisfaction_stat <- data_curr_year %>% 
     group_by(placement_satisfaction) %>% 
     summarize(count = n()) %>% 
     mutate(percent = round((count / total_responses) * 100)) %>% 
@@ -33,7 +37,7 @@ initPlacementSatisfaction_stat_valueBox <- function(input, data) {
   # render initial placement satisfaction stat valueBox ----
   renderValueBox({
     
-    valueBox(paste0("of survey respondents from the graduating class of ", curr_grad_year, " ranked being “satisfied” or “very satisfied” with their initial job placement"),
+    valueBox(paste0("of survey respondents from the graduating class of ", curr_grad_year, " selected being “satisfied” or “very satisfied” with their initial job placement"),
              value = paste0(total_satisfied, "%"),
              icon = icon("heart"),
              color = "light-blue"
