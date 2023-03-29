@@ -7,7 +7,22 @@
 #' @export
 #'
 #' @examples
-initPlacementSatisfaction_stat_valueBox <- function(input, data) {
+initPlacementSatisfaction_stat_valueBox <- function(input, data, program_acronym) {
+  
+  # THIS NEEDS TO BE FIXED
+  # >>>>>>>
+  # get appropriate class year ----
+  if (program_acronym == "MESM") {
+
+    data <- data |>
+      filter(mesm_class_year == 'MESM 2022') # DO THIS AUTOMATICALLY
+      # filter(str_detect(mesm_class_year, curr_grad_year))
+
+  } else if (program_acronym == "MEDS") {
+
+  }
+  
+  # <<<<<<<<
   
   # calculate total responses ----
   total_responses <- length(data$placement_satisfaction)
@@ -33,7 +48,7 @@ initPlacementSatisfaction_stat_valueBox <- function(input, data) {
   # render initial placement satisfaction stat valueBox ----
   renderValueBox({
     
-    valueBox(paste0("of survey respondents from the graduating class of ", curr_grad_year, " ranked being “satisfied” or “very satisfied” with their initial job placement"),
+    valueBox(paste0("of survey respondents from the graduating class of ", curr_grad_year, " selected being “satisfied” or “very satisfied” with their initial job placement"),
              value = paste0(total_satisfied, "%"),
              icon = icon("heart"),
              color = "light-blue"
