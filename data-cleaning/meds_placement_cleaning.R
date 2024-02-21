@@ -1,4 +1,5 @@
 # SC NOTE 2023-02-16: applying same cleaning workflow to both mesm_placement & meds_placement so I don't miss anything
+# SC NOTE 2024-02-20: Sam & Miya discussed the definition of 'placement' as the date of offer acceptance (offer received would be the earliest date; from there, students/alumni could go through negotiations; start date could be delayed into the future)
 
 library(tidyverse)
 
