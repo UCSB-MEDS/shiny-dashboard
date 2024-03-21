@@ -1,4 +1,4 @@
-#' year_radioButtons
+#' meds_year_radioButtons
 #'
 #' @param inputId inputId
 #'
@@ -6,10 +6,10 @@
 #' @export
 #'
 #' @examples
-year_radioButtons <- function(inputId, selected) {
+meds_year_radioButtons <- function(inputId, selected) {
   
   radioButtons(inputId = inputId, label = NULL,
-               choices = c(2021, 2022, 2023, "All Years"),
+               choices = c(2022, 2023, "All Years"),
                selected = "All Years",
                inline = TRUE)
   

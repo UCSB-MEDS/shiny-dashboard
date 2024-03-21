@@ -6,7 +6,7 @@ library(tidyverse)
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
-meds_placement_cleaned <- readRDS("data/meds_placement.rds") |> 
+meds_placement_cleaned <- readRDS("data/meds_placement_22-23.rds") |> 
   
   # ---- DATA ENTERED INCORRECTLY BY STUDENTS ----
 
@@ -121,4 +121,4 @@ meds_placement_cleaned <- readRDS("data/meds_placement.rds") |>
     TRUE ~ employer_sector
   )) 
 
-# saveRDS(meds_placement_cleaned, "data/meds_placement_cleaned.rds")
+ saveRDS(meds_placement_cleaned, "data/meds_placement_cleaned.rds")

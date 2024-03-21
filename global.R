@@ -35,10 +35,10 @@ ipeds <- readRDS("data/ipeds.rds")
 diversity_stats <- readRDS("data/diversity_stats.rds")
 
 # CAREER OUTCOMES DATA (keep 3 most recent years) ----
-mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019)) 
-mesm_status <- readRDS("data/mesm_status.rds") |> filter(!class_year %in% c(2019)) 
-meds_placement <- readRDS("data/meds_placement_cleaned.rds") 
-meds_status <- readRDS("data/meds_status.rds") 
+mesm_placement <- readRDS("data/mesm_placement_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) 
+mesm_status <- readRDS("data/mesm_status_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) 
+meds_placement <- readRDS("data/meds_placement_22-23.rds") 
+meds_status <- readRDS("data/meds_status_22-23.rds") 
 
 # GEOMETRIES FOR MAPS ----
 ug_geoms <- readRDS("data/ug_geoms.rds")
@@ -57,10 +57,10 @@ mesm_color <- "#003660" # was "#005AA3"
 all_programs_color <- "#09847a"
 
 #............................variables...........................
-curr_admission_year <- 2023 # current admissions year (used in programSize_valueBox() subtitle) | ADMISSIONS DATA FOR ENTERING CLASSES OF 2023 USED IN DEMOGRAPHICS TAB
-curr_grad_year <- 2022 # recent graduated class year (used in programSize_valueBox() class size calculation) | CAREER DATA FOR GRADUATING CLASSES OF 2022 USED IN CAREER TAB
+curr_admission_year <- 2024 # current admissions year (used in programSize_valueBox() subtitle) | ADMISSIONS DATA FOR ENTERING CLASSES OF 2024 USED IN DEMOGRAPHICS TAB
+curr_grad_year <- 2023 # recent graduated class year (used in programSize_valueBox() class size calculation) | CAREER DATA FOR GRADUATING CLASSES OF 2023 USED IN CAREER TAB
 meds_employmentStatus_curr_year <- curr_grad_year - 1 # current year for meds employment status, based on enrollment year which is one year prior to graduation (used in employmentStatus_stat_valueBox())
-mesm_employmentStatus_curr_year <- curr_grad_year - 2 # current year for mesm employment status, based on enrollment year, whihc is two years prior to graduation (used in employmentStatus_stat_valueBox())
+mesm_employmentStatus_curr_year <- curr_grad_year - 2 # current year for mesm employment status, based on enrollment year, which is two years prior to graduation (used in employmentStatus_stat_valueBox())
 
 # set name spelling options for US & CA (domesticPlacement_map(), geographicComparison_plot())
 us_names <- c("USA", "US", "Usa")
@@ -74,6 +74,7 @@ mesm_placement_size <- mesm_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>% 
   mutate(program_size = case_when(
+    class_year == 2023 ~ 80, #80 is a fake number -JM update when Kristine tells the grad size
     class_year == 2022 ~ 92,
     class_year == 2021 ~ 93, 
     class_year == 2020 ~ 77 
@@ -95,6 +96,7 @@ mesm_status_size <- mesm_status %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
+    class_year == 2023 ~ 80,
     class_year == 2022 ~ 92,
     class_year == 2021 ~ 93, 
     class_year == 2020 ~ 77 
