@@ -7,34 +7,70 @@
 #'
 #' @examples
 #' ## SC NOTE 2023-02-04: use this fxn to create static plot for MEDS salary since only 1 year of data (no need for radioButtons)
-meds_salary_plot <- function(data) {
+meds_salary_plot <- function(input, data) {
   
   # wrangle data/create reactive df for salary plot ----
-  salary <- data %>% 
-        select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
-        # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
-        filter(employment_type == "Full-Time Job") %>% 
-        # remove $0 compensation (5 tot)
-        filter(estimated_annual_compensation_us != 0) %>% 
-        # remove stipend compensation_frequency
-        filter(compensation_frequency != "Stipend") %>% 
-        # filter for year 
-        filter(class_year %in% c("2022")) %>% 
-        # 3 year Median
-        mutate(Median = median(estimated_annual_compensation_us)) %>% 
-        mutate(Low = min(estimated_annual_compensation_us)) %>% 
-        mutate(High = max(estimated_annual_compensation_us)) %>% 
-        select(-estimated_annual_compensation_us) %>% 
-        pivot_longer(cols = c(Low, High, Median),
-                     names_to = "range", values_to = "values") %>% 
-        left_join(meds_placement_size, by = "class_year")
-      
+  salary <- reactive({  
+  
+    radioButton_yearInput <- input$meds_salary_year
+    placement_size <- meds_placement_size
+    response_num <- sum(placement_size$responses)
+  
+  # if "All Years" selected
+  if (radioButton_yearInput == "All Years") { 
+    
+    data %>% 
+      select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+      # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+      filter(employment_type == "Full-Time Job") %>% 
+      # remove $0 compensation (5 tot)
+      filter(estimated_annual_compensation_us != 0) %>%
+      # remove stipend compensation_frequency
+      filter(compensation_frequency != "Stipend") %>% 
+      # 2 year Median
+      mutate(Median = median(estimated_annual_compensation_us)) %>% 
+      mutate(Low = min(estimated_annual_compensation_us)) %>% 
+      mutate(High = max(estimated_annual_compensation_us)) %>% 
+      select(-estimated_annual_compensation_us) %>% 
+      pivot_longer(cols = c(Low, High, Median),
+                   names_to = "range", values_to = "values") %>% 
+      mutate(responses = response_num)
+    
+  } # END if statement
+  
+  # if any single year is selected
+  else {
+    
+  data %>% 
+      select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
+      # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+      # (41 obs removed)
+      # only 1 NA
+      filter(employment_type == "Full-Time Job") %>% 
+      # remove $0 compensation (5 tot)
+      filter(estimated_annual_compensation_us != 0) %>% 
+      # remove stipend compensation_frequency
+      filter(compensation_frequency != "Stipend") %>% 
+      # filter for year 
+      filter(class_year %in% radioButton_yearInput) %>% 
+      # 2 year Median
+      mutate(Median = median(estimated_annual_compensation_us)) %>% 
+      mutate(Low = min(estimated_annual_compensation_us)) %>% 
+      mutate(High = max(estimated_annual_compensation_us)) %>% 
+      select(-estimated_annual_compensation_us) %>% 
+      pivot_longer(cols = c(Low, High, Median),
+                   names_to = "range", values_to = "values") %>% 
+      left_join(placement_size, by = "class_year")
+    
+  } # END else statement
+
+  })       
 
   # render plotly ----
   renderPlotly({
     
     # create ggplot
-    salary_gg <- ggplot(data = salary, aes(x = reorder(range, values), y = values, fill = range,
+    salary_gg <- ggplot(data = salary(), aes(x = reorder(range, values), y = values, fill = range,
                                            text = paste0(range, ": ", "$", round(values, 2), "\n", "Number of respondents: ", responses))) +
       geom_bar(stat = "identity", position = "dodge") +
       theme_minimal() +

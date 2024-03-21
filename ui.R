@@ -510,7 +510,8 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                          # SC NOTE 2023-02-03: not inluded yet since we only have data from graduating class of 2022
+                                                          meds_year_radioButtons(inputId = "meds_salary_year")
+                                                    
                                                           
                                                  ), # END (TAB 1) meds salary tabPanel 
                                                  
@@ -524,7 +525,8 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                          # SC NOTE 2023-02-03: not inluded yet since we only have data from graduating class of 2022
+                                                    
+                                                          meds_year_radioButtons(inputId = "meds_salarySector_year")
                                                           
                                                  ), # END (TAB 2) meds salary by sector tabPanel 
                                                  
