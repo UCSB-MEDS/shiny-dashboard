@@ -583,7 +583,7 @@ body <- dashboardBody(
                                    tabBox(width = 6,
                                           
                                           # (TAB 1) meds domestic placement map tabPanel ----
-                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 1 Year)", sep = "<br/>")),
+                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # meds tmap output ----
                                                    tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
@@ -591,7 +591,7 @@ body <- dashboardBody(
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
                                           # (TAB 2) meds international placement tabPanel ----
-                                          tabPanel(title = HTML(paste("International Placement", "(Over 1 Year)", sep = "<br/>")),
+                                          tabPanel(title = HTML(paste("International Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # SC NOTE 2022-02-03: no international MEDS alumni yet; add in table when appropriate
                                                    includeMarkdown("text/meds_internationalPlacement.md")
