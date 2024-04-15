@@ -68,7 +68,7 @@ mesm_placement_size <- mesm_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>% 
   mutate(program_size = case_when(
-    class_year == 2023 ~ 80, #80 is a fake number -JM update when Kristine tells the grad size
+    class_year == 2023 ~ 80, 
     class_year == 2022 ~ 92,
     class_year == 2021 ~ 93, 
     class_year == 2020 ~ 77 
@@ -79,7 +79,7 @@ meds_placement_size <- meds_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
-    class_year == 2023 ~ 31, # SC NOTE 2023-02-08: don't have data for this yet, just adding so it's here 
+    class_year == 2023 ~ 31,
     class_year == 2022 ~ 25
   ))
 
