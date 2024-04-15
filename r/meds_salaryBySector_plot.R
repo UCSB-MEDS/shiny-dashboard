@@ -112,6 +112,8 @@ meds_salaryBySector_plot <- function(input, data) {
   # render plotly ----
   plotly::renderPlotly({
     
+    placement_size <- meds_placement_size
+    response_num <- sum(placement_size$responses)
     # create ggplot
     comp_sector <- ggplot(data = salary_sector(), aes(x = sector_type, y = values,fill = reorder(range, values),
                                                       text = paste0(sector_type, "\n", range, ": ", "$", values, "\n", "Number of respondents: ", response_num))) +
