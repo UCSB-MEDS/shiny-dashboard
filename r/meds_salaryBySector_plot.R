@@ -18,14 +18,14 @@ meds_salaryBySector_plot <- function(input, data) {
     
     if (radioButton_yearInput == "All Years") {
       data %>% 
-        select(class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us, sector_type) %>%
+        select(class_year, employer_sector, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
         # assign private, public, and other
-        # mutate(sector_type = case_when(
-        #   employer_sector %in% c("Consulting", "Corporate") ~ "Private",
-        #   employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
-        #   employer_sector %in% c("Foreign Government", "Other") ~ "Other",
-        #   TRUE ~ employer_sector
-        # )) %>% 
+         mutate(sector_type = case_when(
+           employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+           employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
+           employer_sector %in% c("Foreign Government", "Other") ~ "Other",
+           TRUE ~ employer_sector
+         )) %>% 
         mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
