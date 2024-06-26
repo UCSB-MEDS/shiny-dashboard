@@ -25,11 +25,10 @@ salarySpecialization_plot <- function(input, data) {
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
-        filter(employment_type == "Full-Time Job") %>% 
-        # remove $0 compensation (5 tot)
-        filter(estimated_annual_compensation_us != 0) %>% 
-        # remove stipend compensation_frequency
-        filter(compensation_frequency != "Stipend") %>%
+        filter(employment_type == "Full-Time Job", 
+               estimated_annual_compensation_us != 0, # remove $0 compensation (5 tot)
+               compensation_frequency != "Stipend", # remove stipend compensation_frequency
+               !is.na(mesm_program_enrollment_specializations)) %>% #remove NA specializations
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
         unnest(mesm_program_enrollment_specializations) %>% 
         group_by(mesm_program_enrollment_specializations) %>% 
@@ -38,8 +37,8 @@ salarySpecialization_plot <- function(input, data) {
                   High = max(estimated_annual_compensation_us)) %>% 
         pivot_longer(cols = c("Median", "Low", "High"),
                      names_to = "range", values_to = "values") %>% 
-        mutate(range = factor(range, levels = c("High", "Median", "Low"))) %>% 
-        mutate(responses = response_num)
+        mutate(range = factor(range, levels = c("High", "Median", "Low")),
+               responses = response_num)
       
     } # END if statement
     
@@ -50,13 +49,11 @@ salarySpecialization_plot <- function(input, data) {
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
         # (41 obs removed)
         # only 1 NA
-        filter(employment_type == "Full-Time Job") %>% 
-        # remove $0 compensation (5 tot)
-        filter(estimated_annual_compensation_us != 0) %>% 
-        # remove stipend compensation_frequency
-        filter(compensation_frequency != "Stipend") %>%
-        # filter for year
-        filter(class_year == input$mesm_salary_by_specialization_year) %>% 
+        filter(employment_type == "Full-Time Job", 
+               estimated_annual_compensation_us != 0, # remove $0 compensation (5 tot)
+               compensation_frequency != "Stipend", # remove stipend compensation_frequency
+               class_year == input$mesm_salary_by_specialization_year, #filter for year
+               !is.na(mesm_program_enrollment_specializations)) %>% #remove NA specializations 
         mutate(mesm_program_enrollment_specializations = str_split(mesm_program_enrollment_specializations, "; ")) %>% 
         unnest(mesm_program_enrollment_specializations) %>% 
         group_by(class_year, mesm_program_enrollment_specializations) %>% 
