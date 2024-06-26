@@ -6,7 +6,7 @@ library(tidyr)
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
-mesm_placement_cleaned <- readRDS("data/mesm_placement.rds") |> 
+mesm_placement_cleaned <- readRDS("data/mesm_placement_19-23.rds") |> 
   
   # ---- DATA ENTERED INCORRECTLY BY STUDENTS ----
 
@@ -121,4 +121,4 @@ mesm_placement_cleaned <- readRDS("data/mesm_placement.rds") |>
     TRUE ~ employer_sector
   )) 
 
-# saveRDS(mesm_placement_cleaned, "data/mesm_placement_cleaned.rds")
+ saveRDS(mesm_placement_cleaned, "data/mesm_placement_cleaned.rds")

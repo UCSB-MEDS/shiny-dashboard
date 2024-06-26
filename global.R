@@ -33,10 +33,10 @@ ipeds <- readRDS("data/ipeds.rds") |> filter(!ay_year %in% c(2017)) # years remo
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
-mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data;  SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/mesm_placement_cleaned.R`
-mesm_status <- readRDS("data/mesm_status.rds") |> filter(!class_year %in% c(2019)) # years removed to maintain 3 years of data
+mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019,2020)) # years removed to maintain 3 years of data;  SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/mesm_placement_cleaned.R`
+mesm_status <- readRDS("data/mesm_status_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) # years removed to maintain 3 years of data
 meds_placement <- readRDS("data/meds_placement_cleaned.rds") # SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/meds_placement_cleaned.R`
-meds_status <- readRDS("data/meds_status.rds") 
+meds_status <- readRDS("data/meds_status_22-23.rds") 
 
 #.........................source scripts.........................
 # (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----
@@ -51,10 +51,10 @@ mesm_color <- "#003660" # was "#005AA3"
 all_programs_color <- "#09847a"
 
 #............................variables...........................
-curr_admission_year <- 2023 # current admissions year (used in programSize_valueBox() subtitle) | ADMISSIONS DATA FOR ENTERING CLASSES OF 2023 USED IN DEMOGRAPHICS TAB
-curr_grad_year <- 2022 # recent graduated class year (used in programSize_valueBox() class size calculation) | CAREER DATA FOR GRADUATING CLASSES OF 2022 USED IN CAREER TAB
+curr_admission_year <- 2024 # current admissions year (used in programSize_valueBox() subtitle) | ADMISSIONS DATA FOR ENTERING CLASSES OF 2024 USED IN DEMOGRAPHICS TAB
+curr_grad_year <- 2023 # recent graduated class year (used in programSize_valueBox() class size calculation) | CAREER DATA FOR GRADUATING CLASSES OF 2023 USED IN CAREER TAB
 meds_employmentStatus_curr_year <- curr_grad_year - 1 # current year for meds employment status, based on enrollment year which is one year prior to graduation (used in employmentStatus_stat_valueBox())
-mesm_employmentStatus_curr_year <- curr_grad_year - 2 # current year for mesm employment status, based on enrollment year, whihc is two years prior to graduation (used in employmentStatus_stat_valueBox())
+mesm_employmentStatus_curr_year <- curr_grad_year - 2 # current year for mesm employment status, based on enrollment year, which is two years prior to graduation (used in employmentStatus_stat_valueBox())
 
 # set name spelling options for US & CA (domesticPlacement_map(), geographicComparison_plot())
 us_names <- c("USA", "US", "Usa")
@@ -68,6 +68,7 @@ mesm_placement_size <- mesm_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>% 
   mutate(program_size = case_when(
+    class_year == 2023 ~ 80, 
     class_year == 2022 ~ 92,
     class_year == 2021 ~ 93, 
     class_year == 2020 ~ 77 
@@ -78,7 +79,7 @@ meds_placement_size <- meds_placement %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
-    class_year == 2023 ~ 31, # SC NOTE 2023-02-08: don't have data for this yet, just adding so it's here 
+    class_year == 2023 ~ 31,
     class_year == 2022 ~ 25
   ))
 
@@ -89,6 +90,7 @@ mesm_status_size <- mesm_status %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
+    class_year == 2023 ~ 80,
     class_year == 2022 ~ 92,
     class_year == 2021 ~ 93, 
     class_year == 2020 ~ 77 
@@ -116,7 +118,7 @@ total_students_yr <- enrolled %>%
   group_by(ay_year) %>% 
   summarize(size = n())
 
-# 5 year (currently 2017 - 2022) total number of students per program
+# 5 year (currently 2018 - 2023) total number of students per program
 # used in ipedsCategories_plot(), ipedsBackgrounds_plot()
 tot_5yr <- enrolled %>% 
   select(c("ay_year",

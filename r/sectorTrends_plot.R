@@ -32,7 +32,8 @@ sectorTrends_plot <- function(input, data, program_acronym) {
     )) %>% 
     mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) %>%
     group_by(class_year, sector_type) %>% 
-    summarize(count = n())
+    summarize(count = n()) %>%
+    filter(!is.na(sector_type))
   
   sector_time <- sector %>% 
     left_join(placement_size, by = "class_year") %>% 
