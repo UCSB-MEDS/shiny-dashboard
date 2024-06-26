@@ -59,7 +59,7 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
     summarize(count = n()) %>% 
     
     # calculate percentage
-    mutate(percent = round((count / nrow(status_data |> filter (placed != "Time Off" ))) * 100)) %>% 
+    mutate(percent = round((count / nrow(status_data |> filter (placed != "Time Off" ))) * 100)) %>% #we don't count people that said they were taking time off
     filter(placed == "Placed")
   
   renderValueBox({
