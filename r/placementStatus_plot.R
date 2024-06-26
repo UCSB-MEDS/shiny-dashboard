@@ -22,11 +22,14 @@ placementStatus_plot <- function(input, data, program_acronym) {
   }
   
   # wrangle data for placement status plot ----
+  
+  filter_out <- c("PT Eco-E", "TA-ship", "Time Off", "Time-Off")
+  
   status <- data %>% 
     select(class_year, member_status) %>% 
+    filter(!member_status %in% filter_out) %>%
     mutate(status = case_when(
       member_status %in% c("FT Career", "FT Temporary Career", "PT Temporary Career", "FT Career-Sponsored", "PT Career", "FT Career-Sponsored") ~ "Career",
-      member_status %in% c("Time Off", "Searching", "Time-Off") ~ "Searching or Time Off",
       member_status %in% c("FT New Business", "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
       member_status %in% c("Internship/Fellowship", "Continuing Internship", "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
       TRUE ~ member_status
