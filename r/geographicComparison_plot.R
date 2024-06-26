@@ -31,42 +31,10 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       work_location_country,
       location
     )) %>%
-    # # standardize state abbreviation values; # standardize state values; SC NOTE 2023-02-03 figure out a better way to do this (NOTE: this code is repeated in domesticPlacement_plot())
-    # mutate(work_location_state = case_when(
-    #   work_location_state %in% ca_names ~ "CA",
-    #   work_location_state == "Maryland" ~ "MD",
-    #   work_location_state == "Washington" ~ "WA",
-    #   work_location_state == "District of Columbia" ~ "DC",
-    #   work_location_state == "Indiana" ~ "IN",
-    #   work_location_state == "Mt" ~ "MT",
-    #   work_location_state == "Hawaii" ~ "HI",
-    #   work_location_state == "N/A" ~ NA_character_,
-    #   work_location_state == "michoacan" ~ "Michoacan",
-    #   # specifically assign correct work location state
-    #   work_location_city == "Washington DC" ~ "DC",
-    #   work_location_city == "Oxnard" ~ "CA",
-    #   work_location_city == "Santa Cruz" ~ "CA",
-    #   work_location_city == "Fort Collins" ~ "CO",
-    #   work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "AZ",
-    #   TRUE ~ work_location_state
-    # )) %>%
-    # # standardize united states values
-    # mutate(work_location_country = case_when(
-    #   work_location_country %in% us_names ~ "United States",
-    #   # specificallly assign correct country values
-    #   work_location_city == "Remote" & employer_account_name == "Fred Phillips Consulting" ~ "United States",
-    #   work_location_city == "Fort Collins" & employer_account_name == "CGRS, Inc." ~ "United States",
-    #   TRUE ~ work_location_country
-    # )) %>%
-    # # assign ca / out of state / international
-    # mutate(location = case_when(
-    #   work_location_state == "CA" ~ "Domestic (California)",
-    #   work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
-    #   work_location_country != "United States" ~ "International"
-    # )) %>%
     group_by(class_year,
              location) %>%
-    summarize(location_count = n())
+    summarize(location_count = n()) %>%
+    filter(!is.na(location))
   
   # calculating percentages
   placement_location_stats <- placement_location %>%
