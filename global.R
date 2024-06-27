@@ -38,7 +38,11 @@ diversity_stats <- readRDS("data/diversity_stats.rds")
 mesm_placement <- readRDS("data/mesm_placement_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) 
 mesm_status <- readRDS("data/mesm_status_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) 
 meds_placement <- readRDS("data/meds_placement_22-23.rds") 
+<<<<<<< HEAD
 meds_status <- readRDS("data/meds_status_22-23.rds") 
+=======
+meds_status <- readRDS("data/meds_status_22-23.rds")
+>>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
 
 # GEOMETRIES FOR MAPS ----
 ug_geoms <- readRDS("data/ug_geoms.rds")

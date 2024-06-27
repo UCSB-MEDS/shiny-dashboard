@@ -69,14 +69,14 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # MESM geography tabBox ----
-  output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_placement)
+  # output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_placement)
   output$mesm_internationalPlacement_tbl <- internationalPlacement_table(input, data = mesm_placement)
-  output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
+  # output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
   
   # MEDS geography tabBox ----
-  output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
+  # output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
   # SC NOTE 2022-02-08: NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
-  output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
+  # output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ data viz tabBox  ----

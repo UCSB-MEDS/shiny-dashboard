@@ -5,6 +5,11 @@ residency_plot <- function(input) {
     select(c("app_submission_year", "application_id", "objective1", "citizenship_country",
              "residency_country", "birth_country", "california_resident", "ca_high_school", "visa")) %>% 
     mutate(california_resident = unlist(california_resident)) %>% 
+    mutate(california_resident = case_when(
+      california_resident == "Yes" ~ "TRUE",
+      california_resident == "No" ~ "FALSE",
+      TRUE ~ california_resident
+    )) |>
     # residency status
     mutate(residency = case_when(
       # ca resident
@@ -18,8 +23,10 @@ residency_plot <- function(input) {
     summarize(count = n()) %>%
     left_join(program_size, by = c("app_submission_year", "objective1")) %>% 
     mutate(percent = round((count / size) * 100)) %>% 
-    mutate(residency = factor(residency, levels = c("ca resident", "non resident", "international"),
-                              labels = c("CA Resident", "Nonresident", "International"))) 
+    replace_na(list(residency = "unknown")) |> 
+    mutate(residency = factor(residency, levels = c("ca resident", "non resident", "international", "unknown"),
+                              labels = c("CA Resident", "Nonresident", "International", "Unknown")))  
+    
   
   # render plotly ----
   renderPlotly({
@@ -36,7 +43,7 @@ residency_plot <- function(input) {
       theme(panel.grid.minor = element_blank()) +
       labs(title = "Residency distribution trends by degree program",
            x = NULL, y = NULL, fill = NULL) +
-      scale_fill_manual(values = c("CA Resident" = "#9cbebe", "Nonresident" = "#003660", "International" = "#dcd6cc"),) +
+      scale_fill_manual(values = c("CA Resident" = "#9cbebe", "Nonresident" = "#003660", "International" = "#dcd6cc", "Unknown" = "gray40"),) +
       facet_wrap(~objective1, ncol = 1)
     
     # convert to plotly
