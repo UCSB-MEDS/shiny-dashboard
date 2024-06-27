@@ -2,7 +2,7 @@ residency_plot <- function(input) {
   
   # wrangle data & create reactive df for residency plot ----
   residency_stats <- enrolled %>% 
-    select(c("ay_year", "application_id", "objective1", "citizenship_country",
+    select(c("app_submission_year", "application_id", "objective1", "citizenship_country",
              "residency_country", "birth_country", "california_resident", "ca_high_school", "visa")) %>% 
     mutate(california_resident = unlist(california_resident)) %>% 
     # residency status
@@ -14,9 +14,9 @@ residency_plot <- function(input) {
       # international
       visa %in% c("F-1 Student", "J-1", "Family of H,H1,H2,H3") ~ "international"
     )) %>% 
-    group_by(ay_year, objective1, residency) %>% 
+    group_by(app_submission_year, objective1, residency) %>% 
     summarize(count = n()) %>%
-    left_join(program_size, by = c("ay_year", "objective1")) %>% 
+    left_join(program_size, by = c("app_submission_year", "objective1")) %>% 
     mutate(percent = round((count / size) * 100)) %>% 
     mutate(residency = factor(residency, levels = c("ca resident", "non resident", "international"),
                               labels = c("CA Resident", "Nonresident", "International"))) 
@@ -26,11 +26,11 @@ residency_plot <- function(input) {
     
     # create ggplot
     residency_all <- ggplot(data = residency_stats,
-                            aes(x = ay_year, y = percent, fill = reorder(residency, percent),
+                            aes(x = app_submission_year, y = percent, fill = reorder(residency, percent),
                                 text = paste0(residency, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
       geom_bar(position = "dodge", stat = "identity") +
-      scale_x_continuous(breaks = seq(min(residency_stats$ay_year),
-                                      max(residency_stats$ay_year))) +
+      scale_x_continuous(breaks = seq(min(residency_stats$app_submission_year),
+                                      max(residency_stats$app_submission_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +

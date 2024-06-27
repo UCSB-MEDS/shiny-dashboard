@@ -5,9 +5,9 @@ ipedsTrends_plot <- function(input) {
     
     if (input$race_trends == "All Programs") {
       ipeds %>% 
-        group_by(ay_year, category_ipeds) %>% 
+        group_by(app_submission_year, category_ipeds) %>% 
         summarize(count = n()) %>% 
-        left_join(total_students_yr, by = "ay_year") %>% 
+        left_join(total_students_yr, by = "app_submission_year") %>% 
         mutate(percent = round((count / size) * 100, 1))
       
     } # END if statement
@@ -15,9 +15,9 @@ ipedsTrends_plot <- function(input) {
     else {
       
       ipeds %>% 
-        group_by(ay_year, objective1, category_ipeds) %>% 
+        group_by(app_submission_year, objective1, category_ipeds) %>% 
         summarize(count = n()) %>% 
-        left_join(program_size, by = c("ay_year", "objective1")) %>% 
+        left_join(program_size, by = c("app_submission_year", "objective1")) %>% 
         mutate(percent = round((count / size) * 100, 1)) %>% 
         filter(objective1 == input$race_trends)
       
@@ -30,11 +30,11 @@ ipedsTrends_plot <- function(input) {
     
     # create ggplot
     race_trends_gg <- ggplot(data = category_ipeds_stats_time(),
-                             aes(x = ay_year, y = percent, fill = reorder(category_ipeds, percent),
+                             aes(x = app_submission_year, y = percent, fill = reorder(category_ipeds, percent),
                                  text = paste0(category_ipeds, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
       geom_bar(stat = "identity", position = "dodge") +
-      scale_x_continuous(breaks = seq(max(category_ipeds_stats_time()$ay_year),
-                                      min(category_ipeds_stats_time()$ay_year))) +
+      scale_x_continuous(breaks = seq(max(category_ipeds_stats_time()$app_submission_year),
+                                      min(category_ipeds_stats_time()$app_submission_year))) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank()) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +

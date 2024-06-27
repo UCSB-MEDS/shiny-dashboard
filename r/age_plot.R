@@ -3,10 +3,10 @@ age_plot <- function(input){
   
   # wrangle data (2017 - curr_year) ----
   age_program_groups <- enrolled %>% 
-    select(c("ay_year", "application_id", "objective1", "dob")) %>%
+    select(c("app_submission_year", "application_id", "objective1", "dob")) %>%
     # calculate age
     mutate(dob_year = year(dob)) %>%
-    mutate(age = ay_year - dob_year) %>% 
+    mutate(age = app_submission_year - dob_year) %>% 
     filter(age > 18) %>% # remove outliers incorrectly submitted dobs
     mutate(age_group = case_when(age >= 20 & age <= 22 ~ "20-22",
                                  age >= 23 & age <= 24 ~ "23-24",

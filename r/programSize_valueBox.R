@@ -12,7 +12,7 @@
 programSize_valueBox <- function(input, program_acronym, color) {
   
   # program size for current year
-  program_size_curr_year <- program_size %>% filter(ay_year == curr_grad_year)
+  program_size_curr_year <- program_size %>% filter(app_submission_year == curr_grad_year)
   
   # filter for individual program (see 'program_size_curr_year' in 'global.R') ----
   program_size_display <- program_size_curr_year |> filter(objective1 == program_acronym)
