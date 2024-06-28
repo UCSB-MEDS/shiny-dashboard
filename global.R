@@ -25,6 +25,8 @@ library(plotly)
 library(shinycssloaders)
 library(fontawesome) 
 library(naniar)
+library(leaflet)
+library(leaflet.extras)
 
 #..........................import data...........................
 

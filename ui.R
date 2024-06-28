@@ -99,10 +99,12 @@ body <- dashboardBody(
                          title = "Where are students coming from?",
                          solidHeader = TRUE, status = "navy",
                          
-                         # tmap output ----
-                         tmap::tmapOutput(outputId = "origins_map") |> withSpinner(color = "#003660", type = 1),
+                         # origins map output ----
+                         # was `tmap::tmapOutput`
+                         leaflet::leafletOutput(outputId = "origins_map") |> withSpinner(color = "#003660", type = 1),
                          
-                         # tmap caption ----
+                         # origins map caption ----
+                         # see data-cleaning/undergrad_map_caption_values.R script to calculate updated caption values ----
                          includeMarkdown("text/undergrad_map_caption.md")
                          
                      ) # END map box 
@@ -610,7 +612,7 @@ body <- dashboardBody(
                                    
                                    # employers & sectors tbl box ----
                                    box(width = 6,
-                                       title = "Initial Employers and Sectors (Over 1 Year)",
+                                       title = "Initial Employers and Sectors (Over 2 Years)",
                                        solidHeader = TRUE, status = "navy",
                                        DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    
