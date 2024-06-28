@@ -100,7 +100,7 @@ body <- dashboardBody(
                          solidHeader = TRUE, status = "navy",
                          
                          # tmap output ----
-                         tmap::tmapOutput(outputId = "origins_map") |>withSpinner(color = "#003660", type = 1),
+                         tmap::tmapOutput(outputId = "origins_map") |> withSpinner(color = "#003660", type = 1),
                          
                          # tmap caption ----
                          includeMarkdown("text/undergrad_map_caption.md")
@@ -423,7 +423,7 @@ body <- dashboardBody(
                                           tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
                                                    # mesm tmap output ----
-                                                   # tmap::tmapOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
+                                                   tmap::tmapOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                
                                           ), # END (TAB 1) mesm domestic placement map tabPanel
                                           
@@ -586,7 +586,7 @@ body <- dashboardBody(
                                           tabPanel(title = HTML(paste("Domestic Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # meds tmap output ----
-                                                   # tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
+                                                   tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           

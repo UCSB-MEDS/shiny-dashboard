@@ -34,22 +34,16 @@ urmTrends_plot <- function(input) {
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else not urm
           TRUE ~ "N")) %>%
-<<<<<<< HEAD
-=======
-        
+
         # summarize total numbers ----
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
         group_by(app_submission_year, urm_status) %>%
         summarize(count = n()) %>%
         
         # only keep urms ----
         filter(urm_status == "Y") %>%
         left_join(total_students_yr, by = "app_submission_year") %>%
-<<<<<<< HEAD
-=======
-        
+
         # calculate percentage ----
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
         mutate(percent = round((count / size) * 100, 1))
       
     } # END if statement
@@ -57,11 +51,8 @@ urmTrends_plot <- function(input) {
     else {
       
      enrolled %>%
-<<<<<<< HEAD
-=======
-        
+
         # select relevant cols ----
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
         select("app_submission_year", "application_id", "objective1", "citizenship_country",
                "residency_country", "birth_country", "visa", "background",
                "racial_categories", "hispanic_latino") %>%
@@ -85,22 +76,16 @@ urmTrends_plot <- function(input) {
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else
           TRUE ~ "N")) %>%
-<<<<<<< HEAD
-=======
-        
+
         # summarize total numbers ----
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
         group_by(app_submission_year, urm_status, objective1) %>%
         summarize(count = n()) %>%
         
         # only keep urms ----
         filter(urm_status == "Y") %>%
         left_join(program_size, by = c("app_submission_year", "objective1")) %>%
-<<<<<<< HEAD
-=======
         
         # calculate percentage ----
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
         mutate(percent = round((count / size) * 100, 1)) %>%
         
         # filter for program ----
@@ -141,11 +126,7 @@ urmTrends_plot <- function(input) {
       theme_minimal() +
       theme(legend.position = "none",
             panel.grid.minor = element_blank()) +
-<<<<<<< HEAD
-      coord_cartesian(xlim = c(2018, 2022), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
-=======
       coord_cartesian(xlim = c(2019, 2023), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
->>>>>>> 22a9b8f (app runs with updated data, but some visuals need fixing; going to grab jamies updates first)
       # scale_x_continuous(breaks = seq(max(urm_trends_df()$app_submission_year),
       #                                 min(urm_trends_df()$app_submission_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +

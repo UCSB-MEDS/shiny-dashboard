@@ -69,14 +69,14 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # MESM geography tabBox ----
-  # output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_placement)
+  output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_placement)
   output$mesm_internationalPlacement_tbl <- internationalPlacement_table(input, data = mesm_placement)
-  # output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
   
   # MEDS geography tabBox ----
-  # output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
+  output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_placement)
   # SC NOTE 2022-02-08: NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
-  # output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ data viz tabBox  ----
@@ -95,7 +95,7 @@ server <- function(input, output, session){
   output$meds_placement_status <- placementStatus_plot(input, data = meds_status, program_acronym = "MEDS")
   output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") # SC NOTE 2023-02-08: NEED TO FIGURE OUT WHY LOCAL GOVERMENT PLOT LOOKS WEIRD
+  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS") 
   output$meds_salary <- meds_salary_plot(input, data = meds_placement) 
   output$meds_salary_by_sector <- meds_salaryBySector_plot(input, data = meds_placement) # SC NOTE 2023-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salaryBySector_plot()`
   
