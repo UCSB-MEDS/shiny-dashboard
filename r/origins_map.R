@@ -10,12 +10,14 @@ origins_map <- function(input) {
                        options = providerTileOptions(maxZoom = 100)) |> 
       setView(lng = -10, lat = 32, zoom = 1) |> 
       addPolygons(data = ug_geoms$geometry,
-                  weight = 1.5,
+                  weight = 1,
                   color = "black",
                   fillColor = pal(ug_geoms$total),
                   fillOpacity = 1,
-                  popup = paste(ug_geoms$ug1_location, "<br>", 
-                                "Total students: ", ug_geoms$total)) |> 
+                  label = paste0(ug_geoms$ug1_location, " (",
+                                 ug_geoms$total, ")")) |> 
+                  # popup = paste(ug_geoms$ug1_location, "<br>", 
+                  #               "Total students: ", ug_geoms$total)) |> 
       leaflet.extras::addResetMapButton()
     
   })

@@ -333,7 +333,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # mesm salary plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary"),
+                                                          plotlyOutput(outputId = "mesm_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -347,7 +347,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # mesm salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary_by_sector"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_sector") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -361,7 +361,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Specialization",
                                                           
                                                           # mesm salary by specialization plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary_by_specialization"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_specialization") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -506,7 +506,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # meds salary plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary"),
+                                                          plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -521,7 +521,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # meds salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary_by_sector"),
+                                                          plotlyOutput(outputId = "meds_salary_by_sector") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
