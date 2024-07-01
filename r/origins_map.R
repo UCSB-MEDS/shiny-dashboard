@@ -6,7 +6,7 @@ origins_map <- function(input) {
   leaflet::renderLeaflet({
     
     leaflet(ug_geoms$geometry) |> 
-      addProviderTiles(providers$Esri.WorldTerrain, group = "ESRI Terrain",
+      addProviderTiles(providers$CartoDB.PositronNoLabels,
                        options = providerTileOptions(maxZoom = 100)) |> 
       setView(lng = -10, lat = 32, zoom = 1) |> 
       addPolygons(data = ug_geoms$geometry,

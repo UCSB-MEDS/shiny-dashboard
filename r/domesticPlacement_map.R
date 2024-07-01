@@ -50,7 +50,7 @@ domesticPlacement_map <- function(input, data) {
   # leaflet::renderLeaflet({
   # 
   #   leaflet(domestic_stats$geometry) |>
-  #     addProviderTiles(providers$Esri.WorldTerrain, group = "ESRI Terrain",
+  #     addProviderTiles(providers$Esri.WorldTerrain,
   #                      options = providerTileOptions(maxZoom = 100)) |>
   #     setView(lng = -117, lat = 37, zoom = 3) |>
   #     addPolygons(domestic_stats$geometry,
