@@ -4,14 +4,14 @@ server <- function(input, output, session){
   
   #.......................enable bookmarking.......................
   
-  # Automatically bookmark every time an input changes (see https://mastering-shiny.org/action-bookmark.html)
-  observe({
-    reactiveValuesToList(input)
-    session$doBookmark()
-  })
-  # Update the query string
-  onBookmarked(updateQueryString)
-  
+  # # Automatically bookmark every time an input changes (see https://mastering-shiny.org/action-bookmark.html)
+  # observe({
+  #   reactiveValuesToList(input)
+  #   session$doBookmark()
+  # })
+  # # Update the query string
+  # onBookmarked(updateQueryString)
+  # 
   #................demographics tabPanel (demo_db).................
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

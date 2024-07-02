@@ -35,15 +35,15 @@ domesticPlacement_map <- function(input, data) {
                                             replace = "District of Columnbia")) |> 
     left_join(us_state_geoms, by = c("work_location_state" = "state_abbrev")) %>% 
     select(-c(fips, work_location_state)) %>% 
-    st_as_sf() #|> 
-    #st_transform(crs = 4326)
+    st_as_sf() |> 
+    st_transform(crs = 4326)
   
   domestic_stats <- domestic %>% 
     group_by(state) %>% 
     summarize(count = n()) %>%
     mutate(state = paste0(state, " (", count, ")"))
   
-  # SC NOTE 2024-06-30: tried converting tmap to leaflet, but getting error; giving up on this for now but would like to transition this over to leaflet at some point
+  # # SC NOTE 2024-06-30: tried converting tmap to leaflet, but getting error; giving up on this for now but would like to transition this over to leaflet at some point
   # bins <- c(0, 2, 4, 6, 8, 10, 12, 14, 16, Inf)
   # pal <- colorBin("YlGn", domain = domestic_stats$count, bins = bins)
   # 
@@ -63,7 +63,7 @@ domesticPlacement_map <- function(input, data) {
   #     leaflet.extras::addResetMapButton()
   # 
   # })
-  
+  # 
   # render tmap ----
   tmap::renderTmap({
 
