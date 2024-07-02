@@ -183,7 +183,9 @@ body <- dashboardBody(
                               tabPanel(title = "International",
                                        
                                        # international unis DT datatable output ----
-                                       DT::dataTableOutput(outputId = "intl_unis"))
+                                       DT::dataTableOutput(outputId = "intl_unis") |> withSpinner(color = "#003660", type = 1)
+                                       
+                              ) # END (TAB 6) international tabPanel
                               
                        ) # END data visualizations tabBox
                        

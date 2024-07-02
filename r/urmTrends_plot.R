@@ -25,11 +25,13 @@ urmTrends_plot <- function(input) {
         # classify urm status ----
         mutate(urm_status = case_when(
           # us citizens who are hispanic/latino
+          hispanic_latino == TRUE & citizenship_country == "US" ~ "Y",
           hispanic_latino == TRUE & citizenship_country == "United States" ~ "Y",
           # permanent residents who are hispanic/latino
           hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
           # us citizens who identify as urms
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & citizenship_country == "US" ~ "Y",
+          TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & citizenship_country == "United States" ~ "Y",
           # permanent residents who identify as urms
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else not urm
@@ -67,11 +69,13 @@ urmTrends_plot <- function(input) {
         # classify urm status ----
         mutate(urm_status = case_when(
           # us citizens are hispanic/latino
+          hispanic_latino == TRUE & citizenship_country == "US" ~ "Y",
           hispanic_latino == TRUE & citizenship_country == "United States" ~ "Y",
           # permanent residents are hispanic/latino
           hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
           # us citizens identify as urms
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & citizenship_country == "US" ~ "Y",
+          TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & citizenship_country == "United States" ~ "Y",
           # permanent residents identify as urms
           TRUE %in% str_detect(string = racial_categories, pattern = category_urms) == TRUE & visa %in% visa_urms ~ "Y",
           # everything else

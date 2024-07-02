@@ -3,19 +3,19 @@ diversityDemographics_plot <- function(input) {
   # wrangle data & create reactive df for diversity demographics plot (all available years) ----
   diversity_overall <- reactive({
     
-    diversity_stats %>%  
+   diversity_overall<- diversity_stats %>%  
       filter(objective1 == input$diversity_stats_all)
     
   }) 
   
   # render plotly ----
   renderPlotly({
-    overall_demo <- ggplot(data = diversity_overall(),
+    overall_demo <- ggplot(data = diversity_overall(), 
                            aes(x = demographic, y = percent, fill = demographic,
                                text = paste0(demographic, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
       geom_bar(stat = "identity") +
       coord_flip() +
-      scale_x_discrete(limits = rev(levels(diversity_overall()$demographic))) +
+      scale_x_discrete(limits = rev(levels(diversity_overall()$demographic))) + 
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       scale_fill_manual(
         values = c(
@@ -39,9 +39,12 @@ diversityDemographics_plot <- function(input) {
         )
       ) +
       theme_minimal() +
-      theme(legend.position = "none",
-            panel.grid.minor = element_blank()) +
-      labs(title = paste0(input$diversity_stats_all, " Overall Diversity Demographics"),
+      theme(
+        plot.title.position = "plot",
+        legend.position = "none",
+        panel.grid.minor = element_blank()
+        ) +
+      labs(title = paste0(input$diversity_stats_all, " Diversity Demographics"), 
            x = NULL, y = NULL)
     
     # convert to plotly (2017 - curr_year)
