@@ -44,8 +44,6 @@ meds_salary_plot <- function(input, data) {
   data %>% 
       select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
       # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
-      # (41 obs removed)
-      # only 1 NA
       filter(employment_type == "Full-Time Job") %>% 
       # remove $0 compensation (5 tot)
       filter(estimated_annual_compensation_us != 0) %>% 
@@ -70,7 +68,7 @@ meds_salary_plot <- function(input, data) {
   renderPlotly({
     
     # create ggplot
-    salary_gg <- ggplot(data = salary(), aes(x = reorder(range, values), y = values, fill = range,
+    salary_gg <- ggplot(data = salary(), aes(x = reorder(range, values), y = values, fill = range, 
                                            text = paste0(range, ": ", "$", round(values, 2), "\n", "Number of respondents: ", responses))) +
       geom_bar(stat = "identity", position = "dodge") +
       theme_minimal() +
@@ -78,7 +76,7 @@ meds_salary_plot <- function(input, data) {
       scale_y_continuous(labels = scales::dollar_format()) +
       scale_fill_manual(
         values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
-      labs(title = paste0("MEDS Alumni Low, Median, and High Salary Compensation", "\n", "(2022)"), 
+      labs(title = "MEDS Alumni Low, Median, and High Salary Compensation", # removed year from title bc I couldn't get this working for some reason. Old code: `title = paste0("MEDS Alumni Low, Median, and High Salary Compensation", "\n", "(", radioButton_yearInput, ")")`
            x = NULL, y = "Dollars ($)", ill = NULL)
     
     # conver to plotly

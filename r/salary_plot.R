@@ -104,7 +104,7 @@ salary_plot <- function(input, data, program_acronym) {
       scale_y_continuous(labels = scales::dollar_format()) +
       scale_fill_manual(
         values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
-      labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation", "\n", "(", radioButton_yearInput, ")"), 
+      labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), # removed year from title. Old code: `, "\n", "(", radioButton_yearInput, ")"` 
            x = NULL, y = "Dollars ($)", ill = NULL)
     
     # conver to plotly

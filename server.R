@@ -99,9 +99,10 @@ server <- function(input, output, session){
   output$meds_salary <- meds_salary_plot(input, data = meds_placement) 
   output$meds_salary_by_sector <- meds_salaryBySector_plot(input, data = meds_placement) # SC NOTE 2023-02-08: FXN ONLY FOR 2022 -- when we have 3 years of data, can use `salaryBySector_plot()`
   
+  
+  enableBookmarking(store = "url")
+  
 } # END server
-
-
 
 
 
