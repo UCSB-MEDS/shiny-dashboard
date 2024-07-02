@@ -6,7 +6,7 @@ The <a href="https://bren.ucsb.edu/" target="_blank">Bren School of Environmenta
  
  <a href="https://bren.ucsb.edu/phd-environmental-science-and-management" target="_blank"> <img class="phd_hex" src="logos/bren_phd_hex.png" alt="PhD hex in light-green"> PhD in Environmental Science and Management</a>
  
-**Information presented here are based on Bren admissions data from UCSB Graduate Division, collected at the time of admission/enrollment (i.e. incoming year). MESM and PhD information reflects data collected on the 2018-2022 incoming cohorts. MEDS information reflects data collected on the 2021 and 2022 incoming cohorts.**
+**Information presented here are based on Bren admissions data from UCSB Graduate Division, collected at the time of admission/enrollment (i.e. incoming year). MESM and PhD information reflects data collected on the 2019-2023 incoming cohorts. MEDS information reflects data collected on the 2021 - 2023 incoming cohorts.**
 
 
 

@@ -1,1 +1,1 @@
-*In the last 5 years, students have come from 200+ U.S. universities across 41 states, and 58 international universities from 29 countries. See International tab to view table of international universities.*
+*In the last 5 years, students have attended Bren from 174 U.S. universities across 37 states, and 44 international universities from 21 countries. See international tab to view table of international universities.*

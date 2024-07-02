@@ -80,7 +80,7 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
       theme_minimal() +
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
-      labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput, "\n", "(Over ", num_years, " Year(s))"),
+      labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput), # removed part of title: , "\n", "(Over ", num_years, " Year(s))"
            x = NULL, y = "Percent of Respondents", fill = NULL) +
       # color brewer 4-class PuBu
       scale_fill_manual(values = c("Very Satisfied" = "#0570b0", "Satisfied" = "#74a9cf", "Somewhat Satisfied" = "#bdc9e1", "Unsatisfied" = "#f1eef6"))

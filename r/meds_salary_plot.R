@@ -75,10 +75,10 @@ meds_salary_plot <- function(input, data) {
       geom_bar(stat = "identity", position = "dodge") +
       theme_minimal() +
       theme(legend.position = "none") +
-      scale_y_continuous(labels = scales::dollar_format(), breaks = seq(0, 100000, 25000)) +
+      scale_y_continuous(labels = scales::dollar_format()) +
       scale_fill_manual(
         values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
-      labs(title = paste0("MEDS Alumni Low, Median, and High Salary Compensation", "\n", "(2022)"), 
+      labs(title = "MEDS Alumni Low, Median, and High Salary Compensation", # removed year from title bc I couldn't get this working for some reason. Old code: `title = paste0("MEDS Alumni Low, Median, and High Salary Compensation", "\n", "(", radioButton_yearInput, ")")`
            x = NULL, y = "Dollars ($)", ill = NULL)
     
     # conver to plotly

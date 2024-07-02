@@ -99,10 +99,12 @@ body <- dashboardBody(
                          title = "Where are students coming from?",
                          solidHeader = TRUE, status = "navy",
                          
-                         # tmap output ----
-                         tmap::tmapOutput(outputId = "origins_map") |>withSpinner(color = "#003660", type = 1),
+                         # origins map output ----
+                         # was `tmap::tmapOutput`
+                         leaflet::leafletOutput(outputId = "origins_map") |> withSpinner(color = "#003660", type = 1),
                          
-                         # tmap caption ----
+                         # origins map caption ----
+                         # see data-cleaning/undergrad_map_caption_values.R script to calculate updated caption values ----
                          includeMarkdown("text/undergrad_map_caption.md")
                          
                      ) # END map box 
@@ -181,7 +183,9 @@ body <- dashboardBody(
                               tabPanel(title = "International",
                                        
                                        # international unis DT datatable output ----
-                                       DT::dataTableOutput(outputId = "intl_unis"))
+                                       DT::dataTableOutput(outputId = "intl_unis") |> withSpinner(color = "#003660", type = 1)
+                                       
+                              ) # END (TAB 6) international tabPanel
                               
                        ) # END data visualizations tabBox
                        
@@ -331,7 +335,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # mesm salary plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary"),
+                                                          plotlyOutput(outputId = "mesm_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -345,7 +349,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # mesm salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary_by_sector"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_sector") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -359,7 +363,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Specialization",
                                                           
                                                           # mesm salary by specialization plotly output ----
-                                                          plotlyOutput(outputId = "mesm_salary_by_specialization"),
+                                                          plotlyOutput(outputId = "mesm_salary_by_specialization") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -420,7 +424,7 @@ body <- dashboardBody(
                                    tabBox(width = 6,
                                           
                                           # (TAB 1) mesm domestic placement map tabPanel ----
-                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
+                                          tabPanel(title = HTML("Domestic Placement"), # OLD: title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
                                                    # mesm tmap output ----
                                                    tmap::tmapOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
@@ -428,7 +432,7 @@ body <- dashboardBody(
                                           ), # END (TAB 1) mesm domestic placement map tabPanel
                                           
                                           # (TAB 2) mesm international placement tabPanel ----
-                                          tabPanel(title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
+                                          tabPanel(title = HTML("International Placement"), # OLD: title = HTML(paste("International Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
                                                    # DT datatable output ----
                                                    DT::dataTableOutput(outputId = "mesm_internationalPlacement_tbl") |> withSpinner(color = "#003660", type = 1)
@@ -447,7 +451,7 @@ body <- dashboardBody(
                                    
                                    # employers & sectors tbl box ----
                                    box(width = 6,
-                                       title = "Initial Employers and Sectors (Over 3 Years)",
+                                       title = "Initial Employers and Sectors", # OLD: "Initial Employers and Sectors (Over 3 Years)",
                                        solidHeader = TRUE, status = "navy",
                                        DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    
@@ -504,7 +508,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # meds salary plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary"),
+                                                          plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -519,7 +523,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # meds salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary_by_sector"),
+                                                          plotlyOutput(outputId = "meds_salary_by_sector") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
@@ -583,7 +587,7 @@ body <- dashboardBody(
                                    tabBox(width = 6,
                                           
                                           # (TAB 1) meds domestic placement map tabPanel ----
-                                          tabPanel(title = HTML(paste("Domestic Placement", "(Over 2 Years)", sep = "<br/>")),
+                                          tabPanel(title = HTML("Domestic Placement"), #OLD: title = HTML(paste("Domestic Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # meds tmap output ----
                                                    tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
@@ -591,7 +595,8 @@ body <- dashboardBody(
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
                                           # (TAB 2) meds international placement tabPanel ----
-                                          tabPanel(title = HTML(paste("International Placement", "(Over 2 Years)", sep = "<br/>")),
+
+                                          tabPanel(title = HTML("Domestic Placement"), # OLD: title = HTML(paste("International Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # SC NOTE 2022-02-03: no international MEDS alumni yet; add in table when appropriate
                                                    includeMarkdown("text/meds_internationalPlacement.md")
@@ -610,11 +615,20 @@ body <- dashboardBody(
                                    
                                    # employers & sectors tbl box ----
                                    box(width = 6,
-                                       title = "Initial Employers and Sectors (Over 1 Year)",
+                                       title = "Initial Employers and Sectors", # OLD:  Initial Employers and Sectors (Over 2 Years)
                                        solidHeader = TRUE, status = "navy",
                                        DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
+                                 
+                                 # fluidRow(
+                                 #   
+                                 #   column(width = 11),
+                                 #   column(width = 12,
+                                 #          bookmarkButton(label = "Bookmark this application's state and get a URL for sharing",
+                                 #                         title = "Clicking this button will generate a shareable URL that recreates the application's current inputs and outputs."))
+                                 #   
+                                 # )
                                  
                         ), # END MEDS career tabPanel
                         
@@ -628,4 +642,6 @@ body <- dashboardBody(
 
 
 #.................combine all into dashboardPage.................
-dashboardPage(header, sidebar, body)
+ui <- function(request) {
+  dashboardPage(header, sidebar, body)
+}
