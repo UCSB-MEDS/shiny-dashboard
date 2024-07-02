@@ -44,6 +44,8 @@ meds_salary_plot <- function(input, data) {
   data %>% 
       select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) %>%
       # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
+      # (41 obs removed)
+      # only 1 NA
       filter(employment_type == "Full-Time Job") %>% 
       # remove $0 compensation (5 tot)
       filter(estimated_annual_compensation_us != 0) %>% 
@@ -68,7 +70,7 @@ meds_salary_plot <- function(input, data) {
   renderPlotly({
     
     # create ggplot
-    salary_gg <- ggplot(data = salary(), aes(x = reorder(range, values), y = values, fill = range, 
+    salary_gg <- ggplot(data = salary(), aes(x = reorder(range, values), y = values, fill = range,
                                            text = paste0(range, ": ", "$", round(values, 2), "\n", "Number of respondents: ", responses))) +
       geom_bar(stat = "identity", position = "dodge") +
       theme_minimal() +

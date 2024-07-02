@@ -48,6 +48,10 @@ meds_status <- readRDS("data/meds_status_22-23.rds")
 # GEOMETRIES FOR MAPS ----
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
+mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019,2020)) # years removed to maintain 3 years of data;  SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/mesm_placement_cleaned.R`
+mesm_status <- readRDS("data/mesm_status_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) # years removed to maintain 3 years of data
+meds_placement <- readRDS("data/meds_placement_cleaned.rds") # SC NOTE 2022-02-16: moved data cleaning from within some fxns and also incorporated updates to incorrect data, as requested by KB; see `data/meds_placement_cleaned.R`
+meds_status <- readRDS("data/meds_status_22-23.rds") 
 
 #.........................source scripts.........................
 # (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----

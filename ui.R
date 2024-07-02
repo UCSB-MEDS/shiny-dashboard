@@ -595,6 +595,7 @@ body <- dashboardBody(
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
                                           # (TAB 2) meds international placement tabPanel ----
+
                                           tabPanel(title = HTML("Domestic Placement"), # OLD: title = HTML(paste("International Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
                                                    # SC NOTE 2022-02-03: no international MEDS alumni yet; add in table when appropriate
