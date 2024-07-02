@@ -618,13 +618,16 @@ body <- dashboardBody(
                                        solidHeader = TRUE, status = "navy",
                                        DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
                                    
-                                 ), # END fluidRow (contains location info & initial employers table) 
+                                 ) # END fluidRow (contains location info & initial employers table) 
                                  
-                                 fluidRow(
-              
-                                     bookmarkButton("MEDS Career")
-                                  
-                                 )
+                                 # fluidRow(
+                                 #   
+                                 #   column(width = 11),
+                                 #   column(width = 12,
+                                 #          bookmarkButton(label = "Bookmark this application's state and get a URL for sharing",
+                                 #                         title = "Clicking this button will generate a shareable URL that recreates the application's current inputs and outputs."))
+                                 #   
+                                 # )
                                  
                         ), # END MEDS career tabPanel
                         

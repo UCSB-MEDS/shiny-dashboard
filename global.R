@@ -28,6 +28,9 @@ library(naniar)
 library(leaflet)
 library(leaflet.extras)
 
+#.......................enable bookmarking.......................
+enableBookmarking(store = "url")
+
 #..........................import data...........................
 
 # DEMOGRAPHICS DATA (5 most recent years -- old years are filtered out during the data cleaning process; see `cleaning-wrangling-NEW.qmd` in the `admissions-data` repo) ----
@@ -139,3 +142,4 @@ tot_5yr <- enrolled %>%
 # 5 year total number of students across all programs 
 # used in ipedsCategories_plot()
 totStudents_allPrograms_5yr <- sum(tot_5yr$size)
+
