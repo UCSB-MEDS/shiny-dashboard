@@ -47,3 +47,7 @@ vignettes/*.pdf
 
 # google analytics
 www/google-analytics.html
+
+# .DS_Store
+.DS_Store
+**/.DS_Store
