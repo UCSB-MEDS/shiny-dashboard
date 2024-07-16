@@ -44,43 +44,43 @@ domesticPlacement_map <- function(input, data) {
     mutate(state = paste0(state, " (", count, ")"))
   
   # # SC NOTE 2024-06-30: tried converting tmap to leaflet, but getting error; giving up on this for now but would like to transition this over to leaflet at some point
-  # bins <- c(0, 2, 4, 6, 8, 10, 12, 14, 16, Inf)
-  # pal <- colorBin("YlGn", domain = domestic_stats$count, bins = bins)
-  # 
-  # leaflet::renderLeaflet({
-  # 
-  #   leaflet(domestic_stats$geometry) |>
-  #     addProviderTiles(providers$Esri.WorldTerrain,
-  #                      options = providerTileOptions(maxZoom = 100)) |>
-  #     setView(lng = -117, lat = 37, zoom = 3) |>
-  #     addPolygons(domestic_stats$geometry,
-  #                 weight = 1.5,
-  #                 color = "black",
-  #                 fillColor = pal(domestic_stats$count),
-  #                 fillOpacity = 1,
-  #                 label = paste0(domestic_stats$state, " (",
-  #                                domestic_stats$count, " alumni)")) |>
-  #     leaflet.extras::addResetMapButton()
-  # 
-  # })
-  # 
-  # render tmap ----
-  tmap::renderTmap({
+  bins <- c(0, 2, 4, 6, 8, 10, 12, 14, 16, Inf)
+  pal <- colorBin("YlGn", domain = domestic_stats$count, bins = bins)
 
-    tmap_mode("view")
+  leaflet::renderLeaflet({
 
-    tm_shape(domestic_stats) +
-      tm_tiles(leaflet::providers$CartoDB.PositronNoLabels) +
-      tm_polygons(
-        col = "count",
-        style = "jenks",
-        n = 4,
-        palette = "YlGn",
-        popup.vars = c("Number of alumni: " = "count"),
-        legend.show = FALSE
-      ) +
-      tm_view(set.view = c(lon = -118, lat = 37, zoom = 3))
+    leaflet(domestic_stats$geometry) |>
+      addProviderTiles(providers$Esri.WorldTerrain,
+                       options = providerTileOptions(maxZoom = 100)) |>
+      setView(lng = -117, lat = 37, zoom = 3) |>
+      addPolygons(data = domestic_stats$geometry,
+                  weight = 1.5,
+                  color = "black",
+                  fillColor = pal(domestic_stats$count),
+                  fillOpacity = 1,
+                  label = paste0(domestic_stats$state, " (",
+                                 domestic_stats$count, " alumni)")) |>
+      leaflet.extras::addResetMapButton()
 
   })
+
+  # render tmap ----
+  # tmap::renderTmap({
+  # 
+  #   tmap_mode("view")
+  # 
+  #   tm_shape(domestic_stats) +
+  #     tm_tiles(leaflet::providers$CartoDB.PositronNoLabels) +
+  #     tm_polygons(
+  #       col = "count",
+  #       style = "jenks",
+  #       n = 4,
+  #       palette = "YlGn",
+  #       popup.vars = c("Number of alumni: " = "count"),
+  #       legend.show = FALSE
+  #     ) +
+  #     tm_view(set.view = c(lon = -118, lat = 37, zoom = 3))
+  # 
+  # })
 
 }

@@ -176,8 +176,9 @@ body <- dashboardBody(
                                           # (TAB 1) meds domestic placement map tabPanel ----
                                           tabPanel(title = HTML("Domestic Placement"), #OLD: title = HTML(paste("Domestic Placement", "(Over 2 Years)", sep = "<br/>")),
                                                    
-                                                   # meds tmap output ----
-                                                   tmap::tmapOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
+                                                   # meds leaflet output ----
+                                                   # used to be tmap output
+                                                   leaflet::leafletOutput(outputId = "meds_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
@@ -358,8 +359,9 @@ body <- dashboardBody(
                                           # (TAB 1) mesm domestic placement map tabPanel ----
                                           tabPanel(title = HTML("Domestic Placement"), # OLD: title = HTML(paste("Domestic Placement", "(Over 3 Years)", sep = "<br/>")),
                                                    
-                                                   # mesm tmap output ----
-                                                   tmap::tmapOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
+                                                   # mesm leaflet output ----
+                                                   # used to be tmap output
+                                                   leaflet::leafletOutput(outputId = "mesm_domesticPlacement_map") |> withSpinner(color = "#003660", type = 1)
                                                    
                                           ), # END (TAB 1) mesm domestic placement map tabPanel
                                           
