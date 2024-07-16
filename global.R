@@ -27,6 +27,7 @@ library(fontawesome)
 library(naniar)
 library(leaflet)
 library(leaflet.extras)
+library(memoise)
 
 #.......................enable bookmarking.......................
 enableBookmarking(store = "url")
