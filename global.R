@@ -51,8 +51,8 @@ ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
 
 # WRANGLED DATA FOR DOMESTIC PLACEMENT MAPS (slow to load otherwise) ----
-mesm_dom_placement_data <- readRDS("data/mesm_domestic_placement_data.rds")
-meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds")
+mesm_dom_placement_data <- readRDS("data/mesm_domestic_placement_data.rds") # need to run `domestic_placement_cleaning.R` to get this .rds file
+meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds") # need to run `domestic_placement_cleaning.R` to get this .rds file
 
 #.........................source scripts.........................
 # (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----
