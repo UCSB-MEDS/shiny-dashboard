@@ -65,7 +65,7 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   renderValueBox({
     
     shinydashboard::valueBox(
-      subtitle = paste0("of job-seeking survey respondents from the class of ", curr_grad_year, " were employed 6 months after graduation"),
+      subtitle = paste0("of job-seeking survey respondents from the class of ", curr_grad_year, " were employed within 6 months after graduation"),
       value = paste0(status_stat$percent, "%"),
       icon = icon("handshake"),
       color = "green"

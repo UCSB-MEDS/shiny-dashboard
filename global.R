@@ -26,11 +26,11 @@ library(shinycssloaders)
 library(fontawesome) 
 library(naniar)
 library(leaflet)
-library(leaflet.extras)
-library(memoise)
+# library(leaflet.extras)
+# library(memoise)
 
 #.......................enable bookmarking.......................
-enableBookmarking(store = "url")
+# enableBookmarking(store = "url") # SC NOTE 2024-09-25: I dont think this is necessary anymore?
 
 #..........................import data...........................
 

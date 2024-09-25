@@ -71,15 +71,15 @@ body <- dashboardBody(
                                           # fluidRow (valueBoxes 1) ----
                                           fluidRow(
                                             
-                                            valueBoxOutput(outputId = "meds_brenNet_stat", width = 6),
-                                            valueBoxOutput(outputId = "meds_placement_stat", width = 6)
+                                            valueBoxOutput(outputId = "meds_placement_stat", width = 6),
+                                            valueBoxOutput(outputId = "meds_satisfied_stat", width = 6)
                                             
                                           ), # END fluidRow (valuBoxes 1)
                                           
                                           # fluidRow (valueBoxes 2) ----
                                           fluidRow(
                                             
-                                            valueBoxOutput(outputId = "meds_satisfied_stat", width = 12)
+                                            valueBoxOutput(outputId = "meds_brenNet_stat", width = 12)
                                             
                                           ) # END fluidRow (valueBoxes 2)
                                           
@@ -244,15 +244,15 @@ body <- dashboardBody(
                                           # fluidRow (valueBoxes 1) ----
                                           fluidRow(
                                             
-                                            valueBoxOutput(outputId = "mesm_brenNet_stat", width = 6),
-                                            valueBoxOutput(outputId = "placement_stat", width = 6)
+                                            valueBoxOutput(outputId = "placement_stat", width = 6),
+                                            valueBoxOutput(outputId = "mesm_satisfied_stat", width = 6)
                                             
                                           ), # END fluidRow (valuBoxes 1)
                                           
                                           # fluidRow (valueBoxes 2) ----
                                           fluidRow(
                                             
-                                            valueBoxOutput(outputId = "mesm_satisfied_stat", width = 12)
+                                            valueBoxOutput(outputId = "mesm_brenNet_stat", width = 12)
                                             
                                           ) # END fluidRow (valueBoxes 2)
                                           

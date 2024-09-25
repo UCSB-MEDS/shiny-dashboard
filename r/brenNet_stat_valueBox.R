@@ -21,16 +21,18 @@ brenNet_stat_valueBox <- function(input, data) {
     group_by(job_source) %>% 
     summarize(count = n()) %>% 
     mutate(percent = round((count / total_responses) * 100)) %>% 
-    filter(job_source == "Bren School Network")
+    filter(job_source %in% c("Bren School Network", "Personal/Professional Contact")) |> 
+    summarize(total_percent = sum(percent))
   
-  # pull stat value
-  brenNet_stat <- brenNet[[1,3]]
+  # pull stat value ----
+  brenNet_stat <- brenNet |> 
+    pull() 
   
   # render brenNet stat valueBox ----
   renderValueBox({
     
     valueBox(
-      paste0("of survey respondents from the graduating class of ", curr_grad_year, " found their jobs through the Bren School Network"),
+      paste0("of survey respondents from the class of ", curr_grad_year, " found their jobs through the Bren School Network and/or personal professional contacts"),
       value = paste0(brenNet_stat, "%"),
       icon = icon("briefcase"),
       color = "blue"
