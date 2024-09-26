@@ -121,7 +121,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
           str_wrap(x, width = 25)) +
       scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + # ucsb navy, ucsb aqua, ucsb clay
       labs(title = paste0("MESM Alumni Salary Compensation by Sector"),
-           x = NULL, y = "Dollars ($)", fill = NULL)
+           x = NULL, y = NULL, fill = NULL)
     
     # convert to plotly
     plotly::ggplotly(comp_sector, tooltip = "text") %>% 

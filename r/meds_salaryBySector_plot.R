@@ -126,7 +126,7 @@ meds_salaryBySector_plot <- function(input, data) {
           str_wrap(x, width = 25)) +
       scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + # ucsb navy, ucsb aqua, ucsb clay
       labs(title = "MEDS Alumni Salary Compensation by Sector",
-           x = NULL, y = "Dollars ($)", fill = NULL)
+           x = NULL, y = NULL, fill = NULL)
     
     # convert to plotly
     plotly::ggplotly(comp_sector, tooltip = "text") %>% 

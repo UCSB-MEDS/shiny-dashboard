@@ -105,7 +105,7 @@ salary_plot <- function(input, data, program_acronym) {
       scale_fill_manual(
         values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
       labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), # removed year from title. Old code: `, "\n", "(", radioButton_yearInput, ")"` 
-           x = NULL, y = "Dollars ($)", ill = NULL)
+           x = NULL, y = NULL, fill = NULL) # y = "Dollars ($)" # SC 2024-09-26 removed this bc unnecessary
     
     # conver to plotly
     plotly::ggplotly(salary_gg, tooltip = "text") %>% 

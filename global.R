@@ -42,9 +42,9 @@ diversity_stats <- readRDS("data/diversity_stats.rds")
 
 # CAREER OUTCOMES DATA (keep 3 most recent years) ----
 mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019, 2020)) # need to run `mesm_placement_cleaning.R` to get this .rds file 
-mesm_status <- readRDS("data/mesm_status_19-23.rds") |> filter(!class_year %in% c(2019, 2020)) 
+mesm_status <- readRDS("data/Sam-latest-update-sep24/mesm_status_2019_2023.rds") |> filter(!class_year %in% c(2019, 2020)) 
 meds_placement <- readRDS("data/meds_placement_cleaned.rds") # need to run `meds_placement_cleaning.R` to get this .rds file 
-meds_status <- readRDS("data/meds_status_22-23.rds") 
+meds_status <- readRDS("data/Sam-latest-update-sep24/meds_status_2022_2023.rds") 
 
 # GEOMETRIES FOR MAPS ----
 ug_geoms <- readRDS("data/ug_geoms.rds")

@@ -79,7 +79,7 @@ meds_salary_plot <- function(input, data) {
       scale_fill_manual(
         values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
       labs(title = "MEDS Alumni Low, Median, and High Salary Compensation", # removed year from title bc I couldn't get this working for some reason. Old code: `title = paste0("MEDS Alumni Low, Median, and High Salary Compensation", "\n", "(", radioButton_yearInput, ")")`
-           x = NULL, y = "Dollars ($)", ill = NULL)
+           x = NULL, y = NULL, ill = NULL)
     
     # conver to plotly
     plotly::ggplotly(salary_gg, tooltip = "text") %>% 

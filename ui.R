@@ -116,7 +116,6 @@ body <- dashboardBody(
                                                           tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
                                                           
                                                           # year radioButtons input ----
-                                                    
                                                           meds_year_radioButtons(inputId = "meds_salarySector_year")
                                                           
                                                  ), # END (TAB 2) meds salary by sector tabPanel 
@@ -134,10 +133,16 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Trends",
                                                           
                                                           # meds sector trends plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_sector_trends") |> withSpinner(color = "#003660", type = 1),
+                                                          plotly::plotlyOutput(outputId = "meds_sector_trends") |> 
+                                                            withSpinner(color = "#003660", type = 1),
+                                                          
+                                                          br(),
                                                           
                                                           # sector definitions caption ----
-                                                          includeMarkdown("text/sector_definitions.md")
+                                                          includeMarkdown("text/sector_definitions.md"),
+                                                          
+                                                          # year radioButtons input ----
+                                                          meds_year_radioButtons(inputId = "meds_sector_trends_year")
                                                           
                                                  ), # END (TAB 4) meds sector trends tabPanel 
                                                  
@@ -318,10 +323,16 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Trends",
                                                           
                                                           # mesm sector trends plotly output ----
-                                                          plotly::plotlyOutput(outputId = "mesm_sector_trends") |> withSpinner(color = "#003660", type = 1),
+                                                          plotly::plotlyOutput(outputId = "mesm_sector_trends") |> 
+                                                            withSpinner(color = "#003660", type = 1),
+                                                          
+                                                          br(),
                                                           
                                                           # sector definitions caption ----
-                                                          includeMarkdown("text/sector_definitions.md")
+                                                          includeMarkdown("text/sector_definitions.md"),
+                                                          
+                                                          # year radioButtons input ----
+                                                          year_radioButtons(inputId = "mesm_sector_trends_year")
                                                           
                                                  ), # END (TAB 5) mesm sector trends tabPanel 
                                                  

@@ -1,14 +1,4 @@
-#' sectorTrends_plot
-#'
-#' @param input input
-#' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
-#' @param program_acronym chr str; "MEDS" or "MESM"
-#'
-#' @return renderPlotly object
-#' @export
-#'
-#' @examples
-sectorTrends_plot <- function(input, data, program_acronym) {
+sectorTrends_plot_NEW <- function(input, data, program_acronym) {
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                                wrangle data                              ----
@@ -21,7 +11,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
       radioButton_yearInput <- input$mesm_sector_trends_year
       placement_size <- mesm_placement_size
       resoponse_num <- sum(placement_size$responses)
-      
+    
     } else if (program_acronym == "MEDS") {
       
       radioButton_yearInput <- input$meds_sector_trends_year
@@ -114,14 +104,13 @@ sectorTrends_plot <- function(input, data, program_acronym) {
                          limits = c(0, 100),
                          labels = scales::percent_format(accuracy = 1, scale = 1)) +
       labs(title = paste0(program_acronym ," Alumni Placement by Sector"),
-           x = "Percent of Respondents",
-           y = NULL,
+           x = NULL,
+           y = "Percent of Respondents",
            fill = NULL) +
       theme_minimal() +
       theme(
         panel.grid.minor = element_blank(),
-        legend.position = "none",
-        axis.title.x = element_text(margin = unit(c(t = 3, r = 0, b = 0, l = 0), "mm"))
+        legend.position = "bottom"
       )
     
     # create plotly ----
@@ -132,4 +121,5 @@ sectorTrends_plot <- function(input, data, program_acronym) {
   })
   
 }  
+
 
