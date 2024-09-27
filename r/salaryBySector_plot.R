@@ -19,13 +19,12 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       radioButton_yearInput <- input$mesm_salarySector_year
       placement_size <- mesm_placement_size
       response_num <- sum(mesm_placement_size$responses)
-      
-      ## SC NOTE 2023-02-06: eventually will use this fxn for MEDS, but currently only 1 year data, so will make static plot using ____
+
     } else if (program_acronym == "MEDS") {
       
-      # radioButton_yearInput <- input$meds_salarySector_year
-      # placement_size <- meds_placement_size
-      # response_num <- sum(meds_placement_size$responses)
+      radioButton_yearInput <- input$meds_salarySector_year
+      placement_size <- meds_placement_size
+      response_num <- sum(meds_placement_size$responses)
       
     }
     
@@ -71,8 +70,6 @@ salaryBySector_plot <- function(input, data, program_acronym) {
         )) %>% 
         mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) %>%
         # did not include Internship, Part-Time Job, Self-Employed/Freelance (e.g. Eco-E)
-        # (41 obs removed)
-        # only 1 NA
         filter(employment_type == "Full-Time Job") %>% 
         # remove $0 compensation (5 tot)
         filter(estimated_annual_compensation_us != 0) %>% 
@@ -101,27 +98,32 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       response_num <- sum(placement_size$responses)
       
-      ## SC NOTE 2023-02-06: eventually will use this fxn for MEDS, but currently only 1 year data, so will make static plot using ____
     } else if (program_acronym == "MEDS") {
       
-      # placement_size <- meds_placement_size
-      # response_num <- sum(placement_size$responses)
+      placement_size <- meds_placement_size
+      response_num <- sum(placement_size$responses)
       
     }
     
     # create ggplot
-    comp_sector <- ggplot(data = salary_sector(), aes(x = sector_type, y = values,fill = reorder(range, values),
-                                                      text = paste0(sector_type, "\n", range, ": ", "$", values, "\n", "Number of respondents: ", response_num))) +
+    comp_sector <- ggplot(data = salary_sector(), aes(x = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")), 
+                                                      y = values,
+                                                      fill = reorder(range, values),
+                                                      text = paste0(sector_type, 
+                                                                    "\n", range, ": ", "$", 
+                                                                    values, "\n", 
+                                                                    "Number of respondents: ", response_num))) +
       geom_bar(stat = "identity", position = "dodge") +
       coord_flip() +
-      theme_minimal() +
-      scale_y_continuous(labels = scales::dollar_format(), breaks = seq(0, 100000, 25000)) +
+      scale_y_continuous(labels = scales::dollar_format(), 
+                         breaks = seq(from = 0, to = max(salary_sector()$values), by = 50000)) +
       scale_x_discrete(
         labels = function(x)
           str_wrap(x, width = 25)) +
-      scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + # ucsb navy, ucsb aqua, ucsb clay
+      scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + 
       labs(title = paste0("MESM Alumni Salary Compensation by Sector"),
-           x = NULL, y = NULL, fill = NULL)
+           x = NULL, y = NULL, fill = NULL) +
+      theme_minimal() 
     
     # convert to plotly
     plotly::ggplotly(comp_sector, tooltip = "text") %>% 

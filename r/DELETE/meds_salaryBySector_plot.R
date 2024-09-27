@@ -114,19 +114,27 @@ meds_salaryBySector_plot <- function(input, data) {
     
     placement_size <- meds_placement_size
     response_num <- sum(placement_size$responses)
+    
     # create ggplot
-    comp_sector <- ggplot(data = salary_sector(), aes(x = sector_type, y = values,fill = reorder(range, values),
-                                                      text = paste0(sector_type, "\n", range, ": ", "$", values, "\n", "Number of respondents: ", response_num))) +
+    comp_sector <- ggplot(data = salary_sector(), aes(x = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")), 
+                                                      y = values,
+                                                      fill = reorder(range, values),
+                                                      text = paste0(sector_type, "\n", 
+                                                                    range, ": ", "$", 
+                                                                    values, "\n", 
+                                                                    "Number of respondents: ", 
+                                                                    response_num))) +
       geom_bar(stat = "identity", position = "dodge") +
       coord_flip() +
-      theme_minimal() +
-      scale_y_continuous(labels = scales::dollar_format(), breaks = seq(0, 100000, 20000)) +
+      scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + 
+      scale_y_continuous(labels = scales::dollar_format(), 
+                         breaks = seq(from = 0, to = max(salary_sector()$values), by = 50000)) +
       scale_x_discrete(
         labels = function(x)
           str_wrap(x, width = 25)) +
-      scale_fill_manual(values = c("High" = "#003660", "Median" = "#047c91", "Low" = "#dcd6cc")) + # ucsb navy, ucsb aqua, ucsb clay
       labs(title = "MEDS Alumni Salary Compensation by Sector",
-           x = NULL, y = NULL, fill = NULL)
+           x = NULL, y = NULL, fill = NULL) +
+      theme_minimal() 
     
     # convert to plotly
     plotly::ggplotly(comp_sector, tooltip = "text") %>% 

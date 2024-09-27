@@ -23,9 +23,9 @@ salary_plot <- function(input, data, program_acronym) {
       ## SC NOTE 2023-02-04: eventually will use this fxn for MEDS, but currently only 1 year data, so will make static plot using ____
     } else if (program_acronym == "MEDS") {
       
-      # radioButton_yearInput <- input$meds_salary_year
-      # placement_size <- meds_placement_size
-      # response_num <- sum(placement_size$responses)
+      radioButton_yearInput <- input$meds_salary_year
+      placement_size <- meds_placement_size
+      response_num <- sum(placement_size$responses)
       
     }
     
