@@ -1,13 +1,22 @@
-#### user interface ####
 
-#.............................header.............................
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##---------------------------------- HEADER-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 header <- dashboardHeader(
   
   title = span(tags$a(img(src = "logos/bren_hex.png"), href = "https://bren.ucsb.edu/", target = "_blank"), "Bren Student Data Explorer") # _blank opens link in a new tab
   
 ) # END dashboardHeader
 
-#............................sidebar.............................
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------------------- SIDEBAR-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 sidebar <- dashboardSidebar(
   
   # sidebarMenu ----
@@ -22,10 +31,19 @@ sidebar <- dashboardSidebar(
   
 ) # END dashboardSidebar
 
-#..............................body..............................
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------------- BODY--------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 body <- dashboardBody(
   
-  # header (add stylesheet, google analytics, etc.) ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##            body header (add stylesheet, google analytics, etc.)          ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
     includeHTML("www/google-analytics.html")
@@ -36,10 +54,10 @@ body <- dashboardBody(
   
   # tabItems ----
   tabItems(
-    
-    #############################
-    #career tab (career_db) ----- 
-    #############################
+  
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ##                           career tab (career_db)                         ----
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     tabItem(tabName = "career_db",
             
@@ -206,22 +224,27 @@ body <- dashboardBody(
                                           
                                    ), # END meds career location tabBox
                                    
-                                   # employers & sectors tbl box ----
-                                   box(width = 6,
-                                       title = "Initial Employers and Sectors", # OLD:  Initial Employers and Sectors (Over 2 Years)
-                                       solidHeader = TRUE, status = "navy",
-                                       DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
+                                   # MEDS initial employers & titles
+                                   tabBox(
+                                     
+                                     # (TAB 1) meds initial employers -----
+                                     tabPanel("Initial Employers and Sectors",
+                                              
+                                              # mesm initial employers & sectors table ----
+                                              DT::dataTableOutput(outputId = "meds_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)), # END (TAB 1)
+                                     
+                                     # (TAB 2) meds initial titls ----
+                                     tabPanel("Job Titles",
+                                              
+                                              # confidentiality statement ----
+                                              includeMarkdown("text/confidentiality.md"),
+                                              
+                                              # mesm initial employers & sectors table ----
+                                              DT::dataTableOutput(outputId = "meds_title_tbl") |> withSpinner(color = "#003660", type = 1)) # END (TAB 2)
+                                     
+                                   ) # END MEDS tabBox (initial employers & titles)
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
-                                 
-                                 # fluidRow(
-                                 #   
-                                 #   column(width = 11),
-                                 #   column(width = 12,
-                                 #          bookmarkButton(label = "Bookmark this application's state and get a URL for sharing",
-                                 #                         title = "Clicking this button will generate a shareable URL that recreates the application's current inputs and outputs."))
-                                 #   
-                                 # )
                                  
                         ), # END MEDS career tabPanel
                         
@@ -390,15 +413,33 @@ body <- dashboardBody(
                                                    # mesm geographic comparison plotly output ----
                                                    plotly::plotlyOutput(outputId = "mesm_geogComparison_plot") |> withSpinner(color = "#003660", type = 1)
                                                    
-                                          ) # (TAB 3) mesm geographic comparison tabPanel
+                                          ) # END (TAB 3) mesm geographic comparison tabPanel
                                           
                                    ), # END mesm career location tabBox
                                    
                                    # employers & sectors tbl box ----
-                                   box(width = 6,
-                                       title = "Initial Employers and Sectors", # OLD: "Initial Employers and Sectors (Over 3 Years)",
-                                       solidHeader = TRUE, status = "navy",
-                                       DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)) # END employers & sectors tbl box
+                                   tabBox(width = 6,
+                                     
+                                     # (TAB 1) mesm initial employers ----
+                                     tabPanel("Initial Employers and Sectors",
+                                              
+                                              # mesm initial employers & sectors table ----
+                                              DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> withSpinner(color = "#003660", type = 1)
+                                       
+                                     ), # END (TAB 1)
+                                     
+                                     # (TAB 2) mesm initial employers ----
+                                     tabPanel("Job Titles",
+                                              
+                                              # confidentiality statement ----
+                                              includeMarkdown("text/confidentiality.md"),
+                                              
+                                              # mesm initial employers & sectors table ----
+                                              DT::dataTableOutput(outputId = "mesm_title_tbl") |> withSpinner(color = "#003660", type = 1)
+                                              
+                                     ), # END (TAB 2)
+                                     
+                                   ) # END tabBox
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
                                  
@@ -407,10 +448,11 @@ body <- dashboardBody(
             ) # END tabsetPanel career_db
             
     ), # END tabItem career_db
+
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ##                         demographics tab (demo_db)                       ----
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    #################################
-    # demographics tab (demo_df) ----
-    #################################
     tabItem(tabName = "demo_db",
             
             # fluidRow ----
@@ -609,9 +651,10 @@ body <- dashboardBody(
             
     ), # END demographics tab (demo_db)
     
-    ###################
-    # about tab ----
-    ###################
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ##                                  about tab                               ----
+    ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
     tabItem(tabName = "about",
             
             # add banner image ----
@@ -654,7 +697,10 @@ body <- dashboardBody(
 ) # END dashboardBody
 
 
-#.................combine all into dashboardPage.................
-# ui <- function(request) {
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##---------------------- COMBINE ALL INTO DASHBOARDPAGE-------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 dashboardPage(header, sidebar, body)
-# }

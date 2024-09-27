@@ -28,7 +28,7 @@ initialEmployers_table <- function(input, data) {
   # render DT datatable ----
   DT::renderDataTable({
     
-    DT::datatable(data = employer, colnames = c("Employer", "Sector", "# of alumni"),
+    DT::datatable(data = employer, colnames = c("Employer", "Sector", "# of Alumni"),
       class = "cell-border stripe", rownames = FALSE,
       options = list(pageLength = 8, dom = 'Bftipr') 
     ) 
