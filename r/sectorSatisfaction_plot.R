@@ -71,9 +71,12 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     validate(need(nrow(sector_satisfaction()) > 0, paste0("We have not yet had any ", program_acronym, " alumni accept positions in this sector for their initial placements. Check back next year!")))
     
     # create ggplot
-    sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), aes(x = placement_satisfaction, y = percent, fill = reorder(placement_satisfaction, percent),
-                                         text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count)))+
-      geom_bar(position = "dodge", stat = "identity", width = 0.9) +
+    sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), 
+                                     aes(x = placement_satisfaction, 
+                                         y = percent, 
+                                         # fill = reorder(placement_satisfaction, percent),
+                                         text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count))) +
+      geom_bar(position = "dodge", stat = "identity", width = 0.9, fill = "#003660") +
       coord_flip(ylim = c(0, 100)) +
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
@@ -81,9 +84,9 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
       labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput), # removed part of title: , "\n", "(Over ", num_years, " Year(s))"
-           x = NULL, y = "Percent of Respondents", fill = NULL) +
+           x = NULL, y = "Percent of Respondents", fill = NULL) #+
       # color brewer 4-class PuBu
-      scale_fill_manual(values = c("Very Satisfied" = "#0570b0", "Satisfied" = "#74a9cf", "Somewhat Satisfied" = "#bdc9e1", "Unsatisfied" = "#f1eef6"))
+      # scale_fill_manual(values = c("Very Satisfied" = "#0570b0", "Satisfied" = "#74a9cf", "Somewhat Satisfied" = "#bdc9e1", "Unsatisfied" = "#f1eef6"))
     
     # convert to plotly
     plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") %>% 

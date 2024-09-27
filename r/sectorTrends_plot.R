@@ -102,14 +102,14 @@ sectorTrends_plot <- function(input, data, program_acronym) {
     # create ggplot ----
     sector_trends_gg <- ggplot(data = sector_trends_data(), aes(x = percent, 
                                                                 y = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")),
-                                                                fill = sector_type,
+                                                                #fill = sector_type,
                                                                 text = paste0(sector_type,
                                                                               " (", percent, "%", ")",
                                                                               "\n", "Number of respondents: ",
                                                                               responses))) +
-      geom_col() +
-      scale_fill_manual(values = c("Private" = "#003660", "Public" = "#047c91",
-                                   "Non-Profit" = "#dcd6cc", "Other" = "#9cbebe")) +
+      geom_col(fill = "#003660") +
+      # scale_fill_manual(values = c("Private" = "#003660", "Public" = "#047c91",
+      #                              "Non-Profit" = "#dcd6cc", "Other" = "#9cbebe")) +
       scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
                          limits = c(0, 100),
                          labels = scales::percent_format(accuracy = 1, scale = 1)) +
