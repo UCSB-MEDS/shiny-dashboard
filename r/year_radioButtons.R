@@ -1,4 +1,4 @@
-#' year_radioButtons
+#' Creates year selector radioButtons widget
 #'
 #' @param inputId inputId
 #'

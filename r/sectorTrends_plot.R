@@ -1,7 +1,7 @@
-#' sectorTrends_plot
+#' Creates the "Sector Trends" plot, which shows which percentage of alumni found jobs in the private, public, and non-profit sectors (Career tab)
 #'
 #' @param input input
-#' @param data df; either 'mesm_placement' or 'meds_placement' (see global.R)
+#' @param data df; either 'mesm_placement' or 'meds_placement'
 #' @param program_acronym chr str; "MEDS" or "MESM"
 #'
 #' @return renderPlotly object
@@ -9,39 +9,47 @@
 #'
 #' @examples
 sectorTrends_plot <- function(input, data, program_acronym) {
-  
+
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##                                wrangle data                              ----
+  ##                               Data Wrangling                             ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
+  #..............wrangle reactive df of sector trends..............
   sector_trends_data <- reactive({
     
+    #............get appropriate input and placement_size............
     if (program_acronym == "MESM") {
       
       radioButton_yearInput <- input$mesm_sector_trends_year
       placement_size <- mesm_placement_size
-      resoponse_num <- sum(placement_size$responses)
       
     } else if (program_acronym == "MEDS") {
       
       radioButton_yearInput <- input$meds_sector_trends_year
       placement_size <- meds_placement_size
-      resoponse_num <- sum(placement_size$responses)
       
     }
     
-    # if "All Years" is selected ----
+    #...................if `All Years` is selected...................
     if (radioButton_yearInput == "All Years") {
       
       data %>%
         select(c(class_year, employer_sector)) %>%
         mutate(sector_type = case_when(
-          employer_sector %in% c("Consulting", "Corporate") ~ "Private",
-          employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
-          employer_sector %in% c("Foreign Government", "Other") ~ "Other",
+          employer_sector %in% c("Consulting", 
+                                 "Corporate") ~ "Private",
+          employer_sector %in% c("Federal Government", 
+                                 "Local Government", 
+                                 "State Government", 
+                                 "Research/Education") ~ "Public",
+          employer_sector %in% c("Foreign Government", 
+                                 "Other") ~ "Other",
           TRUE ~ employer_sector
         )) %>%
-        mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) %>%
+        mutate(sector_type = factor(sector_type, levels = c("Private", 
+                                                            "Public", 
+                                                            "Non-Profit", 
+                                                            "Other"))) %>%
         group_by(class_year, sector_type) %>%
         summarize(count = n()) %>%
         ungroup() |> 
@@ -53,9 +61,9 @@ sectorTrends_plot <- function(input, data, program_acronym) {
                   program_size = sum(program_size)) |> 
         mutate(percent = round((count / responses) * 100, 1))
       
-    }
+    } # END if `All Years` is selected
     
-    # if any single year is selected ----
+    #.................if any single year is selected.................
     else {
       
       data %>%
@@ -75,38 +83,26 @@ sectorTrends_plot <- function(input, data, program_acronym) {
         filter(class_year == radioButton_yearInput) |> 
         mutate(percent = round((count / responses) * 100, 1))
       
-    }
+    } # END if `any single year` is selected
     
-  })
+  }) # END reactive df
   
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##                                render plotly                             ----
+  ##                                Visualization                             ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   renderPlotly({
     
-    # determine which inputId and response_num to use based on program_acronym supplied ----
-    if (program_acronym == "MESM") {
-      
-      radioButton_yearInput <- input$mesm_sector_trends_year
-      response_num <- sum(mesm_placement_size$responses)
-      
-    } else if (program_acronym == "MEDS") {
-      
-      radioButton_yearInput <- input$meds_sector_trends_year
-      response_num <- sum(meds_placement_size$responses)
-      
-    }
-    
-    # create ggplot ----
-    sector_trends_gg <- ggplot(data = sector_trends_data(), aes(x = percent, 
-                                                                y = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")),
-                                                                #fill = sector_type,
-                                                                text = paste0(sector_type,
-                                                                              " (", percent, "%", ")",
-                                                                              "\n", "Number of respondents: ",
-                                                                              responses))) +
+    #...................create ggplot object first...................
+    sector_trends_gg <- ggplot(data = sector_trends_data(), 
+                               aes(x = percent, 
+                                   y = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")),
+                                   #fill = sector_type,
+                                   text = paste0(sector_type,
+                                                 " (", percent, "%", ")",
+                                                  "\n", "Number of respondents: ",
+                                                  responses))) +
       geom_col(fill = "#003660") +
       # scale_fill_manual(values = c("Private" = "#003660", "Public" = "#047c91",
       #                              "Non-Profit" = "#dcd6cc", "Other" = "#9cbebe")) +
@@ -124,12 +120,18 @@ sectorTrends_plot <- function(input, data, program_acronym) {
         axis.title.x = element_text(margin = unit(c(t = 3, r = 0, b = 0, l = 0), "mm"))
       )
     
-    # create plotly ----
+    #....................then render plotly object...................
     plotly::ggplotly(sector_trends_gg, tooltip = "text") %>% 
       layout(title = list(font = list(size = 16))) %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
-    
-  })
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian")
+             ) # END ggplotly
   
-}  
+  }) # END renderPlotly
+  
+} # END fxn
 

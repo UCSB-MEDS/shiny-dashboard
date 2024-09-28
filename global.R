@@ -1,5 +1,3 @@
-#### global ####
-
 # ---- SC REMINDERS (2023-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
 # update year_radioButtons() with new year choices as career data are added
 # update curr_year vars, below 
@@ -11,7 +9,10 @@
 # DATA CLEANING UPDATES SHOULD BE MADE TO FILES IN `/data_cleaning`
   # TODO: MOVE ug1_name & ug1_location in internationalUniversities_table() to data-cleaning files
 
-#............................packages............................
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                load packages                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 library(tidyverse)
 library(bslib)
 library(shiny)
@@ -32,53 +33,83 @@ library(leaflet)
 #.......................enable bookmarking.......................
 # enableBookmarking(store = "url") # SC NOTE 2024-09-25: I dont think this is necessary anymore?
 
-#..........................import data...........................
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                import data                               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# DEMOGRAPHICS DATA (5 most recent years -- old years are filtered out during the data cleaning process; see `cleaning-wrangling-NEW.qmd` in the `admissions-data` repo) ----
+#........................Demographics Data.......................
+# only visualize 5 most recent years ----
+# old years are filtered out during the data cleaning process; see `cleaning-wrangling-NEW.qmd` in the `admissions-data` repo) 
 admissions <- readRDS("data/admissions.rds") 
 enrolled <- readRDS("data/enrolled.rds") 
 ipeds <- readRDS("data/ipeds.rds") 
 diversity_stats <- readRDS("data/diversity_stats.rds")
 
-# CAREER OUTCOMES DATA (keep 3 most recent years) ----
-mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019, 2020)) # need to run `mesm_placement_cleaning.R` to get this .rds file 
+#......................Career Outcomes Data......................
+# only visualize 3 most recent years ----
+# use `mesm_placement_cleaning.R` & `meds_placement_cleaning.R` to generate `*_placemente_cleaned.rds` files
+mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019, 2020)) 
 mesm_status <- readRDS("data/Sam-latest-update-sep24/mesm_status_2019_2023.rds") |> filter(!class_year %in% c(2019, 2020)) 
-meds_placement <- readRDS("data/meds_placement_cleaned.rds") # need to run `meds_placement_cleaning.R` to get this .rds file 
+meds_placement <- readRDS("data/meds_placement_cleaned.rds")
 meds_status <- readRDS("data/Sam-latest-update-sep24/meds_status_2022_2023.rds") 
 
-# GEOMETRIES FOR MAPS ----
+#..................Spatial Geometries (for maps).................
 ug_geoms <- readRDS("data/ug_geoms.rds")
 us_state_geoms <- readRDS("data/us_state_geoms.rds")
 
-# WRANGLED DATA FOR DOMESTIC PLACEMENT MAPS (slow to load otherwise) ----
-mesm_dom_placement_data <- readRDS("data/mesm_domestic_placement_data.rds") # need to run `domestic_placement_cleaning.R` to get this .rds file
-meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds") # need to run `domestic_placement_cleaning.R` to get this .rds file
+#............Wrangled Data for Domestic Placement Maps...........
+# Maps too slow to load otherwise ----
+# use `domestic_placement_cleaning.R` to generate `*_domestic_placement_data.rds` files
+mesm_dom_placement_data <- readRDS("data/mesm_domestic_placement_data.rds") 
+meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds") 
 
-#.........................source scripts.........................
-# (don't need since shiny v1.5 will automatically source any script in /r, but necessary for deploying on Bren server) ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               Source Scripts                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# don't need since shiny v1.5 will automatically source any script in /r, BUT necessary for deploying on Bren server ----
 file_path <- "r"
 source_scripts = list.files(path = file_path, pattern = "*.R")
 map(paste0(file_path, "/", source_scripts), source)
 
-#............................styling.............................
-phd_color <- "#78A540" # was "#6D7D33" 
-meds_color <- "#027D92" # was "#047C91"
-mesm_color <- "#003660" # was "#005AA3"
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                Define Colors                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+phd_color <- "#78A540" 
+meds_color <- "#027D92"
+mesm_color <- "#003660" 
 all_programs_color <- "#09847a"
 
-#............................variables...........................
-curr_admission_year <- 2024 # current admissions year (used in programSize_valueBox() subtitle) | ADMISSIONS DATA FOR ENTERING CLASSES OF 2024 USED IN DEMOGRAPHICS TAB
-curr_grad_year <- 2023 # recent graduated class year (used in programSize_valueBox() class size calculation) | CAREER DATA FOR GRADUATING CLASSES OF 2023 USED IN CAREER TAB
-meds_employmentStatus_curr_year <- curr_grad_year - 1 # current year for meds employment status, based on enrollment year which is one year prior to graduation (used in employmentStatus_stat_valueBox())
-mesm_employmentStatus_curr_year <- curr_grad_year - 2 # current year for mesm employment status, based on enrollment year, which is two years prior to graduation (used in employmentStatus_stat_valueBox())
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              Define Variables                            ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# set name spelling options for US & CA (domesticPlacement_map(), geographicComparison_plot())
+#..................set current admissions year...................
+# admissions data for entering class of 202* used in demographics tab ----
+curr_admission_year <- 2024 
+
+#..............set most recent graduated class year..............
+# career data for graduating classes of 202* used in career tab ----
+curr_grad_year <- 2023
+
+#............current year for MEDS employment status.............
+# based on enrollment year which is one year prior to graduation ----
+meds_employmentStatus_curr_year <- curr_grad_year - 1 
+
+#............current year for MESM employment status.............
+# based on enrollment year which is two years prior to garduation ----
+mesm_employmentStatus_curr_year <- curr_grad_year - 2 
+
+#..............set name spelling options for US & CA.............
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
-#..........................data frames...........................
-# program sizes + total respondents to initial placement survey
-# used in geographicComparison_plot(), jobSource(), sectorTrends(), salary_plot(), salarySpecialization_plot(), salaryBySector_plot()
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                Data Frames                               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#....MESM program sizes + tot respondents (intial placement).....
 mesm_placement_size <- mesm_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
@@ -90,6 +121,7 @@ mesm_placement_size <- mesm_placement %>%
     class_year == 2020 ~ 77 
   ))
 
+#....MEDS program sizes + tot respondents (intial placement).....
 meds_placement_size <- meds_placement %>%
   select(class_year) %>%
   group_by(class_year) %>%
@@ -99,8 +131,7 @@ meds_placement_size <- meds_placement %>%
     class_year == 2022 ~ 25
   ))
 
-# program sizes + tot respondents to active status survey
-# used in placementStatus_plot()
+#......MESM program sizes + tot respondents (active status)......
 mesm_status_size <- mesm_status %>%
   select(class_year) %>%
   group_by(class_year) %>%
@@ -112,30 +143,29 @@ mesm_status_size <- mesm_status %>%
     class_year == 2020 ~ 77 
   ))
 
+#......MEDS program sizes + tot respondents (active status)......
 meds_status_size <- meds_status %>%
   select(class_year) %>%
   group_by(class_year) %>%
   summarize(responses = n()) %>%
   mutate(program_size = case_when(
-    class_year == 2023 ~ 31, # SC NOTE 2023-02-10: won't get these data until winter 2024, but adding now for when we do
+    class_year == 2023 ~ 31, 
     class_year == 2022 ~ 25 
   ))
 
-# program sizes (5 most recent years)
-# used in programSize_valueBox(), sex_plot()
+#..........................program sizes.........................
 program_size <- enrolled %>%
   select(c("app_submission_year", "application_id", "objective1")) %>%
   group_by(app_submission_year, objective1) %>%
   summarize(size = n())
 
-# total number of students in each year NOT broken down by program
-# used in urmTrends_plot(), ipedsTrends_plot()
+#...............total number students in each year...............
+# not broken down by program ----
 total_students_yr <- enrolled %>% 
   group_by(app_submission_year) %>% 
   summarize(size = n())
 
-# 5 year total number of students per program
-# used in ipedsCategories_plot(), ipedsBackgrounds_plot()
+#............5yr total number of students per program............
 tot_5yr <- enrolled %>% 
   select(c("app_submission_year",
            "application_id",
@@ -144,7 +174,6 @@ tot_5yr <- enrolled %>%
   group_by(objective1) %>%
   summarize(size = n())
 
-# 5 year total number of students across all programs 
-# used in ipedsCategories_plot()
+#........5yr total number of students across all programs........
 totStudents_allPrograms_5yr <- sum(tot_5yr$size)
 

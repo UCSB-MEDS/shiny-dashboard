@@ -1,4 +1,4 @@
-#' program_radioButtons
+#' Creates program selection radioButton widget
 #'
 #' @param inputId inputId
 #' @param selected the initial selected value; must be one of the following: MEDS, MESM PhD, or All Programs
