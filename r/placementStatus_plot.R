@@ -110,6 +110,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
   #..............render placement status plotly object.............
   plotly::renderPlotly({
     
+    #....................make ggplot object first....................
     status_gg <- ggplot(data = salary(),
            aes(x = percent,
                y = fct_relevel(status, c("Searching",

@@ -228,7 +228,10 @@ body <- dashboardBody(
                                                    
                                                    # meds geographic comparison plotly output ----
                                                    plotly::plotlyOutput(outputId = "meds_geogComparison_plot") |> 
-                                                     withSpinner(color = "#003660", type = 1)
+                                                     withSpinner(color = "#003660", type = 1),
+                                                   
+                                                   # year radioButtons input ----
+                                                   meds_year_radioButtons(inputId = "meds_placementLocation_year")
                                                    
                                           ) # (TAB 3) meds geographic comparison tabPanel
                                           
@@ -443,7 +446,10 @@ body <- dashboardBody(
                                                    
                                                    # mesm geographic comparison plotly output ----
                                                    plotly::plotlyOutput(outputId = "mesm_geogComparison_plot") |> 
-                                                     withSpinner(color = "#003660", type = 1)
+                                                     withSpinner(color = "#003660", type = 1),
+                                                   
+                                                   # year radioButtons input ----
+                                                   year_radioButtons(inputId = "mesm_placementLocation_year")
                                                    
                                           ) # END (TAB 3) mesm geographic comparison tabPanel
                                           
