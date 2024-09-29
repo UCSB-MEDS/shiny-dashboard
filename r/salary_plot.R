@@ -13,62 +13,77 @@ salary_plot <- function(input, data, program_acronym) {
   ##                               Data Wrangling                             ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  #................wrangle reactive df of salaries.................
-  salary <- reactive({
+  # #................wrangle reactive df of salaries.................
+  # salary <- reactive({
+  
+  #.........get appropriate input values & place/resp nums.........
+  if (program_acronym == "MESM") {
     
-    #.........get appropriate input values & place/resp nums.........
-    if (program_acronym == "MESM") {
-      
-      radioButton_yearInput <- input$mesm_salary_year
-      placement_size <- mesm_placement_size
-      response_num <- sum(placement_size$responses)
-      
-    } else if (program_acronym == "MEDS") {
-      
-      radioButton_yearInput <- input$meds_salary_year
-      placement_size <- meds_placement_size
-      response_num <- sum(placement_size$responses)
-      
-    }
+    #radioButton_yearInput <- input$mesm_salary_year
+    placement_size <- mesm_placement_size
+    response_num <- sum(placement_size$responses)
     
-    #...................if `All Years` is selected...................
-    if (radioButton_yearInput == "All Years") { 
-      
-      data %>% 
-        select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) |> 
-        filter(employment_type == "Full-Time Job") |>
-        filter(estimated_annual_compensation_us != 0) |>
-        filter(compensation_frequency != "Stipend") |>
-        mutate(Median = median(estimated_annual_compensation_us)) |>
-        mutate(Low = min(estimated_annual_compensation_us)) |>
-        mutate(High = max(estimated_annual_compensation_us)) |>
-        select(-estimated_annual_compensation_us) |>
-        pivot_longer(cols = c(Low, High, Median),
-                     names_to = "range", values_to = "values") |>
-        mutate(responses = response_num)
-      
-    } # END if `All Years` statement
+  } else if (program_acronym == "MEDS") {
     
-    #.................if any single year is selected.................
-    else {
-
-      data %>% 
-        select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) |>
-        filter(employment_type == "Full-Time Job") |>
-        filter(estimated_annual_compensation_us != 0) |>
-        filter(compensation_frequency != "Stipend") |>
-        filter(class_year %in% radioButton_yearInput) |>
-        mutate(Median = median(estimated_annual_compensation_us)) |>
-        mutate(Low = min(estimated_annual_compensation_us)) |>
-        mutate(High = max(estimated_annual_compensation_us)) |>
-        select(-estimated_annual_compensation_us) |>
-        pivot_longer(cols = c(Low, High, Median),
-                     names_to = "range", values_to = "values") |>
-        left_join(placement_size, by = "class_year")
-      
-    } # END single year else statement
+    # radioButton_yearInput <- input$meds_salary_year
+    placement_size <- meds_placement_size
+    response_num <- sum(placement_size$responses)
     
-  }) # END reactive df
+  }
+  
+  #..........................wrangle data..........................
+  salary <- data %>% 
+    select(class_year, employment_type, compensation_frequency,
+           estimated_annual_compensation_us) |>
+    filter(employment_type == "Full-Time Job") |>
+    filter(estimated_annual_compensation_us != 0) |>
+    filter(compensation_frequency != "Stipend") |>
+    group_by(class_year) |> 
+    mutate(Median = median(estimated_annual_compensation_us)) |>
+    mutate(Low = min(estimated_annual_compensation_us)) |>
+    mutate(High = max(estimated_annual_compensation_us)) |>
+    select(-estimated_annual_compensation_us) |>
+    left_join(placement_size, by = "class_year") |> 
+    mutate(class_year = as.factor(class_year))
+  
+  #   #...................if `All Years` is selected...................
+  #   if (radioButton_yearInput == "All Years") { 
+  #     
+  #     data %>% 
+  #       select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) |> 
+  #       filter(employment_type == "Full-Time Job") |>
+  #       filter(estimated_annual_compensation_us != 0) |>
+  #       filter(compensation_frequency != "Stipend") |>
+  #       mutate(Median = median(estimated_annual_compensation_us)) |>
+  #       mutate(Low = min(estimated_annual_compensation_us)) |>
+  #       mutate(High = max(estimated_annual_compensation_us)) |>
+  #       select(-estimated_annual_compensation_us) # |>
+  #       # pivot_longer(cols = c(Low, High, Median),
+  #       #              names_to = "range", values_to = "values") |>
+  #       # mutate(responses = response_num) 
+  #     
+  #   } # END if `All Years` statement
+  #   
+  #   #.................if any single year is selected.................
+  #   else {
+  # 
+  #     data %>% 
+  #       select(class_year, employment_type, compensation_frequency, estimated_annual_compensation_us) |>
+  #       filter(employment_type == "Full-Time Job") |>
+  #       filter(estimated_annual_compensation_us != 0) |>
+  #       filter(compensation_frequency != "Stipend") |>
+  #       filter(class_year %in% radioButton_yearInput) |>
+  #       mutate(Median = median(estimated_annual_compensation_us)) |>
+  #       mutate(Low = min(estimated_annual_compensation_us)) |>
+  #       mutate(High = max(estimated_annual_compensation_us)) |>
+  #       select(-estimated_annual_compensation_us) |>
+  #       # pivot_longer(cols = c(Low, High, Median),
+  #       #              names_to = "range", values_to = "values") |>
+  #       left_join(placement_size, by = "class_year")
+  #     
+  #   } # END single year else statement
+  #   
+  # }) # END reactive df
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                                Visualization                             ----
@@ -91,36 +106,61 @@ salary_plot <- function(input, data, program_acronym) {
     # }
     
     #...................create ggplot object first...................
-    salary_gg <- ggplot(data = salary(), 
-                        aes(x = reorder(range, values), 
-                            y = values, 
-                            fill = range,
-                            text = paste0(range, 
-                                          ": ", "$", 
-                                          round(values, 2), 
-                                          "\n", 
-                                          "Number of respondents: ", 
-                                          responses))) +
-      geom_bar(stat = "identity", position = "dodge") +
-      scale_y_continuous(labels = scales::dollar_format()) +
-      scale_fill_manual(
-        values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
-      labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), #
-           x = NULL, y = NULL, fill = NULL) +
-      theme_minimal() +
-      theme(legend.position = "none")
+    # # formatted ggtext not supported by plotly :(
+    # formatted_title <- glue::glue("MEDS Alumni
+    #                    <span style='color:#9CBEBD'>**Low**</span>,
+    #                     <span style='color:#047c91'>**Median**</span>,
+    #                 and <span style='color:#003660'>**High**</span>
+    #                    Salaries")
     
-    #..................then convert to plotly object.................
-    plotly::ggplotly(salary_gg, tooltip = "text") |> 
-      layout(title = list(font = list(size = 16))) |> 
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian")
-             ) # END ggplotly
     
-  }) # END renderPlotly
+    salary_gg <- ggplot(data = salary) +
+      geom_segment(aes(x = Low, xend = High,
+                       y = class_year, yend = class_year), color = "gray40") +
+      geom_point(aes(x = Low, y = class_year, size = 3.25,
+                     text = paste0("$", round(Low, 2), "\n", "Number of respondents: ", responses)),
+                 fill = "#9CBEBD", color = "gray40", shape = 21, size = 6) +
+    geom_point(aes(x = Median, y = class_year,
+                   text = paste0("$", round(Median, 2), "\n", "Number of respondents: ", responses)), 
+               fill = "#047c91", color = "gray40", shape = 24, size = 7) + # pch = "|", cex = 5
+    geom_point(aes(x = High, y = class_year, size = 3.25,
+                   text = paste0("$", round(High, 2), "\n", "Number of respondents: ", responses)), 
+               fill = "#003660", color = "gray40", shape = 21, size = 6) +
+      scale_x_continuous(labels = scales::dollar_format()) + 
+    labs(title = paste0(program_acronym ," Initial Job Placement Salaries (Low, Median, High)"), 
+         x = NULL, y = NULL, fill = NULL) +
+    theme_minimal() 
+    
+  # salary_gg <- ggplot(data = salary(), 
+  #                     aes(x = reorder(range, values), 
+  #                         y = values, 
+  #                         fill = range,
+  #                         text = paste0(range, 
+  #                                       ": ", "$", 
+  #                                       round(values, 2), 
+  #                                       "\n", 
+  #                                       "Number of respondents: ", 
+  #                                       responses))) +
+  #   geom_bar(stat = "identity", position = "dodge") +
+  #   scale_y_continuous(labels = scales::dollar_format()) +
+  #   scale_fill_manual(
+  #     values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
+  #   labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), #
+  #        x = NULL, y = NULL, fill = NULL) +
+  #   theme_minimal() +
+  #   theme(legend.position = "none")
   
+  #..................then convert to plotly object.................
+  plotly::ggplotly(salary_gg, tooltip = "text") |> 
+    layout(title = list(font = list(size = 16))) |> 
+    config(modeBarButtonsToRemove = list("pan", 
+                                         "select", 
+                                         "lasso2d", 
+                                         "autoScale2d", 
+                                         "hoverClosestCartesian", 
+                                         "hoverCompareCartesian")
+    ) # END ggplotly
+  
+  }) # END renderPlotly
+
 } # END fxn

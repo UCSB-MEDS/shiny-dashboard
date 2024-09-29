@@ -115,10 +115,10 @@ body <- dashboardBody(
                                                           plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
-                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
+                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only.")
                                                           
-                                                          # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_salary_year")
+                                                          # # year radioButtons input ----
+                                                          # meds_year_radioButtons(inputId = "meds_salary_year")
                                                     
                                                           
                                                  ), # END (TAB 1) meds salary tabPanel 
@@ -320,10 +320,10 @@ body <- dashboardBody(
                                                           plotlyOutput(outputId = "mesm_salary") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
-                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
+                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only.")
                                                           
-                                                          # year radioButtons input ----
-                                                          year_radioButtons(inputId = "mesm_salary_year")
+                                                          # # year radioButtons input ----
+                                                          # year_radioButtons(inputId = "mesm_salary_year")
                                                           
                                                  ), # END (TAB 1) mesm salary tabPanel 
                                                  
