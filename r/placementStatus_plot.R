@@ -17,7 +17,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
   #................wrangle reactive df of salaries.................
   salary <- reactive({
     
-    #...............get appropriate `*_status_size` df...............
+    #........get appropriate `*_status_size df and input value.......
     if (program_acronym == "MESM") {
       
       status_size <- mesm_status_size
@@ -113,6 +113,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
     status_gg <- ggplot(data = salary(),
            aes(x = percent,
                y = fct_relevel(status, c("Searching",
+                                         "Eco-Entrepreneurship/New Business",
                                          "Advanced Degree/Another Degree",
                                          "Internship, Fellowship, or Short-term Project",
                                          "Career")),

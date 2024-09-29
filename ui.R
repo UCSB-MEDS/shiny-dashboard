@@ -186,7 +186,10 @@ body <- dashboardBody(
                                                           
                                                           # mesm job source plotly output ---
                                                           plotly::plotlyOutput(outputId = "meds_job_source") |> 
-                                                            withSpinner(color = "#003660", type = 1)
+                                                            withSpinner(color = "#003660", type = 1),
+                                                          
+                                                          # year radioButtons input ----
+                                                          meds_year_radioButtons(inputId = "meds_job_source_year")
                                                           
                                                  ) # END (TAB 6) meds job source tabPanel
                                                  
@@ -398,7 +401,10 @@ body <- dashboardBody(
                                                           
                                                           # mesm job source plotly output ---
                                                           plotly::plotlyOutput(outputId = "mesm_job_source") |> 
-                                                            withSpinner(color = "#003660", type = 1)
+                                                            withSpinner(color = "#003660", type = 1),
+                                                          
+                                                          # year radioButtons input ----
+                                                          year_radioButtons(inputId = "mesm_job_source_year")
                                                           
                                                  ) # END (TAB 7) mesm job source tabPanel
                                                  
