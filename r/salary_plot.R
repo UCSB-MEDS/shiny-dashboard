@@ -33,7 +33,7 @@ salary_plot <- function(input, data, program_acronym) {
   
   #..........................wrangle data..........................
   salary <- data %>% 
-    select(class_year, employment_type, compensation_frequency,
+    select(class_year, employment_type, employer_sector, compensation_frequency,
            estimated_annual_compensation_us) |>
     filter(employment_type == "Full-Time Job") |>
     filter(estimated_annual_compensation_us != 0) |>
@@ -42,7 +42,7 @@ salary_plot <- function(input, data, program_acronym) {
     mutate(Median = median(estimated_annual_compensation_us)) |>
     mutate(Low = min(estimated_annual_compensation_us)) |>
     mutate(High = max(estimated_annual_compensation_us)) |>
-    select(-estimated_annual_compensation_us) |>
+    # select(-estimated_annual_compensation_us) |>
     left_join(placement_size, by = "class_year") |> 
     mutate(class_year = as.factor(class_year))
   
@@ -116,51 +116,56 @@ salary_plot <- function(input, data, program_acronym) {
     
     salary_gg <- ggplot(data = salary) +
       geom_segment(aes(x = Low, xend = High,
-                       y = class_year, yend = class_year), color = "gray40") +
-      geom_point(aes(x = Low, y = class_year, size = 3.25,
+                       y = class_year, yend = class_year), color = "black") +
+      geom_point(aes(x = Low, 
+                     y = class_year,
                      text = paste0("$", round(Low, 2), "\n", "Number of respondents: ", responses)),
-                 fill = "#9CBEBD", color = "gray40", shape = 21, size = 6) +
-    geom_point(aes(x = Median, y = class_year,
-                   text = paste0("$", round(Median, 2), "\n", "Number of respondents: ", responses)), 
-               fill = "#047c91", color = "gray40", shape = 24, size = 7) + # pch = "|", cex = 5
-    geom_point(aes(x = High, y = class_year, size = 3.25,
-                   text = paste0("$", round(High, 2), "\n", "Number of respondents: ", responses)), 
-               fill = "#003660", color = "gray40", shape = 21, size = 6) +
+                 fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
+      geom_point(aes(x = Median, 
+                     y = class_year,
+                     text = paste0("$", round(Median, 2), "\n", "Number of respondents: ", responses)), 
+                 fill = "#047c91", color = "black", shape = 24, size = 7) + # pch = "|", cex = 5
+      geom_point(aes(x = High, 
+                     y = class_year,
+                     text = paste0("$", round(High, 2), "\n", "Number of respondents: ", responses)), 
+                 fill = "#003660", color = "black", shape = 21, size = 6) +
+      geom_point(aes(x = estimated_annual_compensation_us, y = class_year),
+                 color = "gray50", alpha = 0.8, size = 1.5) +
       scale_x_continuous(labels = scales::dollar_format()) + 
-    labs(title = paste0(program_acronym ," Initial Job Placement Salaries (Low, Median, High)"), 
-         x = NULL, y = NULL, fill = NULL) +
-    theme_minimal() 
+      labs(title = paste0(program_acronym ," Initial Job Placement Salaries (Low, Median, High)"), 
+           x = NULL, y = NULL, fill = NULL) +
+      theme_minimal() 
     
-  # salary_gg <- ggplot(data = salary(), 
-  #                     aes(x = reorder(range, values), 
-  #                         y = values, 
-  #                         fill = range,
-  #                         text = paste0(range, 
-  #                                       ": ", "$", 
-  #                                       round(values, 2), 
-  #                                       "\n", 
-  #                                       "Number of respondents: ", 
-  #                                       responses))) +
-  #   geom_bar(stat = "identity", position = "dodge") +
-  #   scale_y_continuous(labels = scales::dollar_format()) +
-  #   scale_fill_manual(
-  #     values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
-  #   labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), #
-  #        x = NULL, y = NULL, fill = NULL) +
-  #   theme_minimal() +
-  #   theme(legend.position = "none")
-  
-  #..................then convert to plotly object.................
-  plotly::ggplotly(salary_gg, tooltip = "text") |> 
-    layout(title = list(font = list(size = 16))) |> 
-    config(modeBarButtonsToRemove = list("pan", 
-                                         "select", 
-                                         "lasso2d", 
-                                         "autoScale2d", 
-                                         "hoverClosestCartesian", 
-                                         "hoverCompareCartesian")
-    ) # END ggplotly
-  
+    # salary_gg <- ggplot(data = salary(), 
+    #                     aes(x = reorder(range, values), 
+    #                         y = values, 
+    #                         fill = range,
+    #                         text = paste0(range, 
+    #                                       ": ", "$", 
+    #                                       round(values, 2), 
+    #                                       "\n", 
+    #                                       "Number of respondents: ", 
+    #                                       responses))) +
+    #   geom_bar(stat = "identity", position = "dodge") +
+    #   scale_y_continuous(labels = scales::dollar_format()) +
+    #   scale_fill_manual(
+    #     values = c("Low" = "#dcd6cc", "Median" = "#047c91", "High" = "#003660")) +
+    #   labs(title = paste0(program_acronym ," Alumni Low, Median, and High Salary Compensation"), #
+    #        x = NULL, y = NULL, fill = NULL) +
+    #   theme_minimal() +
+    #   theme(legend.position = "none")
+    
+    #..................then convert to plotly object.................
+    plotly::ggplotly(salary_gg, tooltip = "text") |> 
+      layout(title = list(font = list(size = 16))) |> 
+      config(modeBarButtonsToRemove = list("pan", 
+                                           "select", 
+                                           "lasso2d", 
+                                           "autoScale2d", 
+                                           "hoverClosestCartesian", 
+                                           "hoverCompareCartesian")
+      ) # END ggplotly
+    
   }) # END renderPlotly
-
+  
 } # END fxn
