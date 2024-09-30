@@ -121,16 +121,16 @@ salarySpecialization_plot <- function(input, data) {
            x = NULL, y = NULL, fill = NULL)
     
     #....................then create plotly object...................
-    plotly::ggplotly(salary_special_gg, tooltip = "text") %>% 
+    plotly::ggplotly(salary_special_gg, tooltip = "text") |> 
       layout(title = list(font = list(size = 16)),
-             legend = list(orientation = "h", y = -0.25, x = 0.2)) %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian")
-             ) # END ggplotly
+             legend = list(orientation = "h", y = -0.25, x = 0.2)) |> 
+      config(displayModeBar = FALSE)
+      # config(modeBarButtonsToRemove = list("pan", 
+      #                                      "select", 
+      #                                      "lasso2d", 
+      #                                      "autoScale2d", 
+      #                                      "hoverClosestCartesian", 
+      #                                      "hoverCompareCartesian")) # END ggplotly
     
   }) # END renderPlotly 
   

@@ -116,16 +116,16 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       theme(panel.grid.minor = element_blank())
     
     #..................then convert to plotly object.................
-    plotly::ggplotly(location_gg, tooltip = "text") %>%
+    plotly::ggplotly(location_gg, tooltip = "text") |> 
       layout(legend = list(orientation = "h", y = -0.1),
-             title = list(font = list(size = 15.5))) %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian")
-      ) # END ggplotly
+             title = list(font = list(size = 15.5))) |> 
+      config(displayModeBar = FALSE)
+      # config(modeBarButtonsToRemove = list("pan", 
+      #                                      "select", 
+      #                                      "lasso2d", 
+      #                                      "autoScale2d", 
+      #                                      "hoverClosestCartesian", 
+      #                                      "hoverCompareCartesian")) # END ggplotly
     
   }) # END renderPlotly
   

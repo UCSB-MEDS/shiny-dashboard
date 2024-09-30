@@ -47,9 +47,9 @@ body <- dashboardBody(
   ), # END header
   
   useShinyjs(), # call shinyjs; Note(HD): initially added to use hidden() ----
-
-  tabItems(
   
+  tabItems(
+    
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ##                           career tab (career_db)                         ----
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,95 +105,121 @@ body <- dashboardBody(
                                    # START right-hand column ----
                                    column(width = 8,
                                           
-                                          # START meds career data visualizations tabBox ----
-                                          tabBox(width = 12,
-                                                 
-                                                 # START (TAB 1) meds salary tabPanel ----
-                                                 tabPanel(title = "Salary",
-                                                          
-                                                          # meds salary plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # caption ----
-                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only.")
-                                                          
-                                                          # # year radioButtons input ----
-                                                          # meds_year_radioButtons(inputId = "meds_salary_year")
-                                                    
-                                                          
-                                                 ), # END (TAB 1) meds salary tabPanel 
-                                                 
-                                                 # START (TAB 2) meds salary by sector tabPanel ----
-                                                 tabPanel(title = "Salary by Sector",
-                                                          
-                                                          # meds salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary_by_sector") |> 
-                                                            withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # caption ----
-                                                          tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
-                                                          
-                                                          # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_salarySector_year")
-                                                          
-                                                 ), # END (TAB 2) meds salary by sector tabPanel 
-                                                 
-                                                 # START (TAB 3) meds placement status tabPanel ----
-                                                 tabPanel(title = "Placement Status",
-                                                          
-                                                          # mesm placement plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_placement_status") |> 
-                                                            withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_placementStatus_year")
-                                                          
-                                                 ), # END (TAB 3) meds placement status tabPanel 
-
-                                                 # START (TAB 4) meds sector trends tabPanel ----
-                                                 tabPanel(title = "Sector Trends",
-                                                          
-                                                          # meds sector trends plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_sector_trends") |> 
-                                                            withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # extra space
-                                                          br(),
-                                                          
-                                                          # sector definitions caption ----
-                                                          includeMarkdown("text/sector_definitions.md"),
-                                                          
-                                                          # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_sector_trends_year")
-                                                          
-                                                 ), # END (TAB 4) meds sector trends tabPanel 
-                                                 
-                                                 # START (TAB 5) meds sector satisfaction tabPanel -----
-                                                 tabPanel(title = "Sector Satisfaction",
-                                                          
-                                                          # meds sector satisfaction plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_sector_satisfaction") |> 
-                                                            withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # sector type radioButtons input ----
-                                                          sectorType_radioButtons(inputId = "meds_sector_types", selected = "Consulting")
-
-                                                 ), # END (TAB 5) meds sector satisfaction tabPanel 
-                                                 
-                                                 
-                                                 # START (TAB 6) meds job source tabPanel ----
-                                                 tabPanel(title = "Job Source",
-                                                          
-                                                          # mesm job source plotly output ---
-                                                          plotly::plotlyOutput(outputId = "meds_job_source") |> 
-                                                            withSpinner(color = "#003660", type = 1),
-                                                          
-                                                          # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_job_source_year")
-                                                          
-                                                 ) # END (TAB 6) meds job source tabPanel
-                                                 
-                                          ) # END meds career data visualizations tabBox
+                                          # # START career survey stats box fluidRow ----
+                                          # fluidRow(
+                                          #   
+                                          #   # START career survey stats box ----
+                                          #   box(width = 12,
+                                          #       title = "Career Survey Stats",
+                                          #       solidHeader = TRUE, status = "success",
+                                          #       
+                                          #       # START first year col ----
+                                          #       column(width = 6,
+                                          #              tags$h4("2022"),
+                                          #              ), # END first year col ----
+                                          # 
+                                          #       # START second year col ----
+                                          #       column(width = 6,
+                                          #              tags$h4("2023")) # END second year col ----
+                                          # 
+                                          #       ) # END career survey stats box
+                                          #   
+                                          # ), # END career survey stats box fluidRow
+                                          # 
+                                          # # START meds career data viz tabBox fluidRow ----
+                                          # fluidRow(
+                                            
+                                            # START meds career data visualizations tabBox ----
+                                            tabBox(width = 12,
+                                                   
+                                                   # START (TAB 1) meds salary tabPanel ----
+                                                   tabPanel(title = "Salary",
+                                                            
+                                                            # meds salary plotly output ----
+                                                            plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # caption ----
+                                                            tags$p(class = "italic_sector", "Data includes Full-Time Career positions only.")
+                                                            
+                                                            # # year radioButtons input ----
+                                                            # meds_year_radioButtons(inputId = "meds_salary_year")
+                                                            
+                                                            
+                                                   ), # END (TAB 1) meds salary tabPanel 
+                                                   
+                                                   # START (TAB 2) meds salary by sector tabPanel ----
+                                                   tabPanel(title = "Salary by Sector",
+                                                            
+                                                            # meds salary by sector plotly output ----
+                                                            plotlyOutput(outputId = "meds_salary_by_sector") |> 
+                                                              withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # caption ----
+                                                            tags$p(class = "italic_sector", "Data includes Full-Time Career positions only."),
+                                                            
+                                                            # year radioButtons input ----
+                                                            meds_year_radioButtons(inputId = "meds_salarySector_year")
+                                                            
+                                                   ), # END (TAB 2) meds salary by sector tabPanel 
+                                                   
+                                                   # START (TAB 3) meds placement status tabPanel ----
+                                                   tabPanel(title = "Placement Status",
+                                                            
+                                                            # mesm placement plotly output ----
+                                                            plotly::plotlyOutput(outputId = "meds_placement_status") |> 
+                                                              withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # year radioButtons input ----
+                                                            meds_year_radioButtons(inputId = "meds_placementStatus_year")
+                                                            
+                                                   ), # END (TAB 3) meds placement status tabPanel 
+                                                   
+                                                   # START (TAB 4) meds sector trends tabPanel ----
+                                                   tabPanel(title = "Sector Trends",
+                                                            
+                                                            # meds sector trends plotly output ----
+                                                            plotly::plotlyOutput(outputId = "meds_sector_trends") |> 
+                                                              withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # extra space
+                                                            br(),
+                                                            
+                                                            # sector definitions caption ----
+                                                            includeMarkdown("text/sector_definitions.md"),
+                                                            
+                                                            # year radioButtons input ----
+                                                            meds_year_radioButtons(inputId = "meds_sector_trends_year")
+                                                            
+                                                   ), # END (TAB 4) meds sector trends tabPanel 
+                                                   
+                                                   # START (TAB 5) meds sector satisfaction tabPanel -----
+                                                   tabPanel(title = "Sector Satisfaction",
+                                                            
+                                                            # meds sector satisfaction plotly output ----
+                                                            plotly::plotlyOutput(outputId = "meds_sector_satisfaction") |> 
+                                                              withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # sector type radioButtons input ----
+                                                            sectorType_radioButtons(inputId = "meds_sector_types", selected = "Consulting")
+                                                            
+                                                   ), # END (TAB 5) meds sector satisfaction tabPanel 
+                                                   
+                                                   
+                                                   # START (TAB 6) meds job source tabPanel ----
+                                                   tabPanel(title = "Job Source",
+                                                            
+                                                            # mesm job source plotly output ---
+                                                            plotly::plotlyOutput(outputId = "meds_job_source") |> 
+                                                              withSpinner(color = "#003660", type = 1),
+                                                            
+                                                            # year radioButtons input ----
+                                                            meds_year_radioButtons(inputId = "meds_job_source_year")
+                                                            
+                                                   ) # END (TAB 6) meds job source tabPanel
+                                                   
+                                            ) # END meds career data visualizations tabBox
+                                            
+                                          #) # END meds career data viz tabBox fluidRow 
                                           
                                    ) # END right-hand column
                                    
@@ -215,7 +241,7 @@ body <- dashboardBody(
                                           ), # END (TAB 1) meds domestic placement map tabPanel
                                           
                                           # START (TAB 2) meds international placement tabPanel ----
-
+                                          
                                           tabPanel(title = HTML("International Placement"), 
                                                    
                                                    # note re: no international MEDS alumni yet (add in table when appropriate) ----
@@ -257,18 +283,18 @@ body <- dashboardBody(
                                               DT::dataTableOutput(outputId = "meds_title_tbl") |> 
                                                 withSpinner(color = "#003660", type = 1)
                                               
-                                              ) # END (TAB 2)
+                                     ) # END (TAB 2)
                                      
                                    ) # END MEDS tabBox (initial employers & titles)
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
                                  
                         ), # END MEDS career tabPanel
-
+                        
                         ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         ##                            MESM CAREER TABPANEL                          ----
                         ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+                        
                         # START MESM career tabPanel ----
                         tabPanel(title = "MESM Initial Career Placements",
                                  
@@ -457,28 +483,28 @@ body <- dashboardBody(
                                    
                                    # START employers & sectors tbl box ----
                                    tabBox(width = 6,
-                                     
-                                     # START (TAB 1) mesm initial employers ----
-                                     tabPanel("Initial Employers and Sectors",
-                                              
-                                              # mesm initial employers & sectors table ----
-                                              DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> 
-                                                withSpinner(color = "#003660", type = 1)
-                                       
-                                     ), # END (TAB 1)
-                                     
-                                     # START (TAB 2) mesm initial employers ----
-                                     tabPanel("Job Titles",
-                                              
-                                              # confidentiality statement ----
-                                              includeMarkdown("text/confidentiality.md"),
-                                              
-                                              # mesm initial employers & sectors table ----
-                                              DT::dataTableOutput(outputId = "mesm_title_tbl") |> 
-                                                withSpinner(color = "#003660", type = 1)
-                                              
-                                     ), # END (TAB 2)
-                                     
+                                          
+                                          # START (TAB 1) mesm initial employers ----
+                                          tabPanel("Initial Employers and Sectors",
+                                                   
+                                                   # mesm initial employers & sectors table ----
+                                                   DT::dataTableOutput(outputId = "mesm_career_employ_sector_tbl") |> 
+                                                     withSpinner(color = "#003660", type = 1)
+                                                   
+                                          ), # END (TAB 1)
+                                          
+                                          # START (TAB 2) mesm initial employers ----
+                                          tabPanel("Job Titles",
+                                                   
+                                                   # confidentiality statement ----
+                                                   includeMarkdown("text/confidentiality.md"),
+                                                   
+                                                   # mesm initial employers & sectors table ----
+                                                   DT::dataTableOutput(outputId = "mesm_title_tbl") |> 
+                                                     withSpinner(color = "#003660", type = 1)
+                                                   
+                                          ), # END (TAB 2)
+                                          
                                    ) # END tabBox
                                    
                                  ) # END fluidRow (contains location info & initial employers table) 
@@ -488,7 +514,7 @@ body <- dashboardBody(
             ) # END tabsetPanel career_db
             
     ), # END tabItem career_db
-
+    
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ##                         demographics tab (demo_db)                       ----
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -728,7 +754,7 @@ body <- dashboardBody(
                          solidHeader = TRUE, status = "navy",
                          includeMarkdown("text/welcome_what_text.md")
                          
-                         ) # END intro box
+                     ) # END intro box
                      
               ), # END left-hand column
               
@@ -742,7 +768,7 @@ body <- dashboardBody(
                          solidHeader = TRUE, status = "navy",
                          includeMarkdown("text/welcome_data_text.md")
                          
-                         ) # END about the data box 
+                     ) # END about the data box 
                      
               ) # END right-hand column
               

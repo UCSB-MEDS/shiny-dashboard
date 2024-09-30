@@ -130,13 +130,13 @@ jobSource_plot <- function(input, data, program_acronym) {
     #..................then convert to plotly object.................
     plotly::ggplotly(source_gg, tooltip = "text") |> 
       layout(legend = list(orientation = "h", y = -0.1)) |> 
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian")
-      ) # END ggplotly
+      config(displayModeBar = FALSE)
+      # config(modeBarButtonsToRemove = list("pan", 
+      #                                      "select", 
+      #                                      "lasso2d", 
+      #                                      "autoScale2d", 
+      #                                      "hoverClosestCartesian", 
+      #                                      "hoverCompareCartesian")) # END ggplotly
     
   }) # END renderPlotly
   

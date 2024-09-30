@@ -121,15 +121,15 @@ sectorTrends_plot <- function(input, data, program_acronym) {
       )
     
     #....................then render plotly object...................
-    plotly::ggplotly(sector_trends_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 16))) %>%
-      config(modeBarButtonsToRemove = list("pan", 
-                                           "select", 
-                                           "lasso2d", 
-                                           "autoScale2d", 
-                                           "hoverClosestCartesian", 
-                                           "hoverCompareCartesian")
-             ) # END ggplotly
+    plotly::ggplotly(sector_trends_gg, tooltip = "text") |>  
+      layout(title = list(font = list(size = 16))) |> 
+      config(displayModeBar = FALSE)
+      # config(modeBarButtonsToRemove = list("pan", 
+      #                                      "select", 
+      #                                      "lasso2d", 
+      #                                      "autoScale2d", 
+      #                                      "hoverClosestCartesian", 
+      #                                      "hoverCompareCartesian")) # END ggplotly
   
   }) # END renderPlotly
   

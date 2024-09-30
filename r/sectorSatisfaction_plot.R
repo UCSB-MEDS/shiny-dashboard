@@ -79,24 +79,28 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), 
                                      aes(x = placement_satisfaction, 
                                          y = percent, 
-                                         # fill = reorder(placement_satisfaction, percent), # SC removed 2024-09
                                          text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count))) +
       geom_bar(position = "dodge", stat = "identity", width = 0.9, fill = "#003660") +
       coord_flip(ylim = c(0, 100)) +
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-      # scale_fill_manual(values = c("Very Satisfied" = "#0570b0", "Satisfied" = "#74a9cf", "Somewhat Satisfied" = "#bdc9e1", "Unsatisfied" = "#f1eef6")) # SC removed 2024-09
       theme_minimal() +
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
       labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput), 
-           x = NULL, y = "Percent of Respondents", fill = NULL) #+
+           x = NULL, y = "Percent of Respondents", fill = NULL) 
     
     #....................then create plotly object...................
-    plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 15))) %>% 
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+    plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") |> 
+      layout(title = list(font = list(size = 15))) |> 
+      config(displayModeBar = FALSE)
+      # config(modeBarButtonsToRemove = list("pan", 
+      #                                      "select", 
+      #                                      "lasso2d", 
+      #                                      "autoScale2d", 
+      #                                      "hoverClosestCartesian", 
+      #                                      "hoverCompareCartesian"))
     
-  }) 
+  }) # END renderPlotly
   
-}
+} # END fxn
