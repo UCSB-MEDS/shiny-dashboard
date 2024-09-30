@@ -16,7 +16,9 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
   
   #..............calculate tot num of alumni by sector.............
   sector_totals <- data |> 
+    select(c(employer_sector, placement_satisfaction)) |>
     group_by(employer_sector) |>
+    drop_na() |> 
     summarize(sector_count = n())
   
   #..........wrangle reactive df of satisfaction by sector.........
@@ -38,7 +40,7 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
       select(c(employer_sector, placement_satisfaction)) |>
       group_by(employer_sector, placement_satisfaction) |>
       summarize(count = n()) |>
-      drop_na() %>% 
+      drop_na() |> 
       left_join(sector_totals, by = "employer_sector") |>
       mutate(percent = round((count / sector_count) * 100, 1)) |>
       mutate(placement_satisfaction = factor(placement_satisfaction, 
@@ -49,11 +51,11 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
                                              labels = c("Very Satisfied", 
                                                         "Satisfied", 
                                                         "Somewhat Satisfied", 
-                                                        "Unsatisfied"))) %>% 
+                                                        "Unsatisfied"))) |> 
       mutate(employer_sector = case_when(
         employer_sector == "Other" ~ "Eco-Entrepreneurship/New Business",
         TRUE ~ employer_sector
-      )) %>% 
+      )) |> 
       filter(employer_sector %in% radioButton_sectorInput)
     
   }) # END reactive df
@@ -65,6 +67,7 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     if (program_acronym == "MESM") {
     
       radioButton_sectorInput <- input$mesm_sector_types
+      
       
     } else if (program_acronym == "MEDS") {
 
@@ -79,7 +82,8 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), 
                                      aes(x = placement_satisfaction, 
                                          y = percent, 
-                                         text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count))) +
+                                         text = paste0(percent, "%"))) +
+                                         # text = paste0(placement_satisfaction, " (", percent, "%", ")", "\n", "Number of respondents: ", sector_count))) +
       geom_bar(position = "dodge", stat = "identity", width = 0.9, fill = "#003660") +
       coord_flip(ylim = c(0, 100)) +
       scale_x_discrete(limits = rev(levels(sector_satisfaction()$placement_satisfaction))) +
@@ -87,19 +91,14 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
       theme_minimal() +
       theme(panel.grid.minor = element_blank(),
             legend.position = "none") +
-      labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput), 
-           x = NULL, y = "Percent of Respondents", fill = NULL) 
+      labs(title = paste0(program_acronym, " Placement Satisfaction in ", radioButton_sectorInput, "\n", 
+                          "(", unique(sector_satisfaction()$sector_count), " respondents across all years)"), 
+           x = NULL, y = NULL, fill = NULL) 
     
     #....................then create plotly object...................
     plotly::ggplotly(sector_satisfaction_gg, tooltip = "text") |> 
       layout(title = list(font = list(size = 15))) |> 
       config(displayModeBar = FALSE)
-      # config(modeBarButtonsToRemove = list("pan", 
-      #                                      "select", 
-      #                                      "lasso2d", 
-      #                                      "autoScale2d", 
-      #                                      "hoverClosestCartesian", 
-      #                                      "hoverCompareCartesian"))
     
   }) # END renderPlotly
   
