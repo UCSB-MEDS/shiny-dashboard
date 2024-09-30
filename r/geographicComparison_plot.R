@@ -93,39 +93,80 @@ geographicComparison_plot <- function(input, data, program_acronym) {
   #..............render placement status plotly object.............
   plotly::renderPlotly({
     
-    #....................make ggplot object first....................
-    location_gg <- ggplot(data = placement_location(),
-                          aes(x = percent,
-                              y = fct_relevel(location, c("International",
-                                                          "Domestic (Out of State)",
-                                                          "Domestic (California)")),
-                              text = paste0(location, 
-                                            " (", percent, 
-                                            "%", ")", "\n", 
-                                            "Number of respondents: ", 
-                                            responses))) + 
-      geom_col(fill = "#003660") +
-      scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
-                         limits = c(0, 100),
-                         labels = scales::percent_format(accuracy = 1, scale = 1)) +
-      scale_y_discrete(labels = scales::label_wrap(20)) +
-      labs(title = str_wrap(paste0("Where ", program_acronym, 
-                          " alumni are working 6 months after graduating"), width = 38),
-           x = NULL, y = NULL, fill = NULL) +
-      theme_minimal() +
-      theme(panel.grid.minor = element_blank())
+    #........get values necessary for constructing plot title........
+    if (program_acronym == "MESM") {
+      
+      radioButton_yearInput <- input$mesm_placementLocation_year
+      selected_class_year <- radioButton_yearInput
+      placement_size <- mesm_placement_size
+      allYrs_size <- sum(placement_size$program_size)
+      allYrs_response <- sum(placement_size$responses)
+      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      
+    } else if (program_acronym == "MEDS") {
+      
+      radioButton_yearInput <- input$meds_placementLocation_year
+      selected_class_year <- radioButton_yearInput
+      placement_size <- meds_placement_size
+      allYrs_size <- sum(placement_size$program_size)
+      allYrs_response <- sum(placement_size$responses)
+      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      
+    }
+    
+    #...................if `All Years` is selected...................
+    if (radioButton_yearInput == "All Years") { 
+      
+      #....................make ggplot object first....................
+      location_gg <- ggplot(data = placement_location(),
+                            aes(x = percent,
+                                y = fct_relevel(location, c("International",
+                                                            "Domestic (Out of State)",
+                                                            "Domestic (California)")),
+                                text = paste0(percent, "%"))) +
+        geom_col(fill = "#003660") +
+        scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
+                           limits = c(0, 100),
+                           labels = scales::percent_format(accuracy = 1, scale = 1)) +
+        scale_y_discrete(labels = scales::label_wrap(20)) +
+        labs(title = paste0("MEDS Initial Job Placement Location", "\n",
+                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+             x = NULL, y = NULL, fill = NULL) +
+        theme_minimal() +
+        theme(panel.grid.minor = element_blank())
+      
+    } # END if `All Years` is selected
+    
+    #.................if any single year is selected.................
+    else {
+      
+      #....................make ggplot object first....................
+      location_gg <- ggplot(data = placement_location(),
+                            aes(x = percent,
+                                y = fct_relevel(location, c("International",
+                                                            "Domestic (Out of State)",
+                                                            "Domestic (California)")),
+                                text = paste0(percent, "%"))) +
+        geom_col(fill = "#003660") +
+        scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
+                           limits = c(0, 100),
+                           labels = scales::percent_format(accuracy = 1, scale = 1)) +
+        scale_y_discrete(labels = scales::label_wrap(20)) +
+        labs(title = paste0("MEDS Initial Job Placement Location", "\n", 
+                            "(", yr_response, "/", yr_size, " survey respondents)"),
+             x = NULL, y = NULL, fill = NULL) +
+        theme_minimal() +
+        theme(panel.grid.minor = element_blank())
+      
+    } # END if `any single year` is selected
     
     #..................then convert to plotly object.................
     plotly::ggplotly(location_gg, tooltip = "text") |> 
       layout(legend = list(orientation = "h", y = -0.1),
              title = list(font = list(size = 15.5))) |> 
       config(displayModeBar = FALSE)
-      # config(modeBarButtonsToRemove = list("pan", 
-      #                                      "select", 
-      #                                      "lasso2d", 
-      #                                      "autoScale2d", 
-      #                                      "hoverClosestCartesian", 
-      #                                      "hoverCompareCartesian")) # END ggplotly
     
   }) # END renderPlotly
   
