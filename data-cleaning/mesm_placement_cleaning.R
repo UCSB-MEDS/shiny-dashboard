@@ -120,7 +120,12 @@ mesm_placement_cleaned <- readRDS("data/Sam-latest-update-sep24/mesm_placement_2
     employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
     employer_sector %in% c("Foreign Government", "Other") ~ "Other",
     TRUE ~ employer_sector
-  )) 
+  )) |> 
+  
+  mutate(employer_sector = case_when(
+    employer_sector == "Corporate; Foreign Government; Tribal Government" ~ "Corporate",
+    TRUE ~ employer_sector
+  ))
   
 
  saveRDS(mesm_placement_cleaned, "data/mesm_placement_cleaned.rds")

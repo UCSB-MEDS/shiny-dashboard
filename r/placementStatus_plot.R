@@ -176,7 +176,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
                            limits = c(0, 100),
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
-        labs(title = paste0(program_acronym, " Placement Status 6 months after graduation", "\n",
+        labs(title = paste0(program_acronym, " Initial Job Placement Status 6 months after graduation", "\n",
                             "(", yr_response, "/", yr_size, " survey respondents)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +

@@ -22,14 +22,12 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       
       radioButton_yearInput <- input$mesm_salarySector_year
       placement_size <- mesm_placement_size
-      #response_num <- sum(mesm_placement_size$responses)
 
     } else if (program_acronym == "MEDS") {
       
       radioButton_yearInput <- input$meds_salarySector_year
       placement_size <- meds_placement_size
-      #response_num <- sum(meds_placement_size$responses)
-      
+
     }
     
     #...................if `All Years` is selected...................

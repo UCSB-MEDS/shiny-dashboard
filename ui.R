@@ -181,11 +181,11 @@ body <- dashboardBody(
                                                             plotly::plotlyOutput(outputId = "meds_sector_trends") |> 
                                                               withSpinner(color = "#003660", type = 1),
                                                             
-                                                            # extra space
-                                                            br(),
-                                                            
-                                                            # sector definitions caption ----
-                                                            includeMarkdown("text/sector_definitions.md"),
+                                                            # # extra space
+                                                            # br(),
+                                                            # 
+                                                            # # sector definitions caption ----
+                                                            # includeMarkdown("text/sector_definitions.md"),
                                                             
                                                             # year radioButtons input ----
                                                             meds_year_radioButtons(inputId = "meds_sector_trends_year")
@@ -402,12 +402,12 @@ body <- dashboardBody(
                                                           plotly::plotlyOutput(outputId = "mesm_sector_trends") |> 
                                                             withSpinner(color = "#003660", type = 1),
                                                           
-                                                          # extra space ----
-                                                          br(),
-                                                          
-                                                          # sector definitions caption ----
-                                                          includeMarkdown("text/sector_definitions.md"),
-                                                          
+                                                          # # extra space ----
+                                                          # br(),
+                                                          # 
+                                                          # # sector definitions caption ----
+                                                          # includeMarkdown("text/sector_definitions.md"),
+
                                                           # year radioButtons input ----
                                                           year_radioButtons(inputId = "mesm_sector_trends_year")
                                                           
