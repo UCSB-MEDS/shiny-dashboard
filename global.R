@@ -49,9 +49,9 @@ diversity_stats <- readRDS("data/diversity_stats.rds")
 # only visualize 3 most recent years ----
 # use `mesm_placement_cleaning.R` & `meds_placement_cleaning.R` to generate `*_placemente_cleaned.rds` files
 mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(!class_year %in% c(2019, 2020)) 
-mesm_status <- readRDS("data/Sam-latest-update-sep24/mesm_status_2019_2023.rds") |> filter(!class_year %in% c(2019, 2020)) 
+mesm_status <- readRDS("data/mesm_status_2019_2023.rds") |> filter(!class_year %in% c(2019, 2020)) 
 meds_placement <- readRDS("data/meds_placement_cleaned.rds")
-meds_status <- readRDS("data/Sam-latest-update-sep24/meds_status_2022_2023.rds") 
+meds_status <- readRDS("data/meds_status_2022_2023.rds") 
 
 #..................Spatial Geometries (for maps).................
 ug_geoms <- readRDS("data/ug_geoms.rds")
