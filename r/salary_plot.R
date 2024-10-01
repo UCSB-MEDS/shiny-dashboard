@@ -118,16 +118,16 @@ salary_plot <- function(input, data, program_acronym) {
                        y = class_year, yend = class_year), color = "black") +
       geom_point(aes(x = Low, 
                      y = class_year,
-                     text = paste0("$", round(Low, 2), "\n", responses, "/", program_size, " survey respondents")),
+                     text = paste0("Low: $",  round(Low, 2), "\n", responses, "/", program_size, " survey respondents")),
                  fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
       geom_point(aes(x = Median, 
                      y = class_year,
-                     text = paste0("$", round(Median, 2), "\n", responses, "/", program_size, " survey respondents")), 
+                     text = paste0("Median: $",  round(Median, 2), "\n", responses, "/", program_size, " survey respondents")), 
                  fill = "#047c91", color = "black", shape = 24, size = 7) + # pch = "|", cex = 5
       geom_point(aes(x = High, 
                      y = class_year,
-                     text = paste0("$", round(High, 2), "\n", responses, "/", program_size, " survey respondents")), 
-                 fill = "#003660", color = "black", shape = 21, size = 6) +
+                     text = paste0("High: $", round(High, 2), "\n", responses, "/", program_size, " survey respondents")), 
+                 fill = "#003660", color = "black", shape = 21, size = 7) +
       geom_point(aes(x = estimated_annual_compensation_us, y = class_year),
                  color = "gray50", alpha = 0.8, size = 1.5) +
       scale_x_continuous(labels = scales::dollar_format()) + 
@@ -158,12 +158,6 @@ salary_plot <- function(input, data, program_acronym) {
     plotly::ggplotly(salary_gg, tooltip = "text") |> 
       layout(title = list(font = list(size = 16))) |> 
       config(displayModeBar = FALSE)
-      # config(modeBarButtonsToRemove = list("pan", 
-      #                                      "select", 
-      #                                      "lasso2d", 
-      #                                      "autoScale2d", 
-      #                                      "hoverClosestCartesian", 
-      #                                      "hoverCompareCartesian")) # END ggplotly
     
   }) # END renderPlotly
   

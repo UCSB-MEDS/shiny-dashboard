@@ -180,15 +180,15 @@ salaryBySector_plot <- function(input, data, program_acronym) {
                          y = fct_reorder(employer_sector, Median), yend = employer_sector), color = "black") +
         geom_point(aes(x = Low, 
                        y = employer_sector,
-                       text = paste0("$", round(Low, 2))), 
+                       text = paste0("Low: $", round(Low, 2))), 
                    fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
         geom_point(aes(x = Median, 
                        y = employer_sector,
-                       text = paste0("$", round(Median, 2))), 
+                       text = paste0("Median: $", round(Median, 2))), 
                    fill = "#047c91", color = "black", shape = 24, size = 7) + 
         geom_point(aes(x = High, 
                        y = employer_sector,
-                       text = paste0("$", round(High, 2))), 
+                       text = paste0("High: $", round(High, 2))), 
                    fill = "#003660", color = "black", shape = 21, size = 6) +
         geom_point(aes(x = estimated_annual_compensation_us, y = employer_sector),
                    color = "gray50", alpha = 0.8, size = 1.5) +
@@ -209,15 +209,15 @@ salaryBySector_plot <- function(input, data, program_acronym) {
                          y = fct_reorder(employer_sector, Median), yend = employer_sector), color = "black") +
         geom_point(aes(x = Low, 
                        y = employer_sector,
-                       text = paste0("$", round(Low, 2))), 
+                       text = paste0("Low: $", round(Low, 2))), 
                    fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
         geom_point(aes(x = Median, 
                        y = employer_sector,
-                       text = paste0("$", round(Median, 2))), 
+                       text = paste0("Median: $", round(Median, 2))), 
                    fill = "#047c91", color = "black", shape = 24, size = 7) + 
         geom_point(aes(x = High, 
                        y = employer_sector,
-                       text = paste0("$", round(High, 2))), 
+                       text = paste0("High: $", round(High, 2))), 
                    fill = "#003660", color = "black", shape = 21, size = 6) +
         geom_point(aes(x = estimated_annual_compensation_us, y = employer_sector),
                    color = "gray50", alpha = 0.8, size = 1.5) +
