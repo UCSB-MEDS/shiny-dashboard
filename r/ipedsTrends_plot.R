@@ -53,8 +53,8 @@ ipedsTrends_plot <- function(input) {
     
     # convert to plotly
     plotly::ggplotly(race_trends_gg, tooltip = "text") %>% 
-      layout(legend = list(orientation = "h", y = -0.1)) %>% 
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+      layout(legend = list(orientation = "h", y = -0.1)) |> 
+      config(displayModeBar = FALSE)
     
   })  
   

@@ -189,12 +189,6 @@ placementStatus_plot <- function(input, data, program_acronym) {
       layout(legend = list(orientation = "h", y = -0.1),
              title = list(font = list(size = 16))) |> 
       config(displayModeBar = FALSE)
-      # config(modeBarButtonsToRemove = list("pan", 
-      #                                      "select", 
-      #                                      "lasso2d", 
-      #                                      "autoScale2d", 
-      #                                      "hoverClosestCartesian",
-      #                                      "hoverCompareCartesian")) # END ggplotly
       
   }) # END renderPlotly
   

@@ -96,8 +96,8 @@ ipedsBackground_plot <- function(input) {
     
     # convert to plotly
     plotly::ggplotly(background_gg, tooltip = "text") %>% 
-      layout(title = list(font = list(size = 15))) %>% 
-      config(modeBarButtonsToRemove = list("pan","select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+      layout(title = list(font = list(size = 15))) |> 
+      config(displayModeBar = FALSE)
     
   }) # END renderPlotly 
   
