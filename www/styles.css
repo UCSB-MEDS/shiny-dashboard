@@ -156,6 +156,11 @@ img.phd_hex {
   text-align: center;
 }
 
+/* italicize font */
+.italic {
+  font-style: italic;
+}
+
 /* styling large and bold font */
 .lrg-bold {
   font-size: medium;
