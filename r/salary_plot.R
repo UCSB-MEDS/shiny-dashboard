@@ -43,7 +43,14 @@ salary_plot <- function(input, data, program_acronym) {
     mutate(Low = min(estimated_annual_compensation_us)) |>
     mutate(High = max(estimated_annual_compensation_us)) |>
     left_join(placement_size, by = "class_year") |> 
-    mutate(class_year = as.factor(class_year))
+    pivot_longer(cols = c(Low, High, Median),
+                 names_to = "range", values_to = "values") |> 
+    mutate(class_year = as.factor(class_year)) |> 
+    mutate(range = fct_relevel(range, c("Low", "Median", "High")))
+  
+  salary_high_low <- salary |> 
+    group_by(class_year) |> 
+    summarize(min_val = min(values), max_val = max(values))
   
   #   #...................if `All Years` is selected...................
   #   if (radioButton_yearInput == "All Years") { 
@@ -111,29 +118,51 @@ salary_plot <- function(input, data, program_acronym) {
     #                     <span style='color:#047c91'>**Median**</span>,
     #                 and <span style='color:#003660'>**High**</span>
     #                    Salaries")
-    
-    
-    salary_gg <- ggplot(data = salary) +
-      geom_segment(aes(x = Low, xend = High,
+
+    salary_gg <- ggplot() +
+      geom_segment(data = salary_high_low, 
+                   aes(x = min_val, xend = max_val,
                        y = class_year, yend = class_year), color = "black") +
-      geom_point(aes(x = Low, 
-                     y = class_year,
-                     text = paste0("Low: $",  round(Low, 2), "\n", responses, "/", program_size, " survey respondents")),
-                 fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
-      geom_point(aes(x = Median, 
-                     y = class_year,
-                     text = paste0("Median: $",  round(Median, 2), "\n", responses, "/", program_size, " survey respondents")), 
-                 fill = "#047c91", color = "black", shape = 24, size = 7) + # pch = "|", cex = 5
-      geom_point(aes(x = High, 
-                     y = class_year,
-                     text = paste0("High: $", round(High, 2), "\n", responses, "/", program_size, " survey respondents")), 
-                 fill = "#003660", color = "black", shape = 21, size = 7) +
-      geom_point(aes(x = estimated_annual_compensation_us, y = class_year),
+      geom_point(data = salary, aes(x = values, y = class_year, 
+                     fill = range, shape = range, size = range,
+                     text = paste0(range, ": $",  round(values, 2), "\n", 
+                                   responses, "/", program_size, " survey respondents"))) +
+      geom_point(data = salary, aes(x = estimated_annual_compensation_us, y = class_year),
                  color = "gray50", alpha = 0.8, size = 1.5) +
+      scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
+      scale_shape_manual(values = c(21, 24, 21)) + 
+      scale_size_manual(values = c(6, 6, 6)) +
       scale_x_continuous(labels = scales::dollar_format()) + 
-      labs(title = paste0(program_acronym ," Initial Job Placement Salaries (Low, Median, High)"), 
-           x = NULL, y = NULL, fill = NULL) +
-      theme_minimal() 
+      labs(title = paste0(program_acronym ," Initial Job Placement Salaries"), 
+           x = NULL, y = NULL, fill = NULL, shape = NULL, size = NULL) +
+      theme_minimal() +
+      theme(
+        legend.position = "bottom",
+        legend.title = element_blank()
+      )
+    
+    ## OLD VERSION
+    # salary_gg <- ggplot(data = salary) +
+    #   geom_segment(aes(x = Low, xend = High,
+    #                    y = class_year, yend = class_year), color = "black") +
+    #   geom_point(aes(x = Low, 
+    #                  y = class_year,
+    #                  text = paste0("Low: $",  round(Low, 2), "\n", responses, "/", program_size, " survey respondents")),
+    #              fill = "#9CBEBD", color = "black", shape = 21, size = 6) +
+    #   geom_point(aes(x = Median, 
+    #                  y = class_year,
+    #                  text = paste0("Median: $",  round(Median, 2), "\n", responses, "/", program_size, " survey respondents")), 
+    #              fill = "#047c91", color = "black", shape = 24, size = 7) + # pch = "|", cex = 5
+    #   geom_point(aes(x = High, 
+    #                  y = class_year,
+    #                  text = paste0("High: $", round(High, 2), "\n", responses, "/", program_size, " survey respondents")), 
+    #              fill = "#003660", color = "black", shape = 21, size = 7) +
+    #   geom_point(aes(x = estimated_annual_compensation_us, y = class_year),
+    #              color = "gray50", alpha = 0.8, size = 1.5) +
+    #   scale_x_continuous(labels = scales::dollar_format()) + 
+    #   labs(title = paste0(program_acronym ," Initial Job Placement Salaries (Low, Median, High)"), 
+    #        x = NULL, y = NULL, fill = NULL) +
+    #   theme_minimal() 
     
     # salary_gg <- ggplot(data = salary(), 
     #                     aes(x = reorder(range, values), 
@@ -156,7 +185,8 @@ salary_plot <- function(input, data, program_acronym) {
     
     #..................then convert to plotly object.................
     plotly::ggplotly(salary_gg, tooltip = "text") |> 
-      layout(title = list(font = list(size = 16))) |> 
+      layout(title = list(font = list(size = 16)),
+             legend = list(orientation = "h", x = 0.3, y = -0.2)) |> 
       config(displayModeBar = FALSE)
     
   }) # END renderPlotly
