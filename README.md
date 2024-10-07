@@ -26,8 +26,6 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/student-data-explorer/) is a
     │   ├── ipedsCategories_plot.R 
     │   ├── ipedsTrends_plot.R 
     │   ├── jobSource_plot.R 
-    │   ├── meds_salary_plot.R 
-    │   ├── meds_salaryBySector_plot.R 
     │   ├── origins_map.R 
     │   ├── placementStatus_plot.R 
     │   ├── program_radioButtons.R 
@@ -83,4 +81,5 @@ This dashboard was first completed in September 2022 and was presented to the Br
 
 ## Application Updates
 * **February 2023, updates by [Sam Csik](https://github.com/samanthacsik):** refactored code base, added career data for MEDS and MESM graduating classes of 2022
-* **July 2024, updates by [Sam Csik](https://github.com/samanthacsik), [Jamie Montgomery](https://github.com/jamiecmontgomery), & [Kat Le](https://github.com/katleyq):** added career data for MEDS and MESM graduating classes of 2023, added admissions data for the 2023 entering classes, refactored code for maps (`{tmap}` > `{leaflet}` + removed data wrangling from server to improve loading speeds) 
+* **July 2024, updates by [Sam Csik](https://github.com/samanthacsik), [Jamie Montgomery](https://github.com/jamiecmontgomery), & [Kat Le](https://github.com/katleyq):** added career data for MEDS and MESM graduating classes of 2023, added admissions data for the 2023 entering classes, refactored code for maps (`{tmap}` > `{leaflet}` + removed data wrangling from server to improve loading speeds)
+* **July 2024, updates by [Sam Csik](https://github.com/samanthacsik):** remade nearly all career plots so that they are a bit easier to interpret, added a secondary table of job titles, and continued refactoring code (i.e. simplifying and removing unncessary code)
