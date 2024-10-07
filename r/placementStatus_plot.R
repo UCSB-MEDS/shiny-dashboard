@@ -1,7 +1,7 @@
-#' placementStatus_plot
+#' Creates the "Placement Status" plot, which indicates what type of employment students have secured 6 months post-grad (Career tab)
 #'
 #' @param input input
-#' @param data  df; either 'mesm_status' or 'meds_status' (see global.R)
+#' @param data  df; either 'mesm_status' or 'meds_status'
 #' @param program_acronym chr str; "MEDS" or "MESM"
 #'
 #' @return a renderPlotly object
@@ -10,57 +10,186 @@
 #' @examples
 placementStatus_plot <- function(input, data, program_acronym) {
   
-  # get appropriate *_status_size df based on user input ----
-  if (program_acronym == "MESM") {
-    
-    status_size <- mesm_status_size
-    
-  } else if (program_acronym == "MEDS") {
-    
-    status_size <- meds_status_size
-    
-  }
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##                               Data Wrangling                             ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  # wrangle data for placement status plot ----
+  #................wrangle reactive df of salaries.................
+  placement_status <- reactive({
+    
+    #........get appropriate `*_status_size df and input value.......
+    if (program_acronym == "MESM") {
+      
+      status_size <- mesm_status_size
+      radioButton_yearInput <- input$mesm_placementStatus_year
+      
+    } else if (program_acronym == "MEDS") {
+      
+      status_size <- meds_status_size
+      radioButton_yearInput <- input$meds_placementStatus_year
+      
+    }
+    
+    #..................list of items to filter out...................
+    filter_out <- c("PT Eco-E", "TA-ship", "Time Off", "Time-Off")
+    
+    #...................if `All Years` is selected...................
+    if (radioButton_yearInput == "All Years") { 
+      
+      # calculate total responses and program size across yrs ----
+      status_size_allYrs <- status_size |> 
+        summarize(
+          total_responses = sum(responses),
+          total_program_size = sum(program_size)
+        )
+      
+      # pull values ---
+      total_responses <- status_size_allYrs |> pull(total_responses)
+      total_program_size <- status_size_allYrs |> pull(total_program_size)
+      
+      data |>
+        select(class_year, member_status) |>
+        filter(!member_status %in% filter_out) |>
+        mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career",
+                               "FT Career-Sponsored") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status
+        )) |>
+        group_by(status) |>
+        summarize(count = n()) |>
+        mutate(responses = rep(total_responses),
+               program_size = rep(total_program_size)) |> 
+        mutate(percent = round((count / responses) * 100, 1))
+      
+    } # END if `All Years` is selected 
+    
+    #.................if any single year is selected.................
+    else {
+      
+      data |>
+        select(class_year, member_status) |>
+        filter(class_year == radioButton_yearInput) |> 
+        filter(!member_status %in% filter_out) |>
+        mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career",
+                               "FT Career-Sponsored") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status
+        )) |>
+        group_by(class_year, status) |>
+        summarize(count = n()) |>
+        left_join(status_size, by = "class_year") |>
+        mutate(percent = round((count / responses) * 100, 1))
+      
+    } # END if `any single year` is selected
+    
+  }) # END reactive df
   
-  filter_out <- c("PT Eco-E", "TA-ship", "Time Off", "Time-Off")
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##                                Visualization                             ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  status <- data %>% 
-    select(class_year, member_status) %>% 
-    filter(!member_status %in% filter_out) %>%
-    mutate(status = case_when(
-      member_status %in% c("FT Career", "FT Temporary Career", "PT Temporary Career", "FT Career-Sponsored", "PT Career", "FT Career-Sponsored") ~ "Career",
-      member_status %in% c("FT New Business", "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
-      member_status %in% c("Internship/Fellowship", "Continuing Internship", "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
-      TRUE ~ member_status
-    )) %>% 
-    group_by(class_year, status) %>% 
-    summarize(count = n()) %>% 
-    left_join(status_size, by = "class_year") %>% 
-    mutate(percent = round((count / responses) * 100, 1)) 
-  
-  # render plotly ----
+  #..............render placement status plotly object.............
   plotly::renderPlotly({
     
-    # create ggplot
-    status_gg <- ggplot(data = status, aes(x = class_year, y = percent, fill = reorder(status, percent),
-                                           text = paste0(status, " (", percent, "%", ")", "\n", "Number of respondents: ", responses))) +
-      geom_bar(position = "dodge", stat = "identity") +
-      scale_x_continuous(breaks = seq(min(status$class_year),  max(status$class_year))) +
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-      theme_minimal() +
-      theme(panel.grid.minor = element_blank()) +
-      labs(title = paste0(program_acronym, " Alumni Placement Status 6 months after graduation"),
-           x = NULL, y = "Percent of Respondents", fill = NULL) +
-      scale_fill_manual(values = c("Advanced Degree/Another Degree" = "#003660", "Career" = "#047c91", 
-                                   "Internship, Fellowship, or Short-term Project" = "#9cbebe", 
-                                   "Eco-Entrepreneurship/New Business" = "#6d7d33", "Searching or Time Off" = "#79a540")) # ucsb navy, ucsb aqua, ucsb mist, ucsb moss, bren leaf green
+    #........get values necessary for constructing plot title........
+    if (program_acronym == "MESM") {
+      
+      radioButton_yearInput <- input$mesm_placementStatus_year
+      selected_class_year <- radioButton_yearInput
+      placement_size <- mesm_placement_size
+      allYrs_size <- sum(placement_size$program_size)
+      allYrs_response <- sum(placement_size$responses)
+      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      
+    } else if (program_acronym == "MEDS") {
+      
+      radioButton_yearInput <- input$meds_placementStatus_year
+      selected_class_year <- radioButton_yearInput
+      placement_size <- meds_placement_size
+      allYrs_size <- sum(placement_size$program_size)
+      allYrs_response <- sum(placement_size$responses)
+      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      
+    } # END if `All Years` is selected
     
-    # convert to plotly
-    plotly::ggplotly(status_gg, tooltip = "text") %>%
+    #...................if `All Years` is selected...................
+    if (radioButton_yearInput == "All Years") { 
+      
+      #....................make ggplot object first....................
+      placement_status_gg <- ggplot(data = placement_status(),
+                                    aes(x = percent,
+                                        y = fct_relevel(status, c("Searching",
+                                                                  "Eco-Entrepreneurship/New Business",
+                                                                  "Advanced Degree/Another Degree",
+                                                                  "Internship, Fellowship, or Short-term Project",
+                                                                  "Career")), 
+                                        text = paste0(percent, "%"))) +
+                                        #text = paste0(status," (", percent, "%", ")"))) +
+        geom_col(fill = "#003660") +
+        scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
+                           limits = c(0, 100),
+                           labels = scales::percent_format(accuracy = 1, scale = 1)) +
+        scale_y_discrete(labels = scales::label_wrap(20)) +
+        labs(title = paste0(program_acronym, " Initial Job Placement Status 6 months after graduation", "\n",
+                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+             x = NULL, y = NULL, fill = NULL) +
+        theme_minimal() +
+        theme(panel.grid.minor = element_blank())
+      
+    }
+    
+    #.................if any single year is selected.................
+    else {
+      
+      #....................make ggplot object first....................
+      placement_status_gg <- ggplot(data = placement_status(),
+                                    aes(x = percent,
+                                        y = fct_relevel(status, c("Searching",
+                                                                  "Eco-Entrepreneurship/New Business",
+                                                                  "Advanced Degree/Another Degree",
+                                                                  "Internship, Fellowship, or Short-term Project",
+                                                                  "Career")),
+                                        text = paste0(percent, "%"))) +
+                                        #text = paste0(status, " (", percent, "%", ")"))) +
+        geom_col(fill = "#003660") +
+        scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
+                           limits = c(0, 100),
+                           labels = scales::percent_format(accuracy = 1, scale = 1)) +
+        scale_y_discrete(labels = scales::label_wrap(20)) +
+        labs(title = paste0(program_acronym, " Initial Job Placement Status 6 months after graduation", "\n",
+                            "(", yr_response, "/", yr_size, " survey respondents)"),
+             x = NULL, y = NULL, fill = NULL) +
+        theme_minimal() +
+        theme(panel.grid.minor = element_blank())
+      
+    } # END if `any single year` is selected
+    
+    #..................then convert to plotly object.................
+    plotly::ggplotly(placement_status_gg, tooltip = "text") |> 
       layout(legend = list(orientation = "h", y = -0.1),
-             title = list(font = list(size = 16))) %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian","hoverCompareCartesian"))
-  }) 
+             title = list(font = list(size = 16))) |> 
+      config(displayModeBar = FALSE)
+      
+  }) # END renderPlotly
   
-}
+} # END fxn

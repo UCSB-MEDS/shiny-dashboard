@@ -76,8 +76,8 @@ race_plot <- function(df, prog_input){
   # plotly
   plotly::ggplotly(ipeds_gg, 
                    source = "race_plot",
-                   tooltip = "text") %>% 
-    config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>% 
+                   tooltip = "text") |> 
+    config(displayModeBar = FALSE) |> 
     # had to add event_register to register source "race_plot"
     event_register("plotly_click")
   

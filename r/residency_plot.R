@@ -47,8 +47,8 @@ residency_plot <- function(input) {
       facet_wrap(~objective1, ncol = 1)
     
     # convert to plotly
-    plotly::ggplotly(residency_all, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+    plotly::ggplotly(residency_all, tooltip = "text") |> 
+      config(displayModeBar = FALSE)
   })
   
 }

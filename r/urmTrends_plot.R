@@ -138,8 +138,8 @@ urmTrends_plot <- function(input) {
            y = NULL, x = NULL)
     
     # convert to plotly
-    plotly::ggplotly(urm_trends_gg, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+    plotly::ggplotly(urm_trends_gg, tooltip = "text") |> 
+      config(displayModeBar = FALSE)
     
   })
   

@@ -86,8 +86,8 @@ ipedsCategories_plot <- function(input) {
            x = NULL, y = NULL)
     
     # convert to plotly
-    plotly::ggplotly(ipeds_gg, source = "race_plot", tooltip = "text") %>% 
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>% 
+    plotly::ggplotly(ipeds_gg, source = "race_plot", tooltip = "text") |> 
+      config(displayModeBar = FALSE) |> 
       # had to add event_register to register source "race_plot"
       event_register("plotly_click")
     

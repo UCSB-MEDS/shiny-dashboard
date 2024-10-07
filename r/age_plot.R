@@ -63,8 +63,8 @@ age_plot <- function(input){
     
     # conver to plotly
     plotly::ggplotly(age_gg, tooltip = "text") %>%
-      layout(title = list(font = list(size = 16))) %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+      layout(title = list(font = list(size = 16))) |> 
+      config(displayModeBar = FALSE)
     
   })
   

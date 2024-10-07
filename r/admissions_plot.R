@@ -43,8 +43,8 @@ admissions_plot <- function(input) {
            x = NULL, y = NULL, fill = NULL)
     
     # convert to plotly (2017 - curr_year admissions) 
-    plotly::ggplotly(admissions_all_plot, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+    plotly::ggplotly(admissions_all_plot, tooltip = "text") |> 
+      config(displayModeBar = FALSE)
     
   }) 
   

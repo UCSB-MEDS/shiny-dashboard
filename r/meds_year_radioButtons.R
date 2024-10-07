@@ -1,4 +1,4 @@
-#' meds_year_radioButtons
+#' Creates MEDS year selection radioButtons widget; ONCE WE HAVE 3 YEARS OF MEDS CAREER DATA, SWITCH TO USING `year_radioButtons()`
 #'
 #' @param inputId inputId
 #'

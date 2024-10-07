@@ -6,7 +6,7 @@ library(tidyr)
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
-mesm_placement_cleaned <- readRDS("data/mesm_placement_19-23.rds") |> 
+mesm_placement_cleaned <- readRDS("data/Sam-latest-update-sep24/mesm_placement_2019_2023.rds") |> 
   
   # ---- DATA ENTERED INCORRECTLY BY STUDENTS ----
 
@@ -114,11 +114,18 @@ mesm_placement_cleaned <- readRDS("data/mesm_placement_19-23.rds") |>
   # ---- CREATE SECTOR_TYPE COLUMN ----
 
   # SC NOTE 2023-02-16: taken from salaryBySector_plot.R & meds_salaryBySector_plot.R
+  # SC NOTE 2024-09-26: a 2023 MESM grad had three employer sectors listed ("Corporate; Foreign Government; Tribal Government") > I've assigned that person's sector_type as "Private"
   mutate(sector_type = case_when(
-    employer_sector %in% c("Consulting", "Corporate") ~ "Private",
+    employer_sector %in% c("Consulting", "Corporate", "Corporate; Foreign Government; Tribal Government") ~ "Private",
     employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
     employer_sector %in% c("Foreign Government", "Other") ~ "Other",
     TRUE ~ employer_sector
-  )) 
+  )) |> 
+  
+  mutate(employer_sector = case_when(
+    employer_sector == "Corporate; Foreign Government; Tribal Government" ~ "Corporate",
+    TRUE ~ employer_sector
+  ))
+  
 
  saveRDS(mesm_placement_cleaned, "data/mesm_placement_cleaned.rds")

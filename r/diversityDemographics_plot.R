@@ -48,8 +48,8 @@ diversityDemographics_plot <- function(input) {
            x = NULL, y = NULL)
     
     # convert to plotly (2017 - curr_year)
-    plotly::ggplotly(overall_demo, tooltip = "text") %>%
-      config(modeBarButtonsToRemove = list("pan", "select", "lasso2d", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian"))
+    plotly::ggplotly(overall_demo, tooltip = "text") |> 
+      config(displayModeBar = FALSE)
     
   }) 
   
