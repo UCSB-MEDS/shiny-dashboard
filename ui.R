@@ -105,30 +105,6 @@ body <- dashboardBody(
                                    # START right-hand column ----
                                    column(width = 8,
                                           
-                                          # # START career survey stats box fluidRow ----
-                                          # fluidRow(
-                                          #   
-                                          #   # START career survey stats box ----
-                                          #   box(width = 12,
-                                          #       title = "Career Survey Stats",
-                                          #       solidHeader = TRUE, status = "success",
-                                          #       
-                                          #       # START first year col ----
-                                          #       column(width = 6,
-                                          #              tags$h4("2022"),
-                                          #              ), # END first year col ----
-                                          # 
-                                          #       # START second year col ----
-                                          #       column(width = 6,
-                                          #              tags$h4("2023")) # END second year col ----
-                                          # 
-                                          #       ) # END career survey stats box
-                                          #   
-                                          # ), # END career survey stats box fluidRow
-                                          # 
-                                          # # START meds career data viz tabBox fluidRow ----
-                                          # fluidRow(
-                                            
                                             # START meds career data visualizations tabBox ----
                                             tabBox(width = 12,
                                                    
@@ -140,10 +116,6 @@ body <- dashboardBody(
                                                             
                                                             # caption ----
                                                             tags$p(tags$em("Data includes Full-Time Career positions only."))
-                                                            
-                                                            # # year radioButtons input ----
-                                                            # meds_year_radioButtons(inputId = "meds_salary_year")
-                                                            
                                                             
                                                    ), # END (TAB 1) meds salary tabPanel 
                                                    
@@ -180,12 +152,6 @@ body <- dashboardBody(
                                                             # meds sector trends plotly output ----
                                                             plotly::plotlyOutput(outputId = "meds_sector_trends") |> 
                                                               withSpinner(color = "#003660", type = 1),
-                                                            
-                                                            # # extra space
-                                                            # br(),
-                                                            # 
-                                                            # # sector definitions caption ----
-                                                            # includeMarkdown("text/sector_definitions.md"),
                                                             
                                                             # year radioButtons input ----
                                                             meds_year_radioButtons(inputId = "meds_sector_trends_year")
