@@ -203,9 +203,9 @@ salaryBySector_plot <- function(input, data, program_acronym) {
         geom_point(data = salary_sector(), 
                    aes(x = estimated_annual_compensation_us, y = employer_sector),
                    color = "gray50", alpha = 0.8, size = 1.5) +
-        scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
-        scale_shape_manual(values = c(21, 24, 21)) + 
-        scale_size_manual(values = c(6, 6, 6)) +
+        scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) +
+        scale_shape_manual(values = c(21, 3, 21)) + 
+        scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) + 
         labs(title = paste0(program_acronym ," Initial Job Placement Salaries by Sector", "\n",
                             "(", allYrs_response, "/", allYrs_size, " survey respondents)"), 
@@ -232,9 +232,9 @@ salaryBySector_plot <- function(input, data, program_acronym) {
         geom_point(data = salary_sector(), 
                    aes(x = estimated_annual_compensation_us, y = employer_sector),
                    color = "gray50", alpha = 0.8, size = 1.5) +
-        scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
-        scale_shape_manual(values = c(21, 24, 21)) +
-        scale_size_manual(values = c(6, 6, 6)) +
+        scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) +
+        scale_shape_manual(values = c(21, 3, 21)) +
+        scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) +
         labs(title = paste0(program_acronym ," Initial Job Placement Salaries by Sector", "\n",
                             "(", yr_response, "/", yr_size, " survey respondents)"),

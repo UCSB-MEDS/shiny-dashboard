@@ -67,9 +67,9 @@ salary_plot <- function(input, data, program_acronym) {
                                    responses, "/", program_size, " survey respondents"))) +
       geom_point(data = salary, aes(x = estimated_annual_compensation_us, y = class_year),
                  color = "gray50", alpha = 0.8, size = 1.5) +
-      scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
-      scale_shape_manual(values = c(21, 24, 21)) + 
-      scale_size_manual(values = c(6, 6, 6)) +
+      scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) + # "#047c91"
+      scale_shape_manual(values = c(21, 3, 21)) + # triangle: 24
+      scale_size_manual(values = c(6, 5, 6)) +
       scale_x_continuous(labels = scales::dollar_format()) + 
       labs(title = paste0(program_acronym ," Initial Job Placement Salaries"), 
            x = NULL, y = NULL, fill = NULL, shape = NULL, size = NULL) +

@@ -226,9 +226,9 @@ salarySpecialization_plot <- function(input, data) {
         geom_point(data = salary_specialization(), 
                    aes(x = estimated_annual_compensation_us, y = mesm_program_enrollment_specializations),
                    color = "gray50", alpha = 0.8, size = 1.5) +
-        scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
-        scale_shape_manual(values = c(21, 24, 21)) +
-        scale_size_manual(values = c(6, 6, 6)) +
+        scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) +
+        scale_shape_manual(values = c(21, 3, 21)) +
+        scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) +
         labs(title = paste0("MESM Salaries by Specialization", "\n", 
                             "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
@@ -254,9 +254,9 @@ salarySpecialization_plot <- function(input, data) {
         geom_point(data = salary_specialization(), 
                    aes(x = estimated_annual_compensation_us, y = mesm_program_enrollment_specializations),
                    color = "gray50", alpha = 0.8, size = 1.5) +
-        scale_fill_manual(values = c("#9CBEBD", "#047c91", "#003660")) +
-        scale_shape_manual(values = c(21, 24, 21)) +
-        scale_size_manual(values = c(6, 6, 6)) +
+        scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) +
+        scale_shape_manual(values = c(21, 3, 21)) +
+        scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) +
         labs(title = paste0("MESM Salaries by Specialization", "\n", 
                             "(", yr_response, "/", yr_size, " survey respondents)"),
