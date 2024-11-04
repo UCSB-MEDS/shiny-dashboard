@@ -222,6 +222,9 @@ body <- dashboardBody(
                                                    plotly::plotlyOutput(outputId = "meds_geogComparison_plot") |> 
                                                      withSpinner(color = "#003660", type = 1),
                                                    
+                                                   # note about percentages that don't add to 100% ----
+                                                   includeMarkdown("text/geog_comparison_perc.md"),
+                                                   
                                                    # year radioButtons input ----
                                                    meds_year_radioButtons(inputId = "meds_placementLocation_year")
                                                    
