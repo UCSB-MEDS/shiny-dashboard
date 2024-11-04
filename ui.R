@@ -542,7 +542,7 @@ body <- dashboardBody(
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       program_radioButtons(inputId = "diversity_stats_all", selected = "MESM"),
+                                       program_radioButtons(inputId = "diversity_stats_all", selected = "MEDS"),
                                        
                                        # urm definition caption ----
                                        includeMarkdown("text/urm_definition.md")
@@ -557,7 +557,7 @@ body <- dashboardBody(
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       program_radioButtons(inputId = "admit_stats_all", selected = "MESM")
+                                       program_radioButtons(inputId = "admit_stats_all", selected = "MEDS")
                                        
                               ), # END (TAB 2) admissions tabPanel
                               
@@ -578,7 +578,7 @@ body <- dashboardBody(
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ---
-                                       program_radioButtons(inputId = "age_prog", selected = "MESM")
+                                       program_radioButtons(inputId = "age_prog", selected = "MEDS")
                                        
                               ), # END (TAB 4) age tabPanel
                               

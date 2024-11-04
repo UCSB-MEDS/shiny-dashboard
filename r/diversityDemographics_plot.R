@@ -10,6 +10,19 @@ diversityDemographics_plot <- function(input) {
   
   # render plotly ----
   renderPlotly({
+    
+    if (input$diversity_stats_all == "MESM") {
+      year_str <- "2020-2024"
+    } 
+    
+    else if (input$diversity_stats_all == "MEDS") {
+      year_str <- "2021-2024"
+    } 
+    
+    else if (input$diversity_stats_all == "PhD") {
+      year_str <- "2020-2024"
+    } 
+    
     overall_demo <- ggplot(data = diversity_overall(), 
                            aes(x = demographic, y = percent, fill = demographic,
                                text = paste0(demographic, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
@@ -44,7 +57,7 @@ diversityDemographics_plot <- function(input) {
         legend.position = "none",
         panel.grid.minor = element_blank()
         ) +
-      labs(title = paste0(input$diversity_stats_all, " Diversity Demographics"), 
+      labs(title = paste0(input$diversity_stats_all, " Diversity Demographics (", year_str, ")"), 
            x = NULL, y = NULL)
     
     # convert to plotly (2017 - curr_year)
