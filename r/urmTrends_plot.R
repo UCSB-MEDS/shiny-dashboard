@@ -130,7 +130,7 @@ urmTrends_plot <- function(input) {
       theme_minimal() +
       theme(legend.position = "none",
             panel.grid.minor = element_blank()) +
-      coord_cartesian(xlim = c(2019, 2023), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
+      coord_cartesian(xlim = c(2020, 2024), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
       # scale_x_continuous(breaks = seq(max(urm_trends_df()$app_submission_year),
       #                                 min(urm_trends_df()$app_submission_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +

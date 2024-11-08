@@ -22,7 +22,7 @@ residency_plot <- function(input) {
     group_by(app_submission_year, objective1, residency) %>% 
     summarize(count = n()) %>%
     left_join(program_size, by = c("app_submission_year", "objective1")) %>% 
-    mutate(percent = round((count / size) * 100)) %>% 
+    mutate(percent = round((count / size) * 100, 1)) %>% 
     replace_na(list(residency = "unknown")) |> 
     mutate(residency = factor(residency, levels = c("ca resident", "non resident", "international", "unknown"),
                               labels = c("CA Resident", "Nonresident", "International", "Unknown")))  
