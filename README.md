@@ -65,8 +65,7 @@ The [Data Explorer](https://shinyapps.bren.ucsb.edu/student-data-explorer/) is a
     ├── global.R                      # data frames, variables, functions, and libraries that are used repeatedly in app
     ├── server.R                      # code needed to build visuals and overall app
     ├── ui.R                          # layout and appearance of app
-    ├── shiny-dashboard.Rproj
-    ├── .DS_store                     
+    ├── shiny-dashboard.Rproj                 
     ├── .gitignore                    # files to ignore when committing project  
     └── README.md
 
