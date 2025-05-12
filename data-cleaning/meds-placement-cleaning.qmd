@@ -1,0 +1,82 @@
+---
+title: "Cleaning MEDS initial career placement data"
+format: html
+---
+
+0. SETUP
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+library(tidyverse)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                         create place names vectors                       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+us_names <- c("USA", "US", "Usa")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                 import pre-processed initial placement data              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+meds_placement <- readRDS(here::here("data", "meds_placement_2022_2024.rds")) 
+```
+
+1. CLEAN DATA
+
+```{r}
+meds_placement_cleaned <- meds_placement |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            remove repeat alumni                          ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# alumni may be repeated if they filled out the job placement survey more than once when getting a new job
+# keep the row that describes their very first job placement 
+
+  filter(full_name != "Charles Wesley Disbrow Hendrickson" | employer_account_name != "Chaminade University of Honolulu") |> # 2022
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                          fix state abbreviations                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# `work_location_state` column should contain state abbreviations (all capitalized)
+
+  mutate(work_location_state = ifelse(test = !is.na(usdata::state2abbr(work_location_state)),
+                                      yes = usdata::state2abbr(work_location_state),
+                                      no = work_location_state)) |> 
+  mutate(work_location_state = toupper(work_location_state)) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              fix country names                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# country names should be spelled out fully (e.g. United States rather than US or USA)
+
+  mutate(work_location_country = case_when(
+    work_location_country %in% us_names ~ "United States",
+    work_location_country == "Korea (the Republic of)" ~ "South Korea",
+    work_location_country == "United Kingdom of Great Britain and Northern Ireland (the)" ~ "United Kingdom",
+    TRUE ~ work_location_country
+  )) |> 
+ 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          create `location` column for in/out state & international       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(location = case_when(
+    work_location_state == "CA" ~ "Domestic (California)",
+    work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
+    work_location_country != "United States" ~ "International"
+  ))
+```
+
+2. WRITE TO FILE
+
+```{r}
+write_rds(meds_placement_cleaned, here::here("data", "meds_placement_cleaned.rds")) 
+```
+

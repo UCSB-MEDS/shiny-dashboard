@@ -1,12 +1,16 @@
 # SC NOTE 2023-02-16: applying same cleaning workflow to both mesm_placement & meds_placement so I don't miss anything
+# SC NOTE 2024-02-20: Sam & Miya discussed the definition of 'placement' as the date of offer acceptance (offer received would be the earliest date; from there, students/alumni could go through negotiations; start date could be delayed into the future)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 library(tidyverse)
-library(tidyr)
 
 us_names <- c("USA", "US", "Usa")
 ca_names <- c("Ca", "CALIFORNIA", "California")
 
-mesm_placement_cleaned <- readRDS("data/Sam-latest-update-sep24/mesm_placement_2019_2023.rds") |> 
+meds_placement_cleaned <- readRDS("data/meds_placement_22-23.rds") |> 
   
   # ---- DATA ENTERED INCORRECTLY BY STUDENTS ----
 
@@ -15,13 +19,13 @@ mesm_placement_cleaned <- readRDS("data/Sam-latest-update-sep24/mesm_placement_2
     work_location_state == "United States" & full_name == "Mariano Viz" ~ "CA",
     TRUE ~ work_location_state
   )) |> 
-  # SC NOTE 2023-02-16: updated as requested by KB (data entered incorrectly by student; KB & team may fix this on their end in the future)
-  mutate(work_location_country = case_when(
-    work_location_country == "Remote" & full_name == "Karla Paulina Garibay Garcia" ~ "Remote (International Location)",
-    work_location_country == "california" & full_name == "Mariano Viz" ~ "United States",
-    work_location_country == "Remote" & full_name == "Elmera Azadpour" ~ "United States",
-    TRUE ~ work_location_country
-  )) |> 
+    # SC NOTE 2023-02-16: updated as requested by KB (data entered incorrectly by student; KB & team may fix this on their end in the future)
+    mutate(work_location_country = case_when(
+      work_location_country == "Remote" & full_name == "Karla Paulina Garibay Garcia" ~ "Remote (International Location)",
+      work_location_country == "california" & full_name == "Mariano Viz" ~ "United States",
+      work_location_country == "Remote" & full_name == "Elmera Azadpour" ~ "United States",
+      TRUE ~ work_location_country
+    )) |> 
   
   # ---- COMPANY NAME CHANGE ----
 
@@ -101,31 +105,24 @@ mesm_placement_cleaned <- readRDS("data/Sam-latest-update-sep24/mesm_placement_2
     work_location_state == "Seoul" ~ 37.532600,
     TRUE ~ NA_real_
   ))  |> 
-  mutate(long = case_when(
-    work_location_state == "Ontario" ~ -85.3232,
-    work_location_state == "Galapagos" ~ -90.9656,
-    work_location_state == "Tahiti" ~ -149.4260,
-    work_location_state == "Michoacan" ~ -101.7068,
-    work_location_state == "North Holland" ~ 4.7885,
-    work_location_state == "Seoul" ~ 127.024612,
-    TRUE ~ NA_real_
-  )) |> 
-  
+    mutate(long = case_when(
+      work_location_state == "Ontario" ~ -85.3232,
+      work_location_state == "Galapagos" ~ -90.9656,
+      work_location_state == "Tahiti" ~ -149.4260,
+      work_location_state == "Michoacan" ~ -101.7068,
+      work_location_state == "North Holland" ~ 4.7885,
+      work_location_state == "Seoul" ~ 127.024612,
+      TRUE ~ NA_real_
+    )) |> 
+
   # ---- CREATE SECTOR_TYPE COLUMN ----
 
   # SC NOTE 2023-02-16: taken from salaryBySector_plot.R & meds_salaryBySector_plot.R
-  # SC NOTE 2024-09-26: a 2023 MESM grad had three employer sectors listed ("Corporate; Foreign Government; Tribal Government") > I've assigned that person's sector_type as "Private"
   mutate(sector_type = case_when(
-    employer_sector %in% c("Consulting", "Corporate", "Corporate; Foreign Government; Tribal Government") ~ "Private",
+    employer_sector %in% c("Consulting", "Corporate") ~ "Private",
     employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
     employer_sector %in% c("Foreign Government", "Other") ~ "Other",
     TRUE ~ employer_sector
-  )) |> 
-  
-  mutate(employer_sector = case_when(
-    employer_sector == "Corporate; Foreign Government; Tribal Government" ~ "Corporate",
-    TRUE ~ employer_sector
-  ))
-  
+  )) 
 
- saveRDS(mesm_placement_cleaned, "data/mesm_placement_cleaned.rds")
+ saveRDS(meds_placement_cleaned, "data/meds_placement_cleaned.rds")
