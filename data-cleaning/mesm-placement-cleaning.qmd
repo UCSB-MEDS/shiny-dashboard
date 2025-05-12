@@ -136,25 +136,6 @@ mesm_placement_cleaned <- mesm_placement |>
     TRUE ~ work_location_city
   )) |> 
 
-  
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##            add missing state abbrv when city is listed (round 2)         ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# some city names have been corrected and we can now add corresponding state names to the `work_location_state` col
-
-  # mutate(work_location_state = case_when(
-  #   work_location_city == "Lansing" ~ "MI",
-  #   work_location_city == "New York" ~ "NY",
-  #   TRUE ~ work_location_state
-  # )) |> 
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                       replace missing values with NA                     ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  #mutate(work_location_state = na_if(work_location_city, "N/A")) |> 
-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                              fix country names                           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
