@@ -1,0 +1,36 @@
+---
+title: "Get geometries"
+format: html
+---
+
+State and country geometries are joined with career placement and admissions data to build the heat maps which appear on the Bren Student Data Explorer. Here, we download and save copies of these geometry data.
+
+1. DOWNLOAD GEOMETRIES
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                   get US state geometries using {tigris}                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+us_state_geoms <- tigris::states(year = 2022) |> # SC NOTE 2025-05-13; updated year from 2018 to 2022
+  select(GEOID, STUSPS, NAME, geometry) %>%
+  rename(fips = GEOID,
+         state_abbrev = STUSPS,
+         state = NAME) 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            get international country geometries using {giscoR}           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+world_geoms <- giscoR::gisco_get_countries(year = "2020", epsg = "4326", spatialtype = "RG")
+```
+
+2. WRITE TO FILE
+
+- save to ~/raw-data/
+
+```{r}
+write_rds(us_state_geoms, here::here("raw-data", "us_state_geoms.rds"))
+write_rds(world_geoms, here::here("raw-data", "world_geoms.rds"))
+```
+

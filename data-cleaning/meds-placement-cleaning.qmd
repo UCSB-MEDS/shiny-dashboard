@@ -22,7 +22,8 @@ us_names <- c("USA", "US", "Usa")
 ##                 import pre-processed initial placement data              ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-meds_placement <- readRDS(here::here("data", "meds_placement_2022_2024.rds")) 
+meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2024.rds")) 
+meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
 ```
 
 1. CLEAN DATA
@@ -77,6 +78,7 @@ meds_placement_cleaned <- meds_placement |>
 2. WRITE TO FILE
 
 ```{r}
-write_rds(meds_placement_cleaned, here::here("data", "meds_placement_cleaned.rds")) 
+write_rds(meds_placement_cleaned, here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) 
+write_rds(meds_status, here::here("bren-student-data-explorer", "data", "meds_status_cleaned.rds")) # no actual cleaning required; just renamed and saved to bren-student-data-explorer/data/
 ```
 

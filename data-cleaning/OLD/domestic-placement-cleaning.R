@@ -10,9 +10,9 @@ library(sf)
 ##                                import data                               ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mesm_placement <- readRDS(here::here("data", "mesm_placement_cleaned.rds")) |> filter(!class_year %in% c(2019, 2020))
-meds_placement <- readRDS("data/meds_placement_cleaned.rds")
-us_state_geoms <- readRDS(here::here("data", "us_state_geoms.rds"))
+mesm_placement <- readRDS(here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) |> filter(year %in% c(2022:2024))
+meds_placement <- readRDS(here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) |> filter(year %in% c(2022:2024))
+us_state_geoms <- readRDS(here::here("bren-student-data-explorer", "data", "us_state_geoms.rds"))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                    wrangle MESM domestic placement data                  ----

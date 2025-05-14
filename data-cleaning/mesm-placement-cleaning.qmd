@@ -37,7 +37,8 @@ international_cities <- c("Ontario", "Tautira", "Michoacan", "Galapagos", "Bonai
 ##                 import pre-processed initial placement data              ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mesm_placement <- readRDS(here::here("data", "mesm_placement_2019_2024.rds")) 
+mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
+mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
 ```
 
 1. CLEAN DATA
@@ -165,5 +166,6 @@ mesm_placement_cleaned <- mesm_placement |>
 2. WRITE TO FILE
 
 ```{r}
-write_rds(mesm_placement_cleaned, here::here("data", "mesm_placement_cleaned.rds")) 
+write_rds(mesm_placement_cleaned, here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) 
+write_rds(mesm_status, here::here("bren-student-data-explorer", "data", "mesm_status_cleaned.rds")) # no actual cleaning required; just renamed and saved to bren-student-data-explorer/data/
 ```

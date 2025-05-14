@@ -1,0 +1,261 @@
+---
+title: "Cleaning Bren admissions data"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+####### app_submission_year == entering class of that year; UPDATED NAME TO `admission_year`; BE SURE TO CHANGE ALL INSTANCES OF app_submission_year > admission_year ####### 
+
+0. SETUP
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+librarian::shelf(
+  tidyverse,
+  lubridate,
+  here,
+  janitor,
+  googlesheets4, # read in data
+  anytime, # convert from UNIX timestamp to datetime
+  patchwork,
+  naniar, # replace NULL with NA
+  plotly, # interactive plots
+  sf,
+  tmap, # maps (static and interactive)
+  tigris, # get state geoms
+  giscoR # get world country polygons
+)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##      import pre-processed application / admissions data & geometries     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+apps <- readRDS(here::here("raw-data", "apps_2017_2024.rds"))
+us_state_geoms <- readRDS(here::here("raw-data", "us_state_geoms.rds"))
+world_geoms <- readRDS(here::here("raw-data", "world_geoms.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       create vectors of student melt                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# it is not uncommon to lose students a handful of students from each incoming class 
+# this often occurs before school starts, but in rare instances, early during the academic year
+# we remove these students, who SIR'ed "yes", from the enrolled student data 
+# we do this using their `application_id` (no names exist in this data set)
+# vectors below are named in accordance with the graduating class year (e.g. `meds2021` includes application_ids for students who would have been a part of the MEDS graduating class of 2021)
+
+#..............................MEDS..............................
+meds2021 <- c(160140)
+meds2024 <- c(190507)
+meds2025 <- c(208616)
+
+#..............................MESM..............................
+mesm2022 <- c(143951, 143945, 140680, 140574, 143794, 
+              136884, 133618, 132166, 130702, 137245, 
+              141594, 130556, 136676, 143998, 141586, 
+              143994, 133438, 143759, 137352)
+mesm2023 <- c(144862, 144862, 144862, 144862, 144862, 
+              144862, 144862, 144862, 144862, 144862, 
+              144862, 144862, 144862, 144862)
+mesm2024 <- c(171607, 172159, 179182, 167788)
+mesm2025 <- c(190166, 191659, 186427, 192264, 188159,
+              197313, 193494, 187308, 190794, 199766,
+              198302, 186177, 187356, 198000, 189904,
+              189764)
+mesm2026 <- c(202412, 203729, 201351, 201643, 204194,
+              206266, 202508, 202610, 214935, 214519,
+              209616, 211041, 198299, 214519,
+              207015) # 207015 deferred a year
+```
+
+1. CLEAN `apps`
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##------------------------ CLEAN / WRANGLE ALL ADMITS---------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+apps_clean <- apps |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                    convert date values to date objects                   ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  # convert app `submitted_date` to a date object and create a column for just the date ----
+  mutate(submitted_datetime = as_datetime(submitted_date),
+         submission_date = as_date(submitted_datetime)) |> 
+  select(-submitted_date) |> 
+  
+  # convert dob to date object ----
+  mutate(dob = as_date(dob)) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##        create `app_submission_year` col based on `submission_date`       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# determine admission year based on the application submission date
+# apps are typically due in Dec, but in rare cases, applicants may be allowed to submit late (as late as March)
+
+  mutate(admission_year = case_when(
+    
+    # 2017 apps: 2016-09-01 to 2017-03-31 ----
+    year(submission_date) == 2016 & month(submission_date) >= 9 ~ 2017,
+    year(submission_date) == 2017 & month(submission_date) <= 3 ~ 2017,
+    
+    # 2018 apps: 2017-09-01 to 2018-03-31 ----
+    year(submission_date) == 2017 & month(submission_date) >= 9 ~ 2018,
+    year(submission_date) == 2018 & month(submission_date) <= 3 ~ 2018,
+    
+    # 2019 apps: 2018-09-01 to 2019-03-31 ----
+    year(submission_date) == 2018 & month(submission_date) >= 9 ~ 2019,
+    year(submission_date) == 2019 & month(submission_date) <= 3 ~ 2019,
+    
+    # 2020 apps: 2019-09-01 to 2020-03-31 ----
+    year(submission_date) == 2019 & month(submission_date) >= 9 ~ 2020,
+    year(submission_date) == 2020 & month(submission_date) <= 3 ~ 2020,
+    
+    # 2021 apps: 2020-09-01 to 2021-03-31 ----
+    year(submission_date) == 2020 & month(submission_date) >= 9 ~ 2021,
+    year(submission_date) == 2021 & month(submission_date) <= 3 ~ 2021,
+    
+    # 2022 apps: 2021-09-01 to 2022-03-31 ----
+    year(submission_date) == 2021 & month(submission_date) >= 9 ~ 2022,
+    year(submission_date) == 2022 & month(submission_date) <= 3 ~ 2022,
+    
+    # 2023 apps: 2022-09-01 to 2023-03-31 ----
+    year(submission_date) == 2022 & month(submission_date) >= 9 ~ 2023,
+    year(submission_date) == 2023 & month(submission_date) <= 3 ~ 2023, 
+    
+    # 2024 apps: 2022-09-01 to 2023-03-31 ----
+    year(submission_date) == 2023 & month(submission_date) >= 9 ~ 2024,
+    year(submission_date) == 2024 & month(submission_date) <= 3 ~ 2024
+    
+  )) |>
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              ensure all genders follow same naming convention            ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(gender = case_when(
+    gender == "Female" ~ "F",
+    gender == "Male" ~ "M",
+    gender == "Unknown" ~ "U",
+    TRUE ~ gender
+  )) |> 
+  replace_na(list(gender = "U")) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  convert any country codes to full names                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# some `citizenship_country` values are country codes, others are spelled out fully (we want full names)
+
+  # convert country codes to full names in new `citizenship_country_full` column ----
+  mutate(citizenship_country_full = countrycode::countrycode(citizenship_country, "iso2c", "country.name")) |> 
+  
+  # fill NAs in `citizen_country_full` with existing full names in `citizenship_country`
+  mutate(citizenship_country_full = coalesce(citizenship_country_full, citizenship_country)) |>
+  
+  # drop original `citizenship_country` column and rename `citizenship_country_full` as `citizenship_country` ----
+  select(-citizenship_country) |> 
+  rename(citizenship_country = citizenship_country_full) #|> 
+```
+
+2. CLEAN / WRANGLE `enrolled`
+
+- includes only students who enrolled in a Bren program (by SIRing "Yes")
+- SIR = Statement of Intent to Register
+
+```{r}
+enrolled <- apps_clean |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            filter for just applicants who intended to register           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(sir == "Yes") |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            remove student melt                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(!application_id %in% meds2021) |>
+  filter(!application_id %in% meds2024) |>
+  filter(!application_id %in% meds2025) |>
+  filter(!application_id %in% mesm2022) |>
+  filter(!application_id %in% mesm2023) |>
+  filter(!application_id %in% mesm2023) |>
+  filter(!application_id %in% mesm2024) |>
+  filter(!application_id %in% mesm2025)
+```
+
+3. CALCULATE ADMISSION RATE BY YEAR / PROGRAM
+
+CHANGE app_submission_year == admission_year
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              total number of applicants per year per program             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+apps_tot <- apps_clean |>
+  group_by(admission_year,
+           objective1) |>
+  summarize(applied = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          total number of admitted applicants per year per program        ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+admit_tot <- apps_clean |>
+  mutate(decision = case_when(
+    decision %in% c("Provisionally Admitted","Unconditionally Admitted") ~ "Admitted",
+    TRUE ~ decision
+  )) |>
+  group_by(admission_year,
+           objective1,
+           decision) |>
+  summarize(admitted = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          total number of enrolled applicants per year per program        ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+enrolled_tot <- enrolled |> 
+  group_by(admission_year,
+           objective1,
+           sir) %>%
+  summarize(enrolled = n()) 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              combine dfs and calculate admission percentages             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+admissions <- left_join(enrolled_tot, apps_tot, by = c("admission_year", "objective1")) |> 
+  left_join(admit_tot, by = c("admission_year", "objective1")) |> 
+  filter(decision == "Admitted",
+         sir == "Yes") %>%
+  mutate(admit_rate_pct = round((admitted / applied) * 100)) |> 
+  select(admission_year, program = objective1, decision, sir, applied, admitted, enrolled, admit_rate_pct)
+```
+
+4.
+
+
+X. WRITE TO FILE
+
+```{r}
+#......................all enrolled students.....................
+write_rds(enrolled, here::here("bren-student-data-explorer", "data", "enrolled.rds"))
+
+#....admit data (total apps, total enrolled, acceptance rate)....
+write_rds(admissions, "data/admissions.rds")
+```
+

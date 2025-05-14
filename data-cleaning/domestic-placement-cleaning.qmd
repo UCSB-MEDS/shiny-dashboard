@@ -1,0 +1,98 @@
+---
+title: "Cleaning domestic job placement data"
+subtitle: "(For faster map loading)"
+format: html
+---
+
+0. SETUP
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+library(tidyverse)
+library(sf)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                import data                               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+mesm_placement <- readRDS(here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) |> filter(year %in% c(2022:2024))
+meds_placement <- readRDS(here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) |> filter(year %in% c(2022:2024))
+us_state_geoms <- readRDS(here::here("bren-student-data-explorer", "data", "us_state_geoms.rds"))
+```
+
+1. WRANGLE MESM DOMESTIC PLACEMENT DATA
+
+```{r}
+#....................select US-based MESM jobs...................
+mesm_domestic <- mesm_placement |> 
+  select(c(
+    year,
+    employer_account_name,
+    work_location_city,
+    work_location_state,
+    work_location_country
+  )) |> 
+  filter(work_location_country == "United States") |> 
+  filter(work_location_city != "Remote") 
+
+#............join MESM domestic jobs with state geoms............
+mesm_domestic_stats_geoms <- us_state_geoms |> 
+  left_join(mesm_domestic, by = c("state_abbrev" = "work_location_state")) |> 
+  select(year, 
+         employer_account_name, 
+         state_abbrev, 
+         state, 
+         work_location_city, 
+         work_location_country, 
+         geometry) |> 
+  st_transform(crs = 4326) |> 
+  drop_na(employer_account_name) |> 
+  group_by(state) |> 
+  summarize(count = n()) |> 
+  mutate(state = paste0(state, " (", count, ")")) |> 
+  mutate(count = as.numeric(count))
+```
+
+2. WRANGLE MEDS DOMESTIC PLACEMENT DATA
+
+```{r}
+#....................select US-based MEDS jobs...................
+meds_domestic <- meds_placement |> 
+  select(c(
+    year,
+    employer_account_name,
+    work_location_city,
+    work_location_state,
+    work_location_country
+  )) |> 
+  filter(work_location_country == "United States") |> 
+  filter(work_location_city != "Remote") 
+
+#............join MEDS domestic jobs with state geoms............
+meds_domestic_stats_geoms <- us_state_geoms |> 
+  left_join(meds_domestic, by = c("state_abbrev" = "work_location_state")) |> 
+  select(year, 
+         employer_account_name, 
+         state_abbrev, 
+         state, 
+         work_location_city, 
+         work_location_country, 
+         geometry) |> 
+  st_transform(crs = 4326) |> 
+  drop_na(employer_account_name) |> 
+  group_by(state) |> 
+  summarize(count = n()) |> 
+  mutate(state = paste0(state, " (", count, ")")) |> 
+  mutate(count = as.numeric(count))
+```
+
+3. WRITE TO FILE
+
+```{r}
+write_rds(mesm_domestic_stats_geoms, here::here("bren-student-data-explorer", "data", "mesm_domestic_placement_data.rds"))
+write_rds(meds_domestic_stats_geoms, here::here("bren-student-data-explorer", "data", "meds_domestic_placement_data.rds"))
+```
+
