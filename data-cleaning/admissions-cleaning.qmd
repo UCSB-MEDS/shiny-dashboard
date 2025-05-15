@@ -7,6 +7,10 @@ editor_options:
 
 ####### app_submission_year == entering class of that year; UPDATED NAME TO `admission_year`; BE SURE TO CHANGE ALL INSTANCES OF app_submission_year > admission_year ####### 
 
+CHANGE app_submission_year == admission_year
+
+program_size => tot_enrolled
+
 0. SETUP
 
 ```{r}
@@ -34,10 +38,15 @@ librarian::shelf(
 ##      import pre-processed application / admissions data & geometries     ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
 apps <- readRDS(here::here("raw-data", "apps_2017_2024.rds"))
 us_state_geoms <- readRDS(here::here("raw-data", "us_state_geoms.rds"))
 world_geoms <- readRDS(here::here("raw-data", "world_geoms.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##           set current year (most recent year of admissions data)         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+curr_year <- 2024
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                       create vectors of student melt                     ----
@@ -73,7 +82,7 @@ mesm2026 <- c(202412, 203729, 201351, 201643, 204194,
               207015) # 207015 deferred a year
 ```
 
-1. CLEAN `apps`
+1. CLEAN `apps` (filtered for 5 most recent years)
 
 ```{r}
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,6 +110,7 @@ apps_clean <- apps |>
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # determine admission year based on the application submission date
+# NOTE: this does not indicate whether or not an application was actually admitted, but rather the year an applicant would begin if admitted
 # apps are typically due in Dec, but in rare cases, applicants may be allowed to submit late (as late as March)
 
   mutate(admission_year = case_when(
@@ -165,13 +175,22 @@ apps_clean <- apps |>
   
   # drop original `citizenship_country` column and rename `citizenship_country_full` as `citizenship_country` ----
   select(-citizenship_country) |> 
-  rename(citizenship_country = citizenship_country_full) #|> 
+  rename(citizenship_country = citizenship_country_full) |>
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                   rename `objective1` column for clarity                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  rename(program = objective1) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 5 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(admission_year %in% (curr_year - 4):curr_year)
 ```
 
-2. CLEAN / WRANGLE `enrolled`
-
-- includes only students who enrolled in a Bren program (by SIRing "Yes")
-- SIR = Statement of Intent to Register
+2. CLEAN / WRANGLE ENROLLMENT BY YEAR / PROGRAM (saved to df named `enrolled`) 
 
 ```{r}
 enrolled <- apps_clean |> 
@@ -180,11 +199,16 @@ enrolled <- apps_clean |>
 ##            filter for just applicants who intended to register           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# includes only students who enrolled in a Bren program (by SIRing "Yes")
+# SIR = Statement of Intent to Register
+
   filter(sir == "Yes") |> 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                            remove student melt                           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# filter out student melt (i.e. those who initially SIRed yes, but then changed their mind)
 
   filter(!application_id %in% meds2021) |>
   filter(!application_id %in% meds2024) |>
@@ -196,57 +220,444 @@ enrolled <- apps_clean |>
   filter(!application_id %in% mesm2025)
 ```
 
-3. CALCULATE ADMISSION RATE BY YEAR / PROGRAM
+3. WRANGLE ADMISSION RATE BY YEAR / PROGRAM (saved to df named `admissions`)
 
-CHANGE app_submission_year == admission_year
+- includes a number of intermediate dfs
 
 ```{r}
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##              total number of applicants per year per program             ----
+##                 total # of applicants per year per program               ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-apps_tot <- apps_clean |>
+tot_apps <- apps_clean |>
   group_by(admission_year,
-           objective1) |>
+           program) |>
   summarize(applied = n())
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##          total number of admitted applicants per year per program        ----
+##            total # of admitted applicants per year per program           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-admit_tot <- apps_clean |>
+tot_admit <- apps_clean |>
   mutate(decision = case_when(
     decision %in% c("Provisionally Admitted","Unconditionally Admitted") ~ "Admitted",
     TRUE ~ decision
   )) |>
   group_by(admission_year,
-           objective1,
+           program,
            decision) |>
   summarize(admitted = n())
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##          total number of enrolled applicants per year per program        ----
+##            total # of enrolled applicants per year per program           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-enrolled_tot <- enrolled |> 
+tot_enrolled <- enrolled |> 
   group_by(admission_year,
-           objective1,
-           sir) %>%
-  summarize(enrolled = n()) 
+           program,
+           sir) |> 
+  summarize(enrolled = n())
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##              combine dfs and calculate admission percentages             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-admissions <- left_join(enrolled_tot, apps_tot, by = c("admission_year", "objective1")) |> 
-  left_join(admit_tot, by = c("admission_year", "objective1")) |> 
+admissions <- left_join(tot_enrolled, tot_apps, by = c("admission_year", "program")) |> 
+  left_join(tot_admit, by = c("admission_year", "program")) |> 
   filter(decision == "Admitted",
-         sir == "Yes") %>%
+         sir == "Yes") |>
   mutate(admit_rate_pct = round((admitted / applied) * 100)) |> 
-  select(admission_year, program = objective1, decision, sir, applied, admitted, enrolled, admit_rate_pct)
+  select(admission_year, program, applied, admitted, enrolled, admit_rate_pct)
 ```
 
-4.
+4. CALCULATE PROGRAM / COHORT SIZES
+
+- includes a number of intermediate dfs
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                    calculate total # of students by year                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+tot_students_yr <- enrolled |> 
+  group_by(admission_year) |>
+  summarize(size = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          calculate total # students by program for the past 5 years      ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+tot_students_5yr <- enrolled |>
+  select(c(admission_year, application_id, program)) |>
+  filter(admission_year %in% (curr_year - 4):curr_year) |> 
+  group_by(program) |>
+  summarize(size = n())
+
+# # all years ---- SAME AS tot_enrolled
+# program_size <- enrolled |>
+#   select(c(admission_year, application_id, program)) |>
+#   group_by(admission_year,
+#            program) |>
+#   summarize(size = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                get total program sizes for current year only             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+program_size_curr <- tot_enrolled |> 
+  filter(admission_year == curr_year)
+# program_size_curr <- enrolled |> 
+#   select(c(admission_year, application_id, program)) |> 
+#   filter(admission_year == curr_year) |> 
+#   group_by(program) |> 
+#   summarize(size = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##           get program sizes for individual programs across years         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..............................MEDS..............................
+program_size_meds <- tot_enrolled |> 
+  filter(program == "MEDS")
+
+#..............................MESM..............................
+program_size_mesm <- tot_enrolled |> 
+  filter(program == "MESM")
+
+#..............................PhD...............................
+program_size_phd <- tot_enrolled |> 
+  filter(program == "PhD")
+```
+
+5. DETERMINE # OF STUDENTS FROM EACH UNDERGRADUATE LOCATION & JOIN GEOMETRIES (saved to df named `ug_locations`)
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            total # of students from each undergraduate location          ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ug_location <- enrolled |> 
+  select(c(admission_year, program, ug1_location)) |> 
+  mutate(ug1_location = str_remove(ug1_location, "US - ")) |> 
+  mutate(ug1_location = case_when(
+    ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "South Korea",
+    ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
+    ug1_location == "District Of Columbia" ~ "District of Columbia",
+    ug1_location == "Scotland" ~ "United Kingdom", # NOTE(HD): no geom for just Scotland; had to change to UK (it's part of UK)
+    ug1_location == "Taiwan" ~ "China", # NOTE(HD): try to preserve Taiwan in future iterations
+    TRUE ~ ug1_location
+  )) |> 
+  group_by(ug1_location) |> 
+  summarize(total = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            get dfs of domestic & international geoms, then join          ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#.........................domestic geoms.........................
+domestic_geoms <- us_state_geoms |> 
+  select(-c(fips, state_abbrev)) |> 
+  rename(location = state) |> 
+  st_transform(crs = 4326)
+
+#......................international geoms.......................
+intl_geoms <- world_geoms |>
+  select(c(NAME_ENGL, geometry)) |>
+  rename("location" = NAME_ENGL) |>
+  # st_join(world_taiwan) |> 
+  st_transform(crs = 4326)
+
+#..............join domestic & international geoms...............
+dom_intl_geoms <- rbind(domestic_geoms, intl_geoms)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##        join geoms with undergraduate locations + simplify polygons       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ug_geoms <- ug_location |> 
+  left_join(dom_intl_geoms, by = c("ug1_location" = "location")) |> 
+  # rbind(world_taiwan) |> 
+  st_as_sf() |> 
+  rmapshaper::ms_simplify(keep = 0.5, keep_shapes = TRUE)
+```
+
+6. ASSIGN IPEDS CATEGORIES (saved to df named `ipeds`)
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------------------- ALL IPEDS-----------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ipeds <- enrolled |>  
+  
+#......................select necessary cols.....................
+  select(admission_year,
+         program,
+         background,
+         racial_categories,
+         hispanic_latino) |> 
+
+#............assign demographic using IPEDS definition...........
+  
+# see Definitions for New Race and Ethnicity Categories from the National Center for Education Statistics: https://nces.ed.gov/ipeds/report-your-data/race-ethnicity-definitions
+# copy saved to Google Drive (in case the online version disappears): https://drive.google.com/file/d/1vGQpxi2dIHSj2odHsKO2ESgmZg7wL43y/view?usp=drive_link
+
+  mutate(category_ipeds = case_when(
+    str_detect(racial_categories, ";") == TRUE ~ "Two or more races",
+    str_detect(racial_categories, "American Indian / Alaska Native") == TRUE & hispanic_latino == FALSE ~ "American Indian or Alaska Native",
+    str_detect(racial_categories, "Asian / Asian American") == TRUE & hispanic_latino == FALSE ~ "Asian",
+    str_detect(racial_categories, "African American / Black") == TRUE & hispanic_latino == FALSE ~ "Black or African American",
+    str_detect(racial_categories, "Native Hawaiian / other Pacific Islander") == TRUE & hispanic_latino == FALSE ~ "Native Hawaiian or Other Pacific Islander",
+   str_detect(racial_categories, "White / Caucasian") == TRUE & hispanic_latino %in% c(FALSE, NA) ~ "White",
+    hispanic_latino == TRUE ~ "Hispanic or Latino",
+    is.na(racial_categories) == TRUE ~ "Unknown race and ethnicity"
+  )) |>
+  mutate(category_ipeds = factor(category_ipeds, levels = c(
+      "American Indian or Alaska Native",
+      "Asian",
+      "Black or African American",
+      "Native Hawaiian or Other Pacific Islander",
+      "White",
+      "Hispanic or Latino",
+      "Two or more races",
+      "Unknown race and ethnicity"
+    )))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##------------------------- INDIVIDUAL IPEDS GROUPS-----------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      American Indian / Alaska Native                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+amIndian_alNat <- ipeds |> 
+  filter(category_ipeds == "American Indian or Alaska Native") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "American Indian or Alaska Native")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    Asian                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+asian <- ipeds |> 
+  filter(category_ipeds == "Asian") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Asian")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    Black                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+black <- ipeds |> 
+  filter(category_ipeds == "Black or African American") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Black or African American")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              Hispanic / Latino                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+hispanic_latino <- ipeds |> 
+  filter(category_ipeds == "Hispanic or Latino") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Hispanic or Latino")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                     Native hawaiian / Pacific Islander                   ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+natHI_pi <- ipeds |> 
+  filter(category_ipeds == "Native Hawaiian or Other Pacific Islander") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Native Hawaiian or Other Pacific Islander")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    White                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+white <- ipeds |> 
+  filter(category_ipeds == "White") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "White")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              Two or more races                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+two_more <- ipeds |> 
+  filter(category_ipeds == "Two or more races") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Two or more races")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                  Unknown                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+unk <- ipeds |> 
+  filter(category_ipeds == "Unknown race and ethnicity") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Unknown race and ethnicity")
+```
+
+7. CALCULATE DIVERSITY STATISTICS (save as df named `diversity_stats`)
+
+Create separate dfs for each diversity demographic (below), then combine into a single df (used to create Diversity Demographics plot on dashboard):
+
+- CA Resident
+- Nonresident
+- International
+- Female
+- Age 25+
+- Military
+- Undocumented
+- URM
+- American Indian or Alaska Native
+- Asian
+- Black or African American
+- Hispanic or Latino
+- Native Hawaiian or Other Pacific Islander
+- White
+- Two or more races
+- Unknown race and ethnicity
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------------------- RESIDENCY-----------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+residency <- enrolled |> 
+  select(c(admission_year, program, citizenship_country, residency_country, california_resident, visa)) |> 
+  mutate(california_resident = case_when(
+    california_resident == "Yes" ~ "TRUE",
+    california_resident == "No" ~ "FALSE",
+    TRUE ~ california_resident
+  )) |> 
+  mutate(demographic = case_when(
+    california_resident == TRUE & visa %in% c(NA, # CA resident
+                                              "DACA/AB540",
+                                              "Permanent Resident",
+                                              "None: DACA Recipient",
+                                              "Undocumented Status") ~ "California Resident",
+    california_resident == FALSE & visa %in% c(NA, # non-CA resident
+                                               "Permanent Resident",
+                                               "Undocumented Status") ~ "Nonresident",
+    visa %in% c("F-1 Student", # international
+                "J-1",
+                "Family of H,H1,H2,H3") ~ "International"
+  )) |> 
+  group_by(program, demographic) |> 
+  summarize(count = n()) |> 
+  replace_na(list(demographic = "Unknown"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##---------------------------------- GENDER-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+gender <- enrolled |> 
+  select(c(admission_year, program, gender)) |> 
+  mutate(gender = factor(gender,
+                         levels = c("F", "M", "U"),
+                         labels = c("Female", "Male", "Undeclared"))) |> 
+  group_by(program, gender) |> 
+  summarize(count = n()) |> 
+  filter(gender == "Female") |> 
+  rename(demographic = gender)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------------- AGE---------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+age <- enrolled |> 
+  select(c(admission_year, program, dob)) |> 
+  mutate(dob_year = lubridate::year(dob)) |> 
+  mutate(age = admission_year - dob_year) |> 
+  filter(age >= 25) |> 
+  group_by(program) |>  
+  summarize(count = n()) |> 
+  mutate(demographic = "Age 25+")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------- MILITARY SERVICE--------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# COME BACK TO THIS
+
+military <- enrolled |> 
+  select(c(admission_year, program, military_service)) |>  
+  mutate(military_service = as.numeric(unlist(military_service))) |> 
+  filter(military_service > 1) |>
+  group_by(program) |>
+  summarize(count = n()) |>
+  mutate(demographic = "Military")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------- FIRST GENERATION--------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+first_gen <- enrolled |> 
+  select(c(admission_year, program, first_generation)) |>  
+  mutate(first_generation = case_when(
+    first_generation == "Yes" ~ "Y",
+    first_generation == "No" ~ "N",
+    TRUE ~ first_generation
+  )) |> 
+  group_by(program, first_generation) |>
+  summarize(count = n()) |> 
+  filter(first_generation == "Y") |>
+  mutate(demographic = "First generation") |>
+  select(-first_generation)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##------------------------------- UNDOCUMENTED----------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+undocumented <- enrolled |> 
+  select(c(admission_year, program, visa)) |> 
+  mutate(undocumented_status = case_when(visa %in% c("DACA/AB540",
+                                                     "Undocumented Status",
+                                                     "None: DACA Recipient") ~ "Yes", 
+                                         TRUE ~ "No")) |> 
+  group_by(program, undocumented_status) |> 
+  summarize(count = n()) |> 
+  filter(undocumented_status == "Yes") |> 
+  mutate(demographic = "Undocumented") |> 
+  select(-undocumented_status)
+
+```
+
 
 
 X. WRITE TO FILE
@@ -257,5 +668,15 @@ write_rds(enrolled, here::here("bren-student-data-explorer", "data", "enrolled.r
 
 #....admit data (total apps, total enrolled, acceptance rate)....
 write_rds(admissions, "data/admissions.rds")
+
+#...............undergrad location geometries data...............
+write_rds(ug_geoms, "data/ug_geoms.rds")
+
+#...........................ipeds data...........................
+write_rds(ipeds, "data/ipeds.rds")
+
+#......................diversity stats data......................
+write_rds(diversity_stats, "data/diversity_stats.rds")
+
 ```
 

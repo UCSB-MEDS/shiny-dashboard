@@ -27,7 +27,7 @@ world_geoms <- giscoR::gisco_get_countries(year = "2020", epsg = "4326", spatial
 
 2. WRITE TO FILE
 
-- save to ~/raw-data/
+- save to `~/raw-data/`
 
 ```{r}
 write_rds(us_state_geoms, here::here("raw-data", "us_state_geoms.rds"))
