@@ -10,13 +10,9 @@ format: html
 ##                               load libraries                             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-library(tidyverse)
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                         create place names vectors                       ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-us_names <- c("USA", "US", "Usa")
+librarian::shelf(
+  tidyverse
+  )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                 import pre-processed initial placement data              ----
@@ -24,9 +20,21 @@ us_names <- c("USA", "US", "Usa")
 
 meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2024.rds")) 
 meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##           set current year (most recent year of admissions data)         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+curr_year <- 2024
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                         create place names vectors                       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+us_names <- c("USA", "US", "Usa")
 ```
 
-1. CLEAN DATA
+1. WRANGLE / CLEAN MEDS INITIAL PLACEMENT DATA
 
 ```{r}
 meds_placement_cleaned <- meds_placement |> 
@@ -72,13 +80,26 @@ meds_placement_cleaned <- meds_placement |>
     work_location_state == "CA" ~ "Domestic (California)",
     work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
     work_location_country != "United States" ~ "International"
-  ))
+  )) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
 ```
 
-2. WRITE TO FILE
+3. WRANGLE / CLEAN MEDS ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+meds_status_cleaned <- meds_status |> 
+  filter(class_year %in% (curr_year - 2):curr_year)
+```
+
+4. WRITE TO FILE
 
 ```{r}
 write_rds(meds_placement_cleaned, here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) 
-write_rds(meds_status, here::here("bren-student-data-explorer", "data", "meds_status_cleaned.rds")) # no actual cleaning required; just renamed and saved to bren-student-data-explorer/data/
+write_rds(meds_status_cleaned, here::here("bren-student-data-explorer", "data", "meds_status_cleaned.rds")) 
 ```
 

@@ -11,6 +11,8 @@ CHANGE app_submission_year == admission_year
 
 program_size => tot_enrolled
 
+check on military status
+
 0. SETUP
 
 ```{r}
@@ -20,18 +22,9 @@ program_size => tot_enrolled
 
 librarian::shelf(
   tidyverse,
-  lubridate,
   here,
   janitor,
-  googlesheets4, # read in data
-  anytime, # convert from UNIX timestamp to datetime
-  patchwork,
-  naniar, # replace NULL with NA
-  plotly, # interactive plots
-  sf,
-  tmap, # maps (static and interactive)
-  tigris, # get state geoms
-  giscoR # get world country polygons
+  sf
 )
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,7 +72,7 @@ mesm2025 <- c(190166, 191659, 186427, 192264, 188159,
 mesm2026 <- c(202412, 203729, 201351, 201643, 204194,
               206266, 202508, 202610, 214935, 214519,
               209616, 211041, 198299, 214519,
-              207015) # 207015 deferred a year
+              207015)y
 ```
 
 1. CLEAN `apps` (filtered for 5 most recent years)
@@ -293,24 +286,12 @@ tot_students_5yr <- enrolled |>
   group_by(program) |>
   summarize(size = n())
 
-# # all years ---- SAME AS tot_enrolled
-# program_size <- enrolled |>
-#   select(c(admission_year, application_id, program)) |>
-#   group_by(admission_year,
-#            program) |>
-#   summarize(size = n())
-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                get total program sizes for current year only             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 program_size_curr <- tot_enrolled |> 
   filter(admission_year == curr_year)
-# program_size_curr <- enrolled |> 
-#   select(c(admission_year, application_id, program)) |> 
-#   filter(admission_year == curr_year) |> 
-#   group_by(program) |> 
-#   summarize(size = n())
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##           get program sizes for individual programs across years         ----
@@ -392,15 +373,16 @@ ug_geoms <- ug_location |>
 
 ipeds <- enrolled |>  
   
-#......................select necessary cols.....................
-  select(admission_year,
-         program,
-         background,
-         racial_categories,
-         hispanic_latino) |> 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            select necessary cols                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#............assign demographic using IPEDS definition...........
-  
+  select(admission_year, program, background, racial_categories, hispanic_latino) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  assign demographic using IPEDS definition               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # see Definitions for New Race and Ethnicity Categories from the National Center for Education Statistics: https://nces.ed.gov/ipeds/report-your-data/race-ethnicity-definitions
 # copy saved to Google Drive (in case the online version disappears): https://drive.google.com/file/d/1vGQpxi2dIHSj2odHsKO2ESgmZg7wL43y/view?usp=drive_link
 
@@ -424,100 +406,6 @@ ipeds <- enrolled |>
       "Two or more races",
       "Unknown race and ethnicity"
     )))
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                                                            --
-##------------------------- INDIVIDUAL IPEDS GROUPS-----------------------------
-##                                                                            --
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                      American Indian / Alaska Native                     ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-amIndian_alNat <- ipeds |> 
-  filter(category_ipeds == "American Indian or Alaska Native") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "American Indian or Alaska Native")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                    Asian                                 ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-asian <- ipeds |> 
-  filter(category_ipeds == "Asian") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Asian")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                    Black                                 ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-black <- ipeds |> 
-  filter(category_ipeds == "Black or African American") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Black or African American")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                              Hispanic / Latino                           ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-hispanic_latino <- ipeds |> 
-  filter(category_ipeds == "Hispanic or Latino") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Hispanic or Latino")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                     Native hawaiian / Pacific Islander                   ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-natHI_pi <- ipeds |> 
-  filter(category_ipeds == "Native Hawaiian or Other Pacific Islander") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Native Hawaiian or Other Pacific Islander")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                    White                                 ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-white <- ipeds |> 
-  filter(category_ipeds == "White") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "White")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                              Two or more races                           ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-two_more <- ipeds |> 
-  filter(category_ipeds == "Two or more races") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Two or more races")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                  Unknown                                 ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-unk <- ipeds |> 
-  filter(category_ipeds == "Unknown race and ethnicity") |> 
-  select(c(admission_year, program, category_ipeds)) |> 
-  group_by(program) |> 
-  summarize(count = n()) |> 
-  mutate(demographic = "Unknown race and ethnicity")
 ```
 
 7. CALCULATE DIVERSITY STATISTICS (save as df named `diversity_stats`)
@@ -556,15 +444,21 @@ residency <- enrolled |>
     TRUE ~ california_resident
   )) |> 
   mutate(demographic = case_when(
-    california_resident == TRUE & visa %in% c(NA, # CA resident
+    
+    # CA resident ----
+    california_resident == TRUE & visa %in% c(NA, 
                                               "DACA/AB540",
                                               "Permanent Resident",
                                               "None: DACA Recipient",
                                               "Undocumented Status") ~ "California Resident",
-    california_resident == FALSE & visa %in% c(NA, # non-CA resident
+    
+    # non-CA resident ----
+    california_resident == FALSE & visa %in% c(NA, 
                                                "Permanent Resident",
                                                "Undocumented Status") ~ "Nonresident",
-    visa %in% c("F-1 Student", # international
+    
+    # international ----
+    visa %in% c("F-1 Student", 
                 "J-1",
                 "Family of H,H1,H2,H3") ~ "International"
   )) |> 
@@ -656,27 +550,233 @@ undocumented <- enrolled |>
   mutate(demographic = "Undocumented") |> 
   select(-undocumented_status)
 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------- UNDERREPRESENTED MINORITIES (URM)-----------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#...............................................................................
+#  From K. Duarte:                                                             .
+#                                                                              .
+#  UCOP (Office of the President) information on demographics reporting: Here  .
+#  is also a definition provided in reports from the regents: The term         .
+#  “minorities” refers to four of the five categories required for reporting   .
+#  under federal affirmative action regulations: African American, Hispanic    .
+#  (includes Chicano/Latino), Asian (includes Pacific Islander), and Native    .
+#  American (American Indian). The fifth category is White or Caucasian. The   .
+#  term “underrepresented minorities” (or URM) refers to three of the above    .
+#  categories that are underrepresented overall among students in higher       .
+#  education: African American, Hispanic (Chicano/Latino) and Native American  .
+#  (American Indian). Although Asians are underrepresented among faculty in    .
+#  some fields, they are overrepresented overall among UC student populations  .
+#  and reflect differing demographic trends among faculty.  For UC reporting,  .
+#  there is a roll-up procedure (similar to those used in aggregated federal   .
+#  reports mentioned above) for those who identify as multiple racial groups.  .
+#  If a person identifies as multiple races and one of the groups they         .
+#  selected is a URM, they will get reported with that URM status.             .
+#                                                                              .
+#...............................................................................
+
+#.........................URM categories.........................
+category_urms <- c("African American / Black",
+                   "American Indian / Alaska Native")
+
+visa_urms <- c("Permanent Residency Pending (Work Permit)",
+               "Permanent Resident")
+
+#............................wrangle.............................
+urm <- enrolled |>  
+  
+  # select relevant columns ----
+  select(admission_year, application_id, program, citizenship_country, residency_country,
+         birth_country, visa, background, racial_categories, hispanic_latino) |>  
+
+  # create a urm_status column based on hispanic/latino, citizenship country, visa, racial categories ----
+  mutate(urm_status = case_when(
+    
+    # us citizens who are hispanic/latino ----
+    hispanic_latino == TRUE & citizenship_country == "US" ~ "Y", # earlier years encoded "United States" as "US"
+    hispanic_latino == TRUE & citizenship_country == "United States" ~ "Y", # recent years encode as "United States"
+    
+    # permanent residents who are hispanic/latino ----
+    hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
+    
+    # us citizens who identify as urms ----
+    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & citizenship_country == "US" ~ "Y",
+    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & citizenship_country == "United States" ~ "Y",
+    # # permanent residents who identify as urms ----
+    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & visa %in% visa_urms ~ "Y",
+    
+    # everyone else ----
+    TRUE ~ "N")) |> 
+  
+  # summarize & wrangle ----
+  group_by(program, urm_status) |>  
+  summarize(count = n()) |>  
+  filter(urm_status == "Y") |>  
+  ungroup() |>  
+  select(-urm_status) |>  
+  mutate(demographic = "URM")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------- AMERICAN INDIAN / ALASKA NATIVE-------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+amIndian_alNat <- ipeds |> 
+  filter(category_ipeds == "American Indian or Alaska Native") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "American Indian or Alaska Native")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------------- ASIAN-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+asian <- ipeds |> 
+  filter(category_ipeds == "Asian") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Asian")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------------- BLACK-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+black <- ipeds |> 
+  filter(category_ipeds == "Black or African American") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Black or African American")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------- HISPANIC / LATINO-------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+hispanic_latino <- ipeds |> 
+  filter(category_ipeds == "Hispanic or Latino") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Hispanic or Latino")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##-------------------- NATIVE HAWAIIAN / PACIFIC ISLANDER-----------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+natHI_pi <- ipeds |> 
+  filter(category_ipeds == "Native Hawaiian or Other Pacific Islander") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Native Hawaiian or Other Pacific Islander")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------------- WHITE-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+white <- ipeds |> 
+  filter(category_ipeds == "White") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "White")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##----------------------------- TWO OR MORE RACES-------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+two_more <- ipeds |> 
+  filter(category_ipeds == "Two or more races") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Two or more races")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------------------- UNKNOWN-------------------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+unk <- ipeds |> 
+  filter(category_ipeds == "Unknown race and ethnicity") |> 
+  select(c(admission_year, program, category_ipeds)) |> 
+  group_by(program) |> 
+  summarize(count = n()) |> 
+  mutate(demographic = "Unknown race and ethnicity")
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##--------------------- FINAL DIVERSITY STATS WRANGLING-------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#...................combine all individual dfs...................
+diversity_all <- rbind(residency, gender, age, military, first_gen, undocumented, 
+                       amIndian_alNat, asian, black, hispanic_latino, natHI_pi, white, two_more, unk, 
+                       urm)
+# 
+#..................set demographic factor levels.................
+diversity_df <- diversity_all |> 
+  mutate(demographic = factor(demographic, levels = c("California Resident",
+                                                      "Nonresident",
+                                                      "International",
+                                                      "Female",
+                                                      "Age 25+",
+                                                      "Military",
+                                                      "First generation",
+                                                      "Undocumented",
+                                                      "URM",
+                                                      "American Indian or Alaska Native",
+                                                      "Asian",
+                                                      "Black or African American",
+                                                      "Hispanic or Latino",
+                                                      "Native Hawaiian or Other Pacific Islander",
+                                                      "White",
+                                                      "Two or more races",
+                                                      "Unknown race and ethnicity"
+  )))
+
+#......................calculate percentages.....................
+diversity_stats <- left_join(tot_students_5yr, diversity_df,
+                             by = c("program")) |> 
+  mutate(percent = round((count / size) * 100, 1))
 ```
 
-
-
-X. WRITE TO FILE
+8. WRITE TO FILE
 
 ```{r}
 #......................all enrolled students.....................
 write_rds(enrolled, here::here("bren-student-data-explorer", "data", "enrolled.rds"))
 
 #....admit data (total apps, total enrolled, acceptance rate)....
-write_rds(admissions, "data/admissions.rds")
+write_rds(admissions, here::here("bren-student-data-explorer", "data", "admissions.rds"))
 
 #...............undergrad location geometries data...............
-write_rds(ug_geoms, "data/ug_geoms.rds")
+write_rds(ug_geoms, here::here("bren-student-data-explorer", "data", "ug_geoms.rds"))
 
 #...........................ipeds data...........................
-write_rds(ipeds, "data/ipeds.rds")
+write_rds(ipeds, here::here("bren-student-data-explorer", "data", "ipeds.rds"))
 
 #......................diversity stats data......................
-write_rds(diversity_stats, "data/diversity_stats.rds")
-
+write_rds(diversity_stats, here::here("bren-student-data-explorer", "data", "diversity_stats.rds"))
 ```
 

@@ -36,19 +36,30 @@ library(leaflet)
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# # # for testing purposes only; keep commented out when not in use
+# mesm_placement <- readRDS("bren-student-data-explorer/data/mesm_placement_cleaned.rds")
+# meds_placement <- readRDS("bren-student-data-explorer/data/meds_placement_cleaned.rds")
+# mesm_status <- readRDS("bren-student-data-explorer/data/mesm_status_cleaned.rds") 
+# meds_status <- readRDS("bren-student-data-explorer/data/meds_status_cleaned.rds")
+# mesm_dom_placement_data <- readRDS("bren-student-data-explorer/data/mesm_domestic_placement_data.rds") 
+# meds_dom_placement_data <- readRDS("bren-student-data-explorer/data/meds_domestic_placement_data.rds") 
+# admissions <- readRDS("bren-student-data-explorer/data/admissions.rds") 
+# enrolled <- readRDS("bren-student-data-explorer/data/enrolled.rds") 
+# ipeds <- readRDS("bren-student-data-explorer/data/ipeds.rds") 
+# diversity_stats <- readRDS("bren-student-data-explorer/data/diversity_stats.rds")
+# ug_geoms <- readRDS("bren-student-data-explorer/data/ug_geoms.rds")
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                            career outcomes data                          ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# dashboard only visualizes 3 most recent years, so filter for just years of interest
-
 #................initial placement data (cleaned)................
-mesm_placement <- readRDS("data/mesm_placement_cleaned.rds") |> filter(year %in% c(2022:2024)) 
-meds_placement <- readRDS("data/meds_placement_cleaned.rds") |> filter(year %in% c(2022:2024)) 
+mesm_placement <- readRDS("data/mesm_placement_cleaned.rds")
+meds_placement <- readRDS("data/meds_placement_cleaned.rds") 
 
 #............active placement (status) data (cleaned)............
-mesm_status <- readRDS("data/mesm_status_2019_2024.rds") |> filter(class_year %in% c(2022:2024)) 
-meds_status <- readRDS("data/meds_status_2022_2024.rds") |> filter(class_year %in% c(2022:2024)) 
+mesm_status <- readRDS("data/mesm_status_cleaned.rds") 
+meds_status <- readRDS("data/meds_status_cleaned.rds")
 
 #............Wrangled Data for Domestic Placement Maps...........
 mesm_dom_placement_data <- readRDS("data/mesm_domestic_placement_data.rds") 
@@ -58,16 +69,12 @@ meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds")
 ##                              demographics data                           ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# dashboard only visualizes 5 most recent years, fo filter for just years of interest
-# old years are filtered out during the data cleaning process; see `cleaning-wrangling-NEW.qmd` in the `admissions-data` repo) 
 admissions <- readRDS("data/admissions.rds") 
 enrolled <- readRDS("data/enrolled.rds") 
 ipeds <- readRDS("data/ipeds.rds") 
 diversity_stats <- readRDS("data/diversity_stats.rds")
-
-#..................Spatial Geometries (for maps).................
 ug_geoms <- readRDS("data/ug_geoms.rds")
-us_state_geoms <- readRDS("data/us_state_geoms.rds")
+#us_state_geoms <- readRDS("data/us_state_geoms.rds")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
@@ -98,26 +105,64 @@ all_programs_color <- "#09847a"
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#..............set most recent graduated class year..............
-# career data for graduating classes of 202* used in career tab 
-curr_grad_year <- 2024
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##    set current admissions year (that we have admissions / app data for)  ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#............current year for MEDS employment status.............
-# based on enrollment year which is one year prior to graduation 
+# using `enrolled` here, but should be the same for `admissions`
+
+curr_admission_year <- max(enrolled$admission_year) # 2024 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##         set current grad class year (that we have career data for)       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# 
+# using `meds_placement` here, but should be the same for `mesm_placement`, `mesm_stauts`, `meds_status`
+
+curr_grad_year <- as.numeric(max(meds_placement$year)) # 2024
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                set current year for MEDS employment status               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# based on enrollment year, which is one year prior to graduation 
+
+# CHANGE THIS VAR NAME??
+
 meds_employmentStatus_curr_year <- curr_grad_year - 1 
 
-#............current year for MESM employment status.............
-# based on enrollment year which is two years prior to garduation 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                set current year for MESM employment status               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# based on enrollment year, which is two years prior to graduation 
+
+# CHANGE THIS VAR NAME??
+
 mesm_employmentStatus_curr_year <- curr_grad_year - 2 
 
-#..................set current admissions year...................
-# admissions data for entering class of 202* used in demographics tab 
-curr_admission_year <- 2024 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                         get individual class sizes                       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..................first for all classes / years.................
+tot_enrolled <- enrolled |> group_by(admission_year, program, sir) |> summarize(enrolled = n())
+
+#..................then for last 3 MESM cohorts..................
+mesm1 <- tot_enrolled |> filter(program == "MESM", admission_year == curr_admission_year - 2) |> pull(enrolled) 
+mesm2 <- tot_enrolled |> filter(program == "MESM", admission_year == curr_admission_year - 3) |> pull(enrolled) 
+mesm3 <- tot_enrolled |> filter(program == "MESM", admission_year == curr_admission_year - 4) |> pull(enrolled) 
+
+#..................and for last 3 MEDS cohorts...................
+meds1 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 1) |> pull(enrolled) 
+meds2 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 2) |> pull(enrolled) 
+meds3 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 3) |> pull(enrolled) 
 
 #..............set name spelling options for US & CA.............
 # get rid of this?
-us_names <- c("USA", "US", "Usa")
-ca_names <- c("Ca", "CALIFORNIA", "California")
+# us_names <- c("USA", "US", "Usa")
+# ca_names <- c("Ca", "CALIFORNIA", "California")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
@@ -125,34 +170,34 @@ ca_names <- c("Ca", "CALIFORNIA", "California")
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# # for testing purposes only; keep commented out when not in use
-# mesm_placement <- readRDS("bren-student-data-explorer/data/mesm_placement_cleaned.rds") 
-# meds_placement <- readRDS("bren-student-data-explorer/data/meds_placement_cleaned.rds") 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            MEDS / MESM class sizes & career survey respondents           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #....MESM program sizes + tot respondents (initial placement).....
 # for calculating MESM career exit survey response rate
+# `year` in `mesm_placement` == graduation year (admission year = graduation year - 2)
 mesm_placement_size <- mesm_placement |> 
   select(year) |>
   group_by(year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    year  == 2024 ~ 100, # enrolled 2022; graduated 2024 # UPDATE
-    year == 2023 ~ 80, # enrolled 2021; graduated 2023
-    year == 2022 ~ 92, # enrolled 2020; graduated 2022
-    year == 2021 ~ 93, # enrolled 2019; graduated 2021
-    year == 2020 ~ 77 # enrolled 2018; graduated 2020
+    year == curr_grad_year ~ mesm1, 
+    year == curr_grad_year - 1 ~ mesm2,
+    year == curr_grad_year - 2 ~ mesm3 
   ))
 
 #....MEDS program sizes + tot respondents (initial placement).....
 # for calculating MEDS career exit survey response rate
+# `year` in `meds_placement` == graduation year (admission year = graduation year - 1)
 meds_placement_size <- meds_placement |>
-  select(class_year) |>
-  group_by(class_year) |>
+  select(year) |>
+  group_by(year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    class_year == 2024 ~ 100, # enrolled 2023; graduated 2024 # UPDATE
-    class_year == 2023 ~ 31, # enrolled 2022; graduated 2023
-    class_year == 2022 ~ 25 # enrolled 2021; graduated 2022
+    year == curr_grad_year ~ meds1, 
+    year == curr_grad_year - 1 ~ meds2, 
+    year == curr_grad_year - 2 ~ meds3 
   ))
 
 #......MESM program sizes + tot respondents (active status)......
@@ -161,11 +206,9 @@ mesm_status_size <- mesm_status |>
   group_by(class_year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    class_year == 2024 ~ 100, # enrolled 2022; graduated 2024 # UPDATE
-    class_year == 2023 ~ 80, # enrolled 2021; graduated 2023
-    class_year == 2022 ~ 92, # enrolled 2020; graduated 2022
-    class_year == 2021 ~ 93, # enrolled 2019; graduated 2021
-    class_year == 2020 ~ 77 # enrolled 2018; graduated 2020
+    class_year == curr_grad_year ~ mesm1, 
+    class_year == curr_grad_year - 1 ~ mesm2,
+    class_year == curr_grad_year - 2 ~ mesm3
   ))
 
 #......MEDS program sizes + tot respondents (active status)......
@@ -174,30 +217,30 @@ meds_status_size <- meds_status |>
   group_by(class_year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    class_year == 2024 ~ 100, # enrolled 2023; graduated 2024 # UPDATE
-    class_year == 2023 ~ 31, # enrolled 2022; graduated 2023
-    class_year == 2022 ~ 25 # enrolled 2021; graduated 2022
+    class_year == curr_grad_year ~ meds1, 
+    class_year == curr_grad_year - 1 ~ meds2, 
+    class_year == curr_grad_year - 2 ~ meds3 
   ))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                        MEDS / MESM / PhD class sizes                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #..........................program sizes.........................
 program_size <- enrolled |>
-  select(c("app_submission_year", "application_id", "objective1")) |>
-  group_by(app_submission_year, objective1) |>
+  select(c(admission_year, application_id, program)) |>
+  group_by(admission_year, program) |>
   summarize(size = n())
 
 #...............total number students in each year...............
-# not broken down by program ----
 total_students_yr <- enrolled |>
-  group_by(app_submission_year) |> 
+  group_by(admission_year) |> 
   summarize(size = n())
 
 #............5yr total number of students per program............
 tot_5yr <- enrolled |>
-  select(c("app_submission_year",
-           "application_id",
-           "objective1",
-           "dob")) |>
-  group_by(objective1) |>
+  select(c(admission_year, application_id, program)) |>
+  group_by(program) |>
   summarize(size = n())
 
 #........5yr total number of students across all programs........

@@ -12,7 +12,22 @@ editor_options:
 ##                               load libraries                             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-library(tidyverse)
+librarian::shelf(
+  tidyverse
+  )
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                 import pre-processed initial placement data              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
+mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##           set current year (most recent year of admissions data)         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+curr_year <- 2024
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                  create name vectors for cleaning pipeline               ----
@@ -32,16 +47,9 @@ mi_cities <- c("Lansing, MI")
 dc_names <- c("Washington D.C.", "Washington DC", "Washington, DC", "Washington. DC", "Washington")
 us_cities <- c("CA", "WA", "OR", "CO", "DC", "NY", "MI")
 international_cities <- c("Ontario", "Tautira", "Michoacan", "Galapagos", "Bonaire", "Maharashtra", "N/A")
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                 import pre-processed initial placement data              ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
-mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
 ```
 
-1. CLEAN DATA
+1. WRANGLE / CLEAN MESM INITIAL PLACEMENT DATA
 
 ```{r}
 mesm_placement_cleaned <- mesm_placement |> 
@@ -160,12 +168,25 @@ mesm_placement_cleaned <- mesm_placement |>
     work_location_state == "CA" ~ "Domestic (California)",
     work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
     work_location_country != "United States" ~ "International"
-  ))
+  )) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
 ```
 
-2. WRITE TO FILE
+3. WRANGLE / CLEAN MESM ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+mesm_status_cleaned <- mesm_status |> 
+  filter(class_year %in% (curr_year - 2):curr_year)
+```
+
+4. WRITE TO FILE
 
 ```{r}
 write_rds(mesm_placement_cleaned, here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) 
-write_rds(mesm_status, here::here("bren-student-data-explorer", "data", "mesm_status_cleaned.rds")) # no actual cleaning required; just renamed and saved to bren-student-data-explorer/data/
+write_rds(mesm_status_cleaned, here::here("bren-student-data-explorer", "data", "mesm_status_cleaned.rds")) 
 ```
