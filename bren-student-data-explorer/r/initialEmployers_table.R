@@ -15,11 +15,9 @@ initialEmployers_table <- function(input, data) {
   
   #............wrangle data for initial employer table.............
   employer <- data |> 
-    select(c(employer_account_name,
-             employer_sector)) |> 
+    select(c(employer_account_name, employer_sector)) |> 
     mutate(employer_account_name = str_replace_all(employer_account_name, "Formerly", "formerly")) |> 
-    group_by(employer_account_name,
-             employer_sector) |> 
+    group_by(employer_account_name, employer_sector) |> 
     summarize(freq = n())
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

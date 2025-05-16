@@ -45,14 +45,7 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       total_program_size <- location_allYrs |> pull(total_program_size)
       
       data |> 
-        select(c(
-          employer_account_name,
-          work_location_city,
-          class_year,
-          work_location_state,
-          work_location_country,
-          location
-        )) |> 
+        select(c(employer_account_name, work_location_city, year, work_location_state, work_location_country, location)) |> 
         group_by(location) |> 
         summarize(location_count = n()) |> 
         filter(!is.na(location)) |> 
@@ -65,20 +58,13 @@ geographicComparison_plot <- function(input, data, program_acronym) {
     #.................if any single year is selected.................
     else {
       
-      data |> 
-        select(c(
-          employer_account_name,
-          work_location_city,
-          class_year,
-          work_location_state,
-          work_location_country,
-          location
-        )) |> 
-        filter(class_year == radioButton_yearInput) |> 
-        group_by(class_year, location) |> 
+      test<-data |> 
+        select(c(employer_account_name, work_location_city, year, work_location_state, work_location_country, location)) |> 
+        filter(year == radioButton_yearInput) |> 
+        group_by(year, location) |> 
         summarize(location_count = n()) |> 
         filter(!is.na(location)) |> 
-        left_join(placement_size, by = "class_year") |> 
+        left_join(placement_size, by = "year") |> 
         mutate(percent = round((location_count / responses) * 100, 1))
       
     } # END if `if any single year` is selected
@@ -101,8 +87,8 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } else if (program_acronym == "MEDS") {
       
@@ -111,8 +97,8 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     }
     
@@ -132,10 +118,13 @@ geographicComparison_plot <- function(input, data, program_acronym) {
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0(program_acronym, " Initial Job Placement Location", "\n",
-                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+                            "(", allYrs_response, " survey respondents out of ", allYrs_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
-        theme(panel.grid.minor = element_blank())
+        theme(
+          panel.grid.minor = element_blank(),
+          plot.subtitle = element_text(size = 9)
+          )
       
     } # END if `All Years` is selected
     
@@ -155,10 +144,13 @@ geographicComparison_plot <- function(input, data, program_acronym) {
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0(program_acronym, " Initial Job Placement Location", "\n", 
-                            "(", yr_response, "/", yr_size, " survey respondents)"),
+                            "(", yr_response, " survey respondents out of ", yr_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
-        theme(panel.grid.minor = element_blank())
+        theme(
+          panel.grid.minor = element_blank(),
+          plot.subtitle = element_text(size = 9)
+        )
       
     } # END if `any single year` is selected
     

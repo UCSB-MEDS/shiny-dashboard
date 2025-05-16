@@ -10,40 +10,40 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~
 
   # MESM valueboxes ----
-  # output$placement_stat <- employmentStatus_stat_valueBox(input, data = mesm_status, program_acronym = "MESM")
-  # output$mesm_brenNet_stat <- brenNet_stat_valueBox(input, data = mesm_placement)
-  # output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
+  output$placement_stat <- employmentStatus_stat_valueBox(input, data = mesm_status, program_acronym = "MESM")
+  output$mesm_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = mesm_placement)
+  output$mesm_brenNet_stat <- brenNet_stat_valueBox(input, data = mesm_placement)
 
   # MEDS valueBoxes ----
-  # output$meds_placement_stat <- employmentStatus_stat_valueBox(input, data = meds_status, program_acronym = "MEDS")
-  # output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
-  # output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
+  output$meds_placement_stat <- employmentStatus_stat_valueBox(input, data = meds_status, program_acronym = "MEDS")
+  output$meds_satisfied_stat <- initPlacementSatisfaction_stat_valueBox(input, data = meds_placement)
+  output$meds_brenNet_stat <- brenNet_stat_valueBox(input, data = meds_placement)
 
   ##~~~~~~~~~~~~~~~
   ##  ~ table  ----
   ##~~~~~~~~~~~~~~~
 
   # MESM table ----
-  # output$mesm_career_employ_sector_tbl <- initialEmployers_table(input, data = mesm_placement)
-  # output$mesm_title_tbl <- initialTitle_table(input, data = mesm_placement)
+  output$mesm_career_employ_sector_tbl <- initialEmployers_table(input, data = mesm_placement)
+  output$mesm_title_tbl <- initialTitle_table(input, data = mesm_placement)
 
   # MEDS table ----
-  # output$meds_career_employ_sector_tbl <- initialEmployers_table(input, data = meds_placement)
-  # output$meds_title_tbl <- initialTitle_table(input, data = meds_placement)
+  output$meds_career_employ_sector_tbl <- initialEmployers_table(input, data = meds_placement)
+  output$meds_title_tbl <- initialTitle_table(input, data = meds_placement)
 
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ geography tabBox  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   # MESM geography tabBox ----
-  # output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_dom_placement_data)
-  # output$mesm_internationalPlacement_tbl <- internationalPlacement_table(input, data = mesm_placement)
-  # output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_domesticPlacement_map <- domesticPlacement_map(input, data = mesm_dom_placement_data)
+  output$mesm_internationalPlacement_tbl <- internationalPlacement_table(input, data = mesm_placement)
+  output$mesm_geogComparison_plot <- geographicComparison_plot(input, data = mesm_placement, program_acronym = "MESM")
 
   # MEDS geography tabBox ----
-  # output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_dom_placement_data)
-  # SC NOTE 2022-02-08: NO INTERNATIONAL PLACEMENT YET FOR MEDS (ADD WHEN APPROPRIATE)
-  # output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_domesticPlacement_map <- domesticPlacement_map(input, data = meds_dom_placement_data)
+  output$meds_internationalPlacement_tbl <- internationalPlacement_table(input, data = meds_placement)
+  output$meds_geogComparison_plot <- geographicComparison_plot(input, data = meds_placement, program_acronym = "MEDS")
 
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ data viz tabBox  ----

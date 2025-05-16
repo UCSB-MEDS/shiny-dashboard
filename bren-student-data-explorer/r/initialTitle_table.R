@@ -14,8 +14,8 @@ initialTitle_table <- function(input, data) {
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   # wrangle data for initial employer & sector table ----
-  title <- data %>% 
-    select(c(job_title)) %>%
+  title <- data |> 
+    select(c(job_title)) |> 
     group_by(job_title) |> 
     summarize(freq = n()) |> 
     arrange(desc(freq))

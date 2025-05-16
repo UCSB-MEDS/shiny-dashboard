@@ -28,9 +28,9 @@ initPlacementSatisfaction_stat_valueBox <- function(input, data) {
     filter(placement_satisfaction %in% c("Satisfied", "Very Satisfied")) |> 
     summarise(
       sat_vsat_count = sum(count),
-      sat_vat_perc = sum(percent)
+      sat_vsat_perc = sum(percent)
     ) |> 
-    pull(sat_vat_perc)
+    pull(sat_vsat_perc)
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                                Visualization                             ----

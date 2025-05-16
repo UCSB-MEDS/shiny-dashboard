@@ -13,9 +13,9 @@ internationalPlacement_table <- function(input, data) {
   ##                               Data Wrangling                             ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  #..............wrangle international placement data..............
+  # wrangle international placement data ---- 
   international_tbl <- data |> 
-    filter(!work_location_country %in% c("US", "Usa", "USA", "United States"),
+    filter(work_location_country != "United States", 
            !is.na(work_location_country)) |> 
     group_by(employer_account_name, employer_sector, work_location_country) |> 
     summarize(count = n())
