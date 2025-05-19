@@ -1,5 +1,4 @@
 # ---- SC REMINDERS (2023-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
-# update year_radioButtons() with new year choices as career data are added
 # update curr_year vars, below 
 # once MEDS hits 3 years, use salary_plot() & salaryBySector_plot() fxns for generating plots (until then, add 2023 to meds_salary_plot() & meds_salaryBySector_plot())
 # update class sizes by year in placementStatus_plot()
@@ -36,16 +35,16 @@ library(leaflet)
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# # # for testing purposes only; keep commented out when not in use
+# # for testing purposes only; keep commented out when not in use
 # mesm_placement <- readRDS("bren-student-data-explorer/data/mesm_placement_cleaned.rds")
 # meds_placement <- readRDS("bren-student-data-explorer/data/meds_placement_cleaned.rds")
-# mesm_status <- readRDS("bren-student-data-explorer/data/mesm_status_cleaned.rds") 
+# mesm_status <- readRDS("bren-student-data-explorer/data/mesm_status_cleaned.rds")
 # meds_status <- readRDS("bren-student-data-explorer/data/meds_status_cleaned.rds")
-# mesm_dom_placement_data <- readRDS("bren-student-data-explorer/data/mesm_domestic_placement_data.rds") 
-# meds_dom_placement_data <- readRDS("bren-student-data-explorer/data/meds_domestic_placement_data.rds") 
-# admissions <- readRDS("bren-student-data-explorer/data/admissions.rds") 
-# enrolled <- readRDS("bren-student-data-explorer/data/enrolled.rds") 
-# ipeds <- readRDS("bren-student-data-explorer/data/ipeds.rds") 
+# mesm_dom_placement_data <- readRDS("bren-student-data-explorer/data/mesm_domestic_placement_data.rds")
+# meds_dom_placement_data <- readRDS("bren-student-data-explorer/data/meds_domestic_placement_data.rds")
+# admissions <- readRDS("bren-student-data-explorer/data/admissions.rds")
+# enrolled <- readRDS("bren-student-data-explorer/data/enrolled.rds")
+# ipeds <- readRDS("bren-student-data-explorer/data/ipeds.rds")
 # diversity_stats <- readRDS("bren-student-data-explorer/data/diversity_stats.rds")
 # ug_geoms <- readRDS("bren-student-data-explorer/data/ug_geoms.rds")
 
@@ -111,24 +110,27 @@ all_programs_color <- "#09847a"
 
 # using `enrolled` here, but should be the same for `admissions`
 
-curr_admission_year <- max(enrolled$admission_year) # 2024 
+curr_admission_year <- max(enrolled$admission_year) 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##         set current grad class year (that we have career data for)       ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# 
 # using `meds_placement` here, but should be the same for `mesm_placement`, `mesm_stauts`, `meds_status`
 
-curr_grad_year <- as.numeric(max(meds_placement$year)) # 2024
+#..................get current grad class year...................
+curr_grad_year <- as.numeric(max(meds_placement$year)) 
+
+#...use ^ to create 3 year vars for year_radioButton() options...
+year1 <- curr_grad_year - 2
+year2 <- curr_grad_year - 1
+year3 <- curr_grad_year
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                set current year for MEDS employment status               ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # based on enrollment year, which is one year prior to graduation 
-
-# CHANGE THIS VAR NAME??
 
 meds_employmentStatus_curr_year <- curr_grad_year - 1 
 
@@ -137,8 +139,6 @@ meds_employmentStatus_curr_year <- curr_grad_year - 1
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # based on enrollment year, which is two years prior to graduation 
-
-# CHANGE THIS VAR NAME??
 
 mesm_employmentStatus_curr_year <- curr_grad_year - 2 
 
@@ -202,24 +202,24 @@ meds_placement_size <- meds_placement |>
 
 #......MESM program sizes + tot respondents (active status)......
 mesm_status_size <- mesm_status |>
-  select(class_year) |>
-  group_by(class_year) |>
+  select(year) |>
+  group_by(year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    class_year == curr_grad_year ~ mesm1, 
-    class_year == curr_grad_year - 1 ~ mesm2,
-    class_year == curr_grad_year - 2 ~ mesm3
+    year == curr_grad_year ~ mesm1, 
+    year == curr_grad_year - 1 ~ mesm2,
+    year == curr_grad_year - 2 ~ mesm3
   ))
 
 #......MEDS program sizes + tot respondents (active status)......
 meds_status_size <- meds_status |>
-  select(class_year) |>
-  group_by(class_year) |>
+  select(year) |>
+  group_by(year) |>
   summarize(responses = n()) |>
   mutate(program_size = case_when(
-    class_year == curr_grad_year ~ meds1, 
-    class_year == curr_grad_year - 1 ~ meds2, 
-    class_year == curr_grad_year - 2 ~ meds3 
+    year == curr_grad_year ~ meds1, 
+    year == curr_grad_year - 1 ~ meds2, 
+    year == curr_grad_year - 2 ~ meds3 
   ))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

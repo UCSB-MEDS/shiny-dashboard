@@ -47,7 +47,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       total_program_size <- status_size_allYrs |> pull(total_program_size)
       
       data |> 
-        select(class_year, employment_type, employer_sector, compensation_frequency,
+        select(year, employment_type, employer_sector, compensation_frequency,
                estimated_annual_compensation_us) |>
         filter(employment_type == "Full-Time Job") |>
         filter(estimated_annual_compensation_us != 0) |>
@@ -67,21 +67,21 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     else {
       
       data |> 
-        select(class_year, employment_type, employer_sector, compensation_frequency,
+        select(year, employment_type, employer_sector, compensation_frequency,
                estimated_annual_compensation_us) |>
         filter(employment_type == "Full-Time Job") |>
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |>
-        group_by(class_year, employer_sector) |> 
+        group_by(year, employer_sector) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
         mutate(High = max(estimated_annual_compensation_us)) |>
-        left_join(placement_size, by = "class_year") |> 
-        mutate(class_year = as.factor(class_year)) |> 
-        filter(class_year == radioButton_yearInput) |> 
+        left_join(placement_size, by = "year") |> 
+        mutate(class = as.factor(year)) |> 
+        filter(year == radioButton_yearInput) |> 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        mutate(year = as.factor(year)) |> 
         mutate(range = fct_relevel(range, c("Low", "Median", "High")))
       
     } # END if 'any single year' is selected
@@ -108,20 +108,20 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     if (radioButton_yearInput == "All Years") { 
       
       data |> 
-        select(class_year, employment_type, employer_sector, compensation_frequency,
+        select(year, employment_type, employer_sector, compensation_frequency,
                estimated_annual_compensation_us) |>
         filter(employment_type == "Full-Time Job") |>
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |>
-        group_by(class_year, employer_sector) |> 
+        group_by(year, employer_sector) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
         mutate(High = max(estimated_annual_compensation_us)) |>
-        left_join(placement_size, by = "class_year") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        left_join(placement_size, by = "year") |> 
+        mutate(year = as.factor(year)) |> 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        mutate(year = as.factor(year)) |> 
         mutate(range = fct_relevel(range, c("Low", "Median", "High"))) |> 
         group_by(employer_sector) |> 
         summarize(min_val = min(values), 
@@ -134,23 +134,23 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     else {
       
       data |> 
-        select(class_year, employment_type, employer_sector, compensation_frequency,
+        select(year, employment_type, employer_sector, compensation_frequency,
                estimated_annual_compensation_us) |>
         filter(employment_type == "Full-Time Job") |>
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |>
-        group_by(class_year, employer_sector) |> 
+        group_by(year, employer_sector) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
         mutate(High = max(estimated_annual_compensation_us)) |>
-        left_join(placement_size, by = "class_year") |> 
-        mutate(class_year = as.factor(class_year)) |> 
-        filter(class_year == radioButton_yearInput) |> 
+        left_join(placement_size, by = "year") |> 
+        mutate(year = as.factor(year)) |> 
+        filter(year == radioButton_yearInput) |> 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        mutate(year = as.factor(year)) |> 
         mutate(range = fct_relevel(range, c("Low", "Median", "High"))) |> 
-        group_by(class_year, employer_sector) |> 
+        group_by(year, employer_sector) |> 
         summarize(min_val = min(values), 
                   max_val = max(values),
                   median_val = median(values))
@@ -174,8 +174,8 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } else if (program_acronym == "MEDS") {
       
@@ -184,8 +184,8 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     }
     
@@ -208,7 +208,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
         scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) + 
         labs(title = paste0(program_acronym ," Initial Job Placement Salaries by Sector", "\n",
-                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"), 
+                            "(", allYrs_response, " survey respondents out of ", allYrs_size, " graduates)"), 
              x = NULL, y = NULL, fill = NULL, shape = NULL, size = NULL) +
         theme_minimal() +
         theme(
@@ -237,7 +237,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
         scale_size_manual(values = c(6, 5, 6)) +
         scale_x_continuous(labels = scales::dollar_format()) +
         labs(title = paste0(program_acronym ," Initial Job Placement Salaries by Sector", "\n",
-                            "(", yr_response, "/", yr_size, " survey respondents)"),
+                            "(", yr_response, " survey respondents out of ", yr_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL, shape = NULL, size = NULL) +
         theme_minimal() +
         theme(

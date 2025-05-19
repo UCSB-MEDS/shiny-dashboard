@@ -46,10 +46,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
       
       # wrangle data ----
       data |> 
-        select(c(class_year, employer_sector)) |> 
-        # mutate(employer_sector = case_when(
-        #   
-        # ))
+        select(c(year, employer_sector)) |> 
         group_by(employer_sector) |> 
         summarize(count = n()) |> 
         filter(!is.na(employer_sector)) |>
@@ -57,65 +54,20 @@ sectorTrends_plot <- function(input, data, program_acronym) {
                program_size = rep(total_program_size)) |> 
         mutate(percent = round((count / responses) * 100, 1))
       
-      # data |> 
-      #   select(c(class_year, employer_sector)) |> 
-      #   mutate(sector_type = case_when(
-      #     employer_sector %in% c("Consulting",
-      #                            "Corporate") ~ "Private",
-      #     employer_sector %in% c("Federal Government",
-      #                            "Local Government",
-      #                            "State Government",
-      #                            "Research/Education") ~ "Public",
-      #     employer_sector %in% c("Foreign Government",
-      #                            "Other") ~ "Other",
-      #     TRUE ~ employer_sector
-      #   )) %>%
-      #   mutate(sector_type = factor(sector_type, levels = c("Private",
-      #                                                       "Public",
-      #                                                       "Non-Profit",
-      #                                                       "Other"))) |> 
-      #   group_by(class_year, sector_type) %>%
-      #   summarize(count = n()) |> 
-      #   ungroup() |> 
-      #   filter(!is.na(sector_type)) |>
-      #   left_join(placement_size, by = "class_year") |>
-      #   group_by(sector_type) |>
-      #   summarize(count = sum(count),
-      #             responses = sum(responses),
-      #             program_size = sum(program_size)) |>
-      #   mutate(percent = round((count / responses) * 100, 1))
-      
     } # END if `All Years` is selected
     
     #.................if any single year is selected.................
     else {
       
       data |> 
-        select(c(class_year, employer_sector)) |> 
-        group_by(class_year, employer_sector) |> 
+        select(c(year, employer_sector)) |> 
+        group_by(year, employer_sector) |> 
         summarize(count = n()) |> 
         ungroup() |> 
         filter(!is.na(employer_sector)) |> 
-        left_join(placement_size, by = "class_year") |>
-        filter(class_year == radioButton_yearInput) |> 
+        left_join(placement_size, by = "year") |>
+        filter(year == radioButton_yearInput) |> 
         mutate(percent = round((count / responses) * 100, 1))
-      
-      # data |> 
-      #   select(c(class_year, employer_sector)) |> 
-      #   mutate(sector_type = case_when(
-      #     employer_sector %in% c("Consulting", "Corporate") ~ "Private",
-      #     employer_sector %in% c("Federal Government", "Local Government", "State Government", "Research/Education") ~ "Public",
-      #     employer_sector %in% c("Foreign Government", "Other") ~ "Other",
-      #     TRUE ~ employer_sector
-      #   )) |>
-      #   mutate(sector_type = factor(sector_type, levels = c("Private", "Public", "Non-Profit", "Other"))) |>
-      #   group_by(class_year, sector_type) |>
-      #   summarize(count = n()) |> 
-      #   ungroup() |> 
-      #   filter(!is.na(sector_type)) |>
-      #   left_join(placement_size, by = "class_year") |>
-      #   filter(class_year == radioButton_yearInput) |> 
-      #   mutate(percent = round((count / responses) * 100, 1))
       
     } # END if `any single year` is selected
     
@@ -136,8 +88,8 @@ sectorTrends_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
 
     } else if (program_acronym == "MEDS") {
 
@@ -146,8 +98,8 @@ sectorTrends_plot <- function(input, data, program_acronym) {
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
 
     }
 
@@ -164,7 +116,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
                            limits = c(0, 100),
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         labs(title = paste0(program_acronym ," Initial Job Placement by Sector", "\n",
-                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+                            "(", allYrs_response, " survey respondents out of ", allYrs_size, " graduates)"),
              x = NULL,
              y = NULL,
              fill = NULL) +
@@ -190,7 +142,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
                            limits = c(0, 100),
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         labs(title = paste0(program_acronym ," Initial Job Placement by Sector", "\n",
-                            "(", yr_response, "/", yr_size, " survey respondents)"),
+                            "(", yr_response, " survey respondents out of ", yr_size, " graduates)"),
              x = NULL,
              y = NULL,
              fill = NULL) +
@@ -202,34 +154,6 @@ sectorTrends_plot <- function(input, data, program_acronym) {
         )
       
     } # END if `any single year` is selected
-      
-    
-    
-    
-    # sector_trends_gg <- ggplot(data = sector_trends_data(), 
-    #                            aes(x = percent, 
-    #                                y = fct_relevel(sector_type, c("Other", "Non-Profit", "Public", "Private")),
-    #                                #fill = sector_type,
-    #                                text = paste0(sector_type,
-    #                                              " (", percent, "%", ")",
-    #                                               "\n", "Number of respondents: ",
-    #                                               responses))) +
-    #   geom_col(fill = "#003660") +
-    #   # scale_fill_manual(values = c("Private" = "#003660", "Public" = "#047c91",
-    #   #                              "Non-Profit" = "#dcd6cc", "Other" = "#9cbebe")) +
-    #   scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
-    #                      limits = c(0, 100),
-    #                      labels = scales::percent_format(accuracy = 1, scale = 1)) +
-    #   labs(title = paste0(program_acronym ," Alumni Placement by Sector"),
-    #        x = "Percent of Respondents",
-    #        y = NULL,
-    #        fill = NULL) +
-    #   theme_minimal() +
-    #   theme(
-    #     panel.grid.minor = element_blank(),
-    #     legend.position = "none",
-    #     axis.title.x = element_text(margin = unit(c(t = 3, r = 0, b = 0, l = 0), "mm"))
-    #   )
     
     #....................then render plotly object...................
     plotly::ggplotly(sector_trends_gg, tooltip = "text") |>  

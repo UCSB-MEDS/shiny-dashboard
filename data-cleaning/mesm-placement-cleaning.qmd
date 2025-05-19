@@ -22,6 +22,10 @@ librarian::shelf(
 
 mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
 mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
+# apps <- readRDS(here::here("raw-data", "apps_2017_2024.rds")) |> 
+#   select(sheet_name_year, full_name, application_id) |> 
+#   mutate(application_id = map(application_id, as.character)) |> 
+#   unnest(application_id)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##           set current year (most recent year of admissions data)         ----
@@ -49,7 +53,45 @@ us_cities <- c("CA", "WA", "OR", "CO", "DC", "NY", "MI")
 international_cities <- c("Ontario", "Tautira", "Michoacan", "Galapagos", "Bonaire", "Maharashtra", "N/A")
 ```
 
-1. WRANGLE / CLEAN MESM INITIAL PLACEMENT DATA
+1. WRANGLE / CLEAN MESM ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+mesm_status_cleaned <- mesm_status |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      assign status to broader buckets                    ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status)) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              combine first & last names & update `year` name             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  mutate(full_name = str_c(first_name, last_name, sep = " ")) |> 
+  select(full_name, year = class_year, campaign_name, member_status, status) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+2. WRANGLE / CLEAN MESM INITIAL PLACEMENT DATA
 
 ```{r}
 mesm_placement_cleaned <- mesm_placement |> 
@@ -75,11 +117,14 @@ mesm_placement_cleaned <- mesm_placement |>
 ##                        fix incorrectly entered data                      ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# Career Team staff requested edits to particular entries after information was entered incorrectly by student submitters
-
   mutate(employment_type = case_when(
-    full_name == "Katelyn Elizabeth Toigo" ~ "Internship", # Full-Time > Internship; requested by K.Birney 2023-02-16
+    full_name == "Katelyn Elizabeth Toigo" ~ "Internship", # Full-Time > Internship; update requested by K.Birney 2023-02-16
     TRUE ~ employment_type
+  )) |> 
+  
+    mutate(employer_sector = case_when(
+    employer_sector == "Corporate; Foreign Government; Tribal Government" ~ "Corporate", # found by SShanny-Csik 2025-05-19
+    TRUE ~ employer_sector
   )) |> 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,7 +140,20 @@ mesm_placement_cleaned <- mesm_placement |>
     employer_account_name == "Environmental Incentives. LLC" ~ "Environmental Incentives, LLC",
     TRUE ~ employer_account_name
   )) |> 
-  
+
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  update / simplify specialization titles                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    mutate(mesm_program_enrollment_specializations = case_when(
+          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+          str_detect(mesm_program_enrollment_specializations, ";") ~ "Dual Specialization",
+          TRUE ~ mesm_program_enrollment_specializations
+        )) |>
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                          fix state abbreviations                         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -177,16 +235,11 @@ mesm_placement_cleaned <- mesm_placement |>
   filter(year %in% (curr_year - 2):curr_year)
 ```
 
-3. WRANGLE / CLEAN MESM ACTIVE PLACEMENT (STATUS) DATA
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+3. WRITE TO FILE
 
 ```{r}
-mesm_status_cleaned <- mesm_status |> 
-  filter(class_year %in% (curr_year - 2):curr_year)
-```
-
-4. WRITE TO FILE
-
-```{r}
-write_rds(mesm_placement_cleaned, here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds")) 
 write_rds(mesm_status_cleaned, here::here("bren-student-data-explorer", "data", "mesm_status_cleaned.rds")) 
+write_rds(mesm_placement_cleaned, here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds"))
 ```

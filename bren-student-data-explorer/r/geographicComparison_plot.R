@@ -58,7 +58,7 @@ geographicComparison_plot <- function(input, data, program_acronym) {
     #.................if any single year is selected.................
     else {
       
-      test<-data |> 
+      data |> 
         select(c(employer_account_name, work_location_city, year, work_location_state, work_location_country, location)) |> 
         filter(year == radioButton_yearInput) |> 
         group_by(year, location) |> 

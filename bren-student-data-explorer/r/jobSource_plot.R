@@ -47,7 +47,7 @@ jobSource_plot <- function(input, data, program_acronym) {
       total_program_size <- status_size_allYrs |> pull(total_program_size)
       
       data |> 
-        select(c(class_year, job_source)) |>
+        select(c(year, job_source)) |>
         group_by(job_source) |>
         summarize(count = n()) |>
         drop_na() |>
@@ -61,12 +61,12 @@ jobSource_plot <- function(input, data, program_acronym) {
     else {
       
       data |> 
-        select(c(class_year, job_source)) |>
-        filter(class_year == radioButton_yearInput) |>
-        group_by(class_year, job_source) |>
+        select(c(year, job_source)) |>
+        filter(year == radioButton_yearInput) |>
+        group_by(year, job_source) |>
         summarize(count = n()) |>
         drop_na() |>
-        left_join(placement_size, by = "class_year") |>
+        left_join(placement_size, by = "year") |>
         mutate(percent = round((count / responses) * 100, 1))
       
     } # END if `any single year` is selected
@@ -88,8 +88,8 @@ jobSource_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } else if (program_acronym == "MEDS") {
       
@@ -98,8 +98,8 @@ jobSource_plot <- function(input, data, program_acronym) {
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } # END if `All Years` is selected
     
@@ -121,7 +121,7 @@ jobSource_plot <- function(input, data, program_acronym) {
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0("Job Sources ", program_acronym, " alumni are using to secure jobs", "\n",
-                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+                            "(", allYrs_response, " survey respondents out of ", allYrs_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
         theme(panel.grid.minor = element_blank())
@@ -147,7 +147,7 @@ jobSource_plot <- function(input, data, program_acronym) {
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0("Job Sources ", program_acronym, " alumni are using to secure jobs", "\n",
-                            "(", yr_response, "/", yr_size, " survey respondents)"),
+                            "(", yr_response, " survey respondents out of ", yr_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
         theme(panel.grid.minor = element_blank())

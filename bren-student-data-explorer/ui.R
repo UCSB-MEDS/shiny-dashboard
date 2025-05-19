@@ -131,7 +131,7 @@ body <- dashboardBody(
                                                           tags$p(tags$em("Data includes Full-Time Career positions only.")),
                                                           
                                                           # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_salarySector_year")
+                                                          year_radioButtons(inputId = "meds_salarySector_year")
                                                           
                                                  ), # END (TAB 2) meds salary by sector tabPanel
                                                  
@@ -143,7 +143,7 @@ body <- dashboardBody(
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_placementStatus_year")
+                                                          year_radioButtons(inputId = "meds_placementStatus_year")
                                                           
                                                  ), # END (TAB 3) meds placement status tabPanel
                                                  
@@ -155,7 +155,7 @@ body <- dashboardBody(
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_sector_trends_year")
+                                                          year_radioButtons(inputId = "meds_sector_trends_year")
                                                           
                                                  ), # END (TAB 4) meds sector trends tabPanel
                                                  
@@ -180,7 +180,7 @@ body <- dashboardBody(
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          meds_year_radioButtons(inputId = "meds_job_source_year")
+                                                          year_radioButtons(inputId = "meds_job_source_year")
                                                           
                                                  ) # END (TAB 6) meds job source tabPanel
                                                  
@@ -372,12 +372,6 @@ body <- dashboardBody(
                                               # mesm sector trends plotly output ----
                                               plotly::plotlyOutput(outputId = "mesm_sector_trends") |>
                                                 withSpinner(color = "#003660", type = 1),
-                                              
-                                              # extra space ----
-                                              br(),
-                                              
-                                              # sector definitions caption ----
-                                              includeMarkdown("text/sector_definitions.md"),
                                               
                                               # year radioButtons input ----
                                               year_radioButtons(inputId = "mesm_sector_trends_year")

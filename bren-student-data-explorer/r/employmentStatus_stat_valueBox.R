@@ -18,8 +18,8 @@ employmentStatus_stat_valueBox <- function(input, data, program_acronym) {
   
   #..........wrangle data for employment status valueBox...........
   status_data <- data |> 
-    select(class_year, member_status) |> 
-    filter(class_year == curr_grad_year) |> 
+    select(year, member_status) |> 
+    filter(year == curr_grad_year) |> 
     mutate(status = case_when(
       member_status %in% c("FT Career", 
                            "FT Temporary Career", 

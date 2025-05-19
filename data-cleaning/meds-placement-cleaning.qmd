@@ -34,7 +34,48 @@ curr_year <- 2024
 us_names <- c("USA", "US", "Usa")
 ```
 
-1. WRANGLE / CLEAN MEDS INITIAL PLACEMENT DATA
+1. WRANGLE / CLEAN MEDS ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+
+# unique(meds_status$member_status)
+
+meds_status_cleaned <- meds_status |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      assign status to broader buckets                    ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status)) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              combine first & last names & update `year` name             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  mutate(full_name = str_c(first_name, last_name, sep = " ")) |> 
+  select(full_name, year = class_year, campaign_name, member_status, status) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+2. WRANGLE / CLEAN MEDS INITIAL PLACEMENT DATA
 
 ```{r}
 meds_placement_cleaned <- meds_placement |> 
@@ -89,17 +130,12 @@ meds_placement_cleaned <- meds_placement |>
   filter(year %in% (curr_year - 2):curr_year)
 ```
 
-3. WRANGLE / CLEAN MEDS ACTIVE PLACEMENT (STATUS) DATA
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+3. WRITE TO FILE
 
 ```{r}
-meds_status_cleaned <- meds_status |> 
-  filter(class_year %in% (curr_year - 2):curr_year)
-```
-
-4. WRITE TO FILE
-
-```{r}
-write_rds(meds_placement_cleaned, here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) 
 write_rds(meds_status_cleaned, here::here("bren-student-data-explorer", "data", "meds_status_cleaned.rds")) 
+write_rds(meds_placement_cleaned, here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) 
 ```
 

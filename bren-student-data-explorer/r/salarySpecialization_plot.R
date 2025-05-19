@@ -23,7 +23,7 @@ salarySpecialization_plot <- function(input, data) {
     if (radioButton_yearInput == "All Years") { 
       
       mesm_placement |> 
-        select(class_year, 
+        select(year, 
                mesm_program_enrollment_specializations, 
                employment_type, 
                compensation_frequency, 
@@ -32,22 +32,22 @@ salarySpecialization_plot <- function(input, data) {
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |> 
         filter(!is.na(mesm_program_enrollment_specializations)) |> 
-        mutate(mesm_program_enrollment_specializations = case_when(
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
-          TRUE ~ mesm_program_enrollment_specializations
-        )) |> 
+        # mutate(mesm_program_enrollment_specializations = case_when(
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+        #   TRUE ~ mesm_program_enrollment_specializations
+        # )) |> 
         group_by(mesm_program_enrollment_specializations) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
@@ -62,7 +62,7 @@ salarySpecialization_plot <- function(input, data) {
     else {
       
       mesm_placement |> 
-        select(class_year, 
+        select(year, 
                mesm_program_enrollment_specializations, 
                employment_type, 
                compensation_frequency, 
@@ -71,30 +71,30 @@ salarySpecialization_plot <- function(input, data) {
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |> 
         filter(!is.na(mesm_program_enrollment_specializations)) |> 
-        mutate(mesm_program_enrollment_specializations = case_when(
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
-          TRUE ~ mesm_program_enrollment_specializations
-        )) |> 
-        filter(class_year == radioButton_yearInput) |>
+        # mutate(mesm_program_enrollment_specializations = case_when(
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+        #   TRUE ~ mesm_program_enrollment_specializations
+        # )) |> 
+        filter(year == radioButton_yearInput) |>
         group_by(mesm_program_enrollment_specializations) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
         mutate(High = max(estimated_annual_compensation_us)) |> 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        mutate(year = as.factor(year)) |> 
         mutate(range = fct_relevel(range, c("Low", "Median", "High")))
       
     } # END if `any single year` is selected
@@ -111,7 +111,7 @@ salarySpecialization_plot <- function(input, data) {
     if (radioButton_yearInput == "All Years") { 
       
       mesm_placement |> 
-        select(class_year, 
+        select(year, 
                mesm_program_enrollment_specializations, 
                employment_type, 
                compensation_frequency, 
@@ -120,22 +120,22 @@ salarySpecialization_plot <- function(input, data) {
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |> 
         filter(!is.na(mesm_program_enrollment_specializations)) |> 
-        mutate(mesm_program_enrollment_specializations = case_when(
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
-          TRUE ~ mesm_program_enrollment_specializations
-        )) |> 
+        # mutate(mesm_program_enrollment_specializations = case_when(
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+        #   TRUE ~ mesm_program_enrollment_specializations
+        # )) |> 
         group_by(mesm_program_enrollment_specializations) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
@@ -154,7 +154,7 @@ salarySpecialization_plot <- function(input, data) {
     else {
       
       mesm_placement |> 
-        select(class_year, 
+        select(year, 
                mesm_program_enrollment_specializations, 
                employment_type, 
                compensation_frequency, 
@@ -163,32 +163,32 @@ salarySpecialization_plot <- function(input, data) {
         filter(estimated_annual_compensation_us != 0) |>
         filter(compensation_frequency != "Stipend") |> 
         filter(!is.na(mesm_program_enrollment_specializations)) |> 
-        mutate(mesm_program_enrollment_specializations = case_when(
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
-          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
-          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
-          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
-          TRUE ~ mesm_program_enrollment_specializations
-        )) |> 
-        filter(class_year == radioButton_yearInput) |>
+        # mutate(mesm_program_enrollment_specializations = case_when(
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE); Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Economics and Politics of the Environment; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Corporate Environmental Management; Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Conservation Planning; Water Resources Management" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Conservation Planning" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM); Business and Sustainability (formerly CEM)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Environmental Policy (formerly EPE)" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM); Energy and Climate" ~ "Dual Specialization",
+        #   mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+        #   mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+        #   mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+        #   TRUE ~ mesm_program_enrollment_specializations
+        # )) |> 
+        filter(year == radioButton_yearInput) |>
         group_by(mesm_program_enrollment_specializations) |> 
         mutate(Median = median(estimated_annual_compensation_us)) |>
         mutate(Low = min(estimated_annual_compensation_us)) |>
         mutate(High = max(estimated_annual_compensation_us)) |> 
         pivot_longer(cols = c(Low, High, Median),
                      names_to = "range", values_to = "values") |> 
-        mutate(class_year = as.factor(class_year)) |> 
+        mutate(year = as.factor(year)) |> 
         mutate(range = fct_relevel(range, c("Low", "Median", "High"))) |> 
-        group_by(class_year, mesm_program_enrollment_specializations) |> 
+        group_by(year, mesm_program_enrollment_specializations) |> 
         summarize(min_val = min(values), 
                   max_val = max(values),
                   median_val = median(values))
@@ -210,8 +210,8 @@ salarySpecialization_plot <- function(input, data) {
     placement_size <- mesm_placement_size
     allYrs_size <- sum(placement_size$program_size)
     allYrs_response <- sum(placement_size$responses)
-    yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-    yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+    yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+    yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
     
     #...................if `All Years` is selected...................
     if (radioButton_yearInput == "All Years") { 

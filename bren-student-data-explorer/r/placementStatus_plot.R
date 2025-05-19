@@ -48,22 +48,8 @@ placementStatus_plot <- function(input, data, program_acronym) {
       total_program_size <- status_size_allYrs |> pull(total_program_size)
       
       data |>
-        select(class_year, member_status) |>
+        select(year, member_status, status) |>
         filter(!member_status %in% filter_out) |>
-        mutate(status = case_when(
-          member_status %in% c("FT Career",
-                               "FT Temporary Career",
-                               "PT Temporary Career",
-                               "FT Career-Sponsored",
-                               "PT Career",
-                               "FT Career-Sponsored") ~ "Career",
-          member_status %in% c("FT New Business",
-                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
-          member_status %in% c("Internship/Fellowship",
-                               "Continuing Internship",
-                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
-          TRUE ~ member_status
-        )) |>
         group_by(status) |>
         summarize(count = n()) |>
         mutate(responses = rep(total_responses),
@@ -76,26 +62,12 @@ placementStatus_plot <- function(input, data, program_acronym) {
     else {
       
       data |>
-        select(class_year, member_status) |>
-        filter(class_year == radioButton_yearInput) |> 
+        select(year, member_status, status) |>
+        filter(year == radioButton_yearInput) |> 
         filter(!member_status %in% filter_out) |>
-        mutate(status = case_when(
-          member_status %in% c("FT Career",
-                               "FT Temporary Career",
-                               "PT Temporary Career",
-                               "FT Career-Sponsored",
-                               "PT Career",
-                               "FT Career-Sponsored") ~ "Career",
-          member_status %in% c("FT New Business",
-                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
-          member_status %in% c("Internship/Fellowship",
-                               "Continuing Internship",
-                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
-          TRUE ~ member_status
-        )) |>
-        group_by(class_year, status) |>
+        group_by(year, status) |>
         summarize(count = n()) |>
-        left_join(status_size, by = "class_year") |>
+        left_join(status_size, by = "year") |>
         mutate(percent = round((count / responses) * 100, 1))
       
     } # END if `any single year` is selected
@@ -117,8 +89,8 @@ placementStatus_plot <- function(input, data, program_acronym) {
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } else if (program_acronym == "MEDS") {
       
@@ -127,8 +99,8 @@ placementStatus_plot <- function(input, data, program_acronym) {
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
       allYrs_response <- sum(placement_size$responses)
-      yr_size <- placement_size |> filter(class_year == selected_class_year) |> pull(program_size)
-      yr_response <- placement_size |> filter(class_year == selected_class_year) |> pull(responses)
+      yr_size <- placement_size |> filter(year == selected_class_year) |> pull(program_size)
+      yr_response <- placement_size |> filter(year == selected_class_year) |> pull(responses)
       
     } # END if `All Years` is selected
     
@@ -144,14 +116,13 @@ placementStatus_plot <- function(input, data, program_acronym) {
                                                                   "Internship, Fellowship, or Short-term Project",
                                                                   "Career")), 
                                         text = paste0(percent, "%"))) +
-                                        #text = paste0(status," (", percent, "%", ")"))) +
         geom_col(fill = "#003660") +
         scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
                            limits = c(0, 100),
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0(program_acronym, " Initial Job Placement Status 6 months after graduation", "\n",
-                            "(", allYrs_response, "/", allYrs_size, " survey respondents)"),
+                            "(", allYrs_response, " survey respondents out of ", allYrs_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
         theme(panel.grid.minor = element_blank())
@@ -170,14 +141,13 @@ placementStatus_plot <- function(input, data, program_acronym) {
                                                                   "Internship, Fellowship, or Short-term Project",
                                                                   "Career")),
                                         text = paste0(percent, "%"))) +
-                                        #text = paste0(status, " (", percent, "%", ")"))) +
         geom_col(fill = "#003660") +
         scale_x_continuous(breaks = c(0, 25, 50, 75, 100),
                            limits = c(0, 100),
                            labels = scales::percent_format(accuracy = 1, scale = 1)) +
         scale_y_discrete(labels = scales::label_wrap(20)) +
         labs(title = paste0(program_acronym, " Initial Job Placement Status 6 months after graduation", "\n",
-                            "(", yr_response, "/", yr_size, " survey respondents)"),
+                            "(", yr_response, " survey respondents out of ", yr_size, " graduates)"),
              x = NULL, y = NULL, fill = NULL) +
         theme_minimal() +
         theme(panel.grid.minor = element_blank())

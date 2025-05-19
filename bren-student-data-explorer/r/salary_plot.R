@@ -30,24 +30,24 @@ salary_plot <- function(input, data, program_acronym) {
   
   # df for creating data points ----
   salary <- data |> 
-    select(class_year, employment_type, employer_sector, compensation_frequency,
+    select(year, employment_type, employer_sector, compensation_frequency,
            estimated_annual_compensation_us) |>
     filter(employment_type == "Full-Time Job") |>
     filter(estimated_annual_compensation_us != 0) |>
     filter(compensation_frequency != "Stipend") |>
-    group_by(class_year) |> 
+    group_by(year) |> 
     mutate(Median = median(estimated_annual_compensation_us)) |>
     mutate(Low = min(estimated_annual_compensation_us)) |>
     mutate(High = max(estimated_annual_compensation_us)) |>
-    left_join(placement_size, by = "class_year") |> 
+    left_join(placement_size, by = "year") |> 
     pivot_longer(cols = c(Low, High, Median),
                  names_to = "range", values_to = "values") |> 
-    mutate(class_year = as.factor(class_year)) |> 
+    mutate(year = as.factor(year)) |> 
     mutate(range = fct_relevel(range, c("Low", "Median", "High")))
   
   # df for creating segments ----
   salary_highlights <- salary |> 
-    group_by(class_year) |> 
+    group_by(year) |> 
     summarize(min_val = min(values), max_val = max(values))
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,15 +60,15 @@ salary_plot <- function(input, data, program_acronym) {
     salary_gg <- ggplot() +
       geom_segment(data = salary_highlights, 
                    aes(x = min_val, xend = max_val,
-                       y = class_year, yend = class_year), color = "black") +
-      geom_point(data = salary, aes(x = values, y = class_year, 
+                       y = year, yend = year), color = "black") +
+      geom_point(data = salary, aes(x = values, y = year, 
                      fill = range, shape = range, size = range,
                      text = paste0(range, ": $",  round(values, 2), "\n", 
                                    responses, "/", program_size, " survey respondents"))) +
-      geom_point(data = salary, aes(x = estimated_annual_compensation_us, y = class_year),
+      geom_point(data = salary, aes(x = estimated_annual_compensation_us, y = year),
                  color = "gray50", alpha = 0.8, size = 1.5) +
-      scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) + # "#047c91"
-      scale_shape_manual(values = c(21, 3, 21)) + # triangle: 24
+      scale_fill_manual(values = c("#9CBEBD", "black", "#003660")) +
+      scale_shape_manual(values = c(21, 3, 21)) + 
       scale_size_manual(values = c(6, 5, 6)) +
       scale_x_continuous(labels = scales::dollar_format()) + 
       labs(title = paste0(program_acronym ," Initial Job Placement Salaries"), 
