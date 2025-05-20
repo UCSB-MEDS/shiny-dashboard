@@ -1,6 +1,7 @@
 #' Creates the "Diversity Demographics" plot which visualizes a variety of diversity metrics across cohorts and for all available years of data
 #'
-#' @param input 
+#' @param input input
+#' @param curr_year current admission year for which we have data (see var in global.R, `curr_admission_year`)
 #'
 #' @returns
 #' @export
@@ -43,6 +44,7 @@ diversityDemographics_plot <- function(input, curr_year) {
   #..........................render plotly.........................
   renderPlotly({
     
+    # build ggplot ----
     overall_demo <- ggplot(data = diversity_overall(), 
                            aes(x = demographic, y = percent, fill = demographic,
                                text = paste0(demographic, 
@@ -53,18 +55,30 @@ diversityDemographics_plot <- function(input, curr_year) {
       scale_x_discrete(limits = rev(levels(diversity_overall()$demographic))) + 
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       scale_fill_manual(values = plot_colors) +
-      labs(title = paste0(input$diversity_stats_all_input, " Diversity Demographics", "\n",
-                          "(", year_range, ")"),
+      labs(title = paste0(input$diversity_stats_all_input, " Diversity Demographics"),
            x = NULL, y = NULL) +
       theme_minimal() +
       theme(
         plot.title.position = "plot",
         legend.position = "none",
         panel.grid.minor = element_blank()
-        ) 
+      ) 
     
-    # convert to plotly (2017 - curr_year)
+    # convert to plotly & add subtitle (not natively supported by ggplotly()) ----
     plotly::ggplotly(overall_demo, tooltip = "text") |> 
+      layout(
+        annotations = list(
+          list(
+            text = paste0("(", year_range, ")"),
+            x = 0,
+            y = 1.05,
+            xref = "paper",
+            yref = "paper",
+            showarrow = FALSE,
+            font = list(size = 13)
+          )
+        )
+      )|> 
       config(displayModeBar = FALSE)
     
   }) 

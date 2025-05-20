@@ -552,11 +552,11 @@ body <- dashboardBody(
                             tabPanel(title = "Admissions",
                                      
                                      # admissions plotly output ----
-                                     plotly::plotlyOutput(outputId = "admit_stats_all") |>
+                                     plotly::plotlyOutput(outputId = "admit_stats_all_plot") |>
                                        withSpinner(color = "#003660", type = 1),
                                      
                                      # program radioButtons input ----
-                                     program_radioButtons(inputId = "admit_stats_all", selected = "MEDS")
+                                     program_radioButtons(inputId = "admit_stats_all_input", selected = "MEDS")
                                      
                             ), # END (TAB 2) admissions tabPanel
                             
