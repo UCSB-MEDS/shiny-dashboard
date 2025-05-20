@@ -9,7 +9,7 @@
 year_radioButtons <- function(inputId, selected) {
   
   radioButtons(inputId = inputId, label = NULL,
-               choices = c(year1, year2, year3, "All Years"),
+               choices = c(car_year1, car_year2, car_year3, "All Years"),
                selected = "All Years",
                inline = TRUE)
   

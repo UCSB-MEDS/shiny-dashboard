@@ -521,27 +521,27 @@ body <- dashboardBody(
                    # START valueBox fluidRow ----
                    fluidRow(
                      
-                     valueBoxOutput(outputId = "meds_curr_size", width = 4),
-                     valueBoxOutput(outputId = "mesm_curr_size", width = 4),
-                     valueBoxOutput(outputId = "phd_curr_size", width = 4)
+                     valueBoxOutput(outputId = "meds_curr_size_stat", width = 4),
+                     valueBoxOutput(outputId = "mesm_curr_size_stat", width = 4),
+                     valueBoxOutput(outputId = "phd_curr_size_stat", width = 4)
                      
                    ), # END valueBox fluidRow
                    
                    # START data viz fluidRow ----
                    fluidRow(
                      
-                     # START create tabBox for data vizualizations ----
+                     # START create tabBox for data visualizations ----
                      tabBox(width = 12,
                             
                             # START (TAB 1) overall diversity demographics tabPanel ----
                             tabPanel(title = "Diversity Demographics",
                                      
                                      # overall_diversity plotly output ----
-                                     plotly::plotlyOutput(outputId = "overall_diversity") |>
+                                     plotly::plotlyOutput(outputId = "overall_diversity_plot") |>
                                        withSpinner(color = "#003660", type = 1),
                                      
                                      # program radioButtons input ----
-                                     program_radioButtons(inputId = "diversity_stats_all", selected = "MEDS"),
+                                     program_radioButtons(inputId = "diversity_stats_all_input", selected = "MEDS"),
                                      
                                      # urm definition caption ----
                                      includeMarkdown("text/urm_definition.md")

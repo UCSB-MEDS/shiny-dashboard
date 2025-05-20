@@ -72,7 +72,7 @@ mesm2025 <- c(190166, 191659, 186427, 192264, 188159,
 mesm2026 <- c(202412, 203729, 201351, 201643, 204194,
               206266, 202508, 202610, 214935, 214519,
               209616, 211041, 198299, 214519,
-              207015)y
+              207015)
 ```
 
 1. CLEAN `apps` (filtered for 5 most recent years)
@@ -755,10 +755,16 @@ diversity_df <- diversity_all |>
                                                       "Unknown race and ethnicity"
   )))
 
+#............create chr string of data set year range............
+year_min <- min(enrolled$admission_year)
+year_max <- max(enrolled$admission_year)
+year_range_str <- paste0(year_min, "-", year_max)
+
 #......................calculate percentages.....................
 diversity_stats <- left_join(tot_students_5yr, diversity_df,
                              by = c("program")) |> 
-  mutate(percent = round((count / size) * 100, 1))
+  mutate(percent = round((count / size) * 100, 1)) |> 
+  mutate(year_range = rep(year_range_str))
 ```
 
 8. WRITE TO FILE

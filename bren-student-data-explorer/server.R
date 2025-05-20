@@ -74,15 +74,15 @@ server <- function(input, output, session){
   ##  ~ program size valueBoxes  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  # output$meds_curr_size <- programSize_valueBox(input, program_acronym = "MEDS", color = "light-blue")
-  # output$mesm_curr_size <- programSize_valueBox(input, program_acronym = "MESM", color = "blue") 
-  # output$phd_curr_size <- programSize_valueBox(input, program_acronym = "PhD", color = "green")
+  output$meds_curr_size_stat <- programSize_valueBox(input, program_acronym = "MEDS", color = "light-blue")
+  output$mesm_curr_size_stat <- programSize_valueBox(input, program_acronym = "MESM", color = "blue")
+  output$phd_curr_size_stat <- programSize_valueBox(input, program_acronym = "PhD", color = "green")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ demographics tabBox  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  # output$overall_diversity <- diversityDemographics_plot(input)
+  output$overall_diversity_plot <- diversityDemographics_plot(input)
   # output$admit_stats_all <- admissions_plot(input)
   # output$sex_all <- sex_plot(input)
   # output$age_all <- age_plot(input)

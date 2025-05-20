@@ -1,27 +1,35 @@
+#' Creates the "Diversity Demographics" plot which visualizes a variety of diversity metrics across cohorts and for all available years of data
+#'
+#' @param input 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 diversityDemographics_plot <- function(input) {
   
-  # wrangle data & create reactive df for diversity demographics plot (all available years) ----
+  #................wrangle data & create reactive df...............
   diversity_overall <- reactive({
     
-   diversity_overall<- diversity_stats %>%  
-      filter(objective1 == input$diversity_stats_all)
+   diversity_overall <- diversity_stats |> 
+      filter(program == input$diversity_stats_all_input)
     
   }) 
   
-  # render plotly ----
+  #..........................render plotly.........................
   renderPlotly({
     
-    if (input$diversity_stats_all == "MESM") {
-      year_str <- "2020-2024"
-    } 
-    
-    else if (input$diversity_stats_all == "MEDS") {
-      year_str <- "2021-2024"
-    } 
-    
-    else if (input$diversity_stats_all == "PhD") {
-      year_str <- "2020-2024"
-    } 
+    # if (input$diversity_stats_all_input == "MESM") {
+    #   year_str <- "2020-2024"
+    # } 
+    # 
+    # else if (input$diversity_stats_all_input == "MEDS") {
+    #   year_str <- "2021-2024"
+    # } 
+    # 
+    # else if (input$diversity_stats_all_input == "PhD") {
+    #   year_str <- "2020-2024"
+    # } 
     
     overall_demo <- ggplot(data = diversity_overall(), 
                            aes(x = demographic, y = percent, fill = demographic,
@@ -57,7 +65,8 @@ diversityDemographics_plot <- function(input) {
         legend.position = "none",
         panel.grid.minor = element_blank()
         ) +
-      labs(title = paste0(input$diversity_stats_all, " Diversity Demographics (", year_str, ")"), 
+      labs(title = paste0(input$diversity_stats_all_input, " Diversity Demographics"), 
+           subtitle = paste0("(", year_range, ")"),
            x = NULL, y = NULL)
     
     # convert to plotly (2017 - curr_year)

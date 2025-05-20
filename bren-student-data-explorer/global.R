@@ -73,7 +73,6 @@ enrolled <- readRDS("data/enrolled.rds")
 ipeds <- readRDS("data/ipeds.rds") 
 diversity_stats <- readRDS("data/diversity_stats.rds")
 ug_geoms <- readRDS("data/ug_geoms.rds")
-#us_state_geoms <- readRDS("data/us_state_geoms.rds")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
@@ -112,19 +111,26 @@ all_programs_color <- "#09847a"
 
 curr_admission_year <- max(enrolled$admission_year) 
 
+#........use ^ to create 5 year vars for demographics yrs........
+# dem_year1 <- curr_admission_year - 4
+# dem_year2 <- curr_admission_year - 3
+# dem_year3 <- curr_admission_year - 2
+# dem_year4 <- curr_admission_year - 1
+# dem_year5 <- curr_admission_year
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##         set current grad class year (that we have career data for)       ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# using `meds_placement` here, but should be the same for `mesm_placement`, `mesm_stauts`, `meds_status`
+# using `meds_placement` here, but should be the same for `mesm_placement`, `mesm_status`, `meds_status`
 
 #..................get current grad class year...................
 curr_grad_year <- as.numeric(max(meds_placement$year)) 
 
-#...use ^ to create 3 year vars for year_radioButton() options...
-year1 <- curr_grad_year - 2
-year2 <- curr_grad_year - 1
-year3 <- curr_grad_year
+#..........use ^ to create 3 year vars for career years..........
+car_year1 <- curr_grad_year - 2
+car_year2 <- curr_grad_year - 1
+car_year3 <- curr_grad_year
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                set current year for MEDS employment status               ----
@@ -158,11 +164,6 @@ mesm3 <- tot_enrolled |> filter(program == "MESM", admission_year == curr_admiss
 meds1 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 1) |> pull(enrolled) 
 meds2 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 2) |> pull(enrolled) 
 meds3 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 3) |> pull(enrolled) 
-
-#..............set name spelling options for US & CA.............
-# get rid of this?
-# us_names <- c("USA", "US", "Usa")
-# ca_names <- c("Ca", "CALIFORNIA", "California")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
