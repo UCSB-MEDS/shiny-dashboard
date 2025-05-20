@@ -20,13 +20,13 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     #............get appropriate inputId, df, response num...........
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_salarySector_year
+      radioButton_yearInput <- input$mesm_salarySector_year_input
       placement_size <- mesm_placement_size
       status_size <- mesm_status_size
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_salarySector_year
+      radioButton_yearInput <- input$meds_salarySector_year_input
       placement_size <- meds_placement_size
       status_size <- meds_status_size
       
@@ -94,12 +94,12 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     #............get appropriate inputId, df, response num...........
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_salarySector_year
+      radioButton_yearInput <- input$mesm_salarySector_year_input
       placement_size <- mesm_placement_size
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_salarySector_year
+      radioButton_yearInput <- input$meds_salarySector_year_input
       placement_size <- meds_placement_size
       
     }
@@ -169,7 +169,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
     #........get values necessary for constructing plot title........
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_salarySector_year
+      radioButton_yearInput <- input$mesm_salarySector_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
@@ -179,7 +179,7 @@ salaryBySector_plot <- function(input, data, program_acronym) {
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_salarySector_year
+      radioButton_yearInput <- input$meds_salarySector_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)

@@ -113,7 +113,7 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary",
                                                           
                                                           # meds salary plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary") |> withSpinner(color = "#003660", type = 1),
+                                                          plotlyOutput(outputId = "meds_salary_plot") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(tags$em("Data includes Full-Time Career positions only."))
@@ -124,14 +124,14 @@ body <- dashboardBody(
                                                  tabPanel(title = "Salary by Sector",
                                                           
                                                           # meds salary by sector plotly output ----
-                                                          plotlyOutput(outputId = "meds_salary_by_sector") |>
+                                                          plotlyOutput(outputId = "meds_salary_by_sector_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
                                                           tags$p(tags$em("Data includes Full-Time Career positions only.")),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "meds_salarySector_year")
+                                                          year_radioButtons(inputId = "meds_salarySector_year_input")
                                                           
                                                  ), # END (TAB 2) meds salary by sector tabPanel
                                                  
@@ -139,11 +139,11 @@ body <- dashboardBody(
                                                  tabPanel(title = "Placement Status",
                                                           
                                                           # mesm placement plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_placement_status") |>
+                                                          plotly::plotlyOutput(outputId = "meds_placement_status_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "meds_placementStatus_year")
+                                                          year_radioButtons(inputId = "meds_placementStatus_year_input")
                                                           
                                                  ), # END (TAB 3) meds placement status tabPanel
                                                  
@@ -151,11 +151,11 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Trends",
                                                           
                                                           # meds sector trends plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_sector_trends") |>
+                                                          plotly::plotlyOutput(outputId = "meds_sector_trends_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "meds_sector_trends_year")
+                                                          year_radioButtons(inputId = "meds_sector_trends_year_input")
                                                           
                                                  ), # END (TAB 4) meds sector trends tabPanel
                                                  
@@ -163,11 +163,11 @@ body <- dashboardBody(
                                                  tabPanel(title = "Sector Satisfaction",
                                                           
                                                           # meds sector satisfaction plotly output ----
-                                                          plotly::plotlyOutput(outputId = "meds_sector_satisfaction") |>
+                                                          plotly::plotlyOutput(outputId = "meds_sector_satisfaction_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # sector type radioButtons input ----
-                                                          sectorType_radioButtons(inputId = "meds_sector_types", selected = "Consulting")
+                                                          sectorType_radioButtons(inputId = "meds_sector_types_input", selected = "Consulting")
                                                           
                                                  ), # END (TAB 5) meds sector satisfaction tabPanel
                                                  
@@ -176,11 +176,11 @@ body <- dashboardBody(
                                                  tabPanel(title = "Job Source",
                                                           
                                                           # mesm job source plotly output ---
-                                                          plotly::plotlyOutput(outputId = "meds_job_source") |>
+                                                          plotly::plotlyOutput(outputId = "meds_job_source_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "meds_job_source_year")
+                                                          year_radioButtons(inputId = "meds_job_source_year_input")
                                                           
                                                  ) # END (TAB 6) meds job source tabPanel
                                                  
@@ -314,7 +314,7 @@ body <- dashboardBody(
                                      tabPanel(title = "Salary",
                                               
                                               # mesm salary plotly output ----
-                                              plotlyOutput(outputId = "mesm_salary") |> withSpinner(color = "#003660", type = 1),
+                                              plotlyOutput(outputId = "mesm_salary_plot") |> withSpinner(color = "#003660", type = 1),
                                               
                                               # caption ----
                                               tags$p(tags$em("Data includes Full-Time Career positions only."))
@@ -328,14 +328,14 @@ body <- dashboardBody(
                                      tabPanel(title = "Salary by Sector",
                                               
                                               # mesm salary by sector plotly output ----
-                                              plotlyOutput(outputId = "mesm_salary_by_sector") |>
+                                              plotlyOutput(outputId = "mesm_salary_by_sector_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # caption ----
                                               tags$p(tags$em("Data includes Full-Time Career positions only.")),
                                               
                                               # year radioButtons input ----
-                                              year_radioButtons(inputId = "mesm_salarySector_year")
+                                              year_radioButtons(inputId = "mesm_salarySector_year_input")
                                               
                                      ), # END (TAB 2) mesm salary by sector tabPanel
                                      
@@ -343,14 +343,14 @@ body <- dashboardBody(
                                      tabPanel(title = "Salary by Specialization",
                                               
                                               # mesm salary by specialization plotly output ----
-                                              plotlyOutput(outputId = "mesm_salary_by_specialization") |>
+                                              plotlyOutput(outputId = "mesm_salary_by_specialization_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # caption ----
                                               tags$p(tags$em("Data includes Full-Time Career positions only.")),
                                               
                                               # year radioButtons input ----
-                                              year_radioButtons(inputId = "mesm_salary_by_specialization_year")
+                                              year_radioButtons(inputId = "mesm_salary_by_specialization_year_input")
                                               
                                      ), # END (TAB 3) mesm salary by specialization tabPanel
                                      
@@ -358,11 +358,11 @@ body <- dashboardBody(
                                      tabPanel(title = "Placement Status",
                                               
                                               # mesm placement plotly output ----
-                                              plotly::plotlyOutput(outputId = "mesm_placement_status") |>
+                                              plotly::plotlyOutput(outputId = "mesm_placement_status_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # year radioButtons input ----
-                                              year_radioButtons(inputId = "mesm_placementStatus_year")
+                                              year_radioButtons(inputId = "mesm_placementStatus_year_input")
                                               
                                      ), # END (TAB 4) mesm placement status tabPanel
                                      
@@ -370,11 +370,11 @@ body <- dashboardBody(
                                      tabPanel(title = "Sector Trends",
                                               
                                               # mesm sector trends plotly output ----
-                                              plotly::plotlyOutput(outputId = "mesm_sector_trends") |>
+                                              plotly::plotlyOutput(outputId = "mesm_sector_trends_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # year radioButtons input ----
-                                              year_radioButtons(inputId = "mesm_sector_trends_year")
+                                              year_radioButtons(inputId = "mesm_sector_trends_year_input")
                                               
                                      ), # END (TAB 5) mesm sector trends tabPanel
                                      
@@ -382,11 +382,11 @@ body <- dashboardBody(
                                      tabPanel(title = "Sector Satisfaction",
                                               
                                               # mesm sector satisfaction plotly output ----
-                                              plotly::plotlyOutput(outputId = "mesm_sector_satisfaction") |>
+                                              plotly::plotlyOutput(outputId = "mesm_sector_satisfaction_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # sector type radioButtons input ----
-                                              sectorType_radioButtons(inputId = "mesm_sector_types", selected = "Consulting")
+                                              sectorType_radioButtons(inputId = "mesm_sector_types_input", selected = "Consulting")
                                               
                                      ), # END (TAB 6) mesm sector satisfaction tabPanel
                                      
@@ -394,11 +394,11 @@ body <- dashboardBody(
                                      tabPanel(title = "Job Source",
                                               
                                               # mesm job source plotly output ---
-                                              plotly::plotlyOutput(outputId = "mesm_job_source") |>
+                                              plotly::plotlyOutput(outputId = "mesm_job_source_plot") |>
                                                 withSpinner(color = "#003660", type = 1),
                                               
                                               # year radioButtons input ----
-                                              year_radioButtons(inputId = "mesm_job_source_year")
+                                              year_radioButtons(inputId = "mesm_job_source_year_input")
                                               
                                      ) # END (TAB 7) mesm job source tabPanel
                                      

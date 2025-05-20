@@ -20,12 +20,12 @@ sectorTrends_plot <- function(input, data, program_acronym) {
     #............get appropriate input and placement_size............
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_sector_trends_year
+      radioButton_yearInput <- input$mesm_sector_trends_year_input
       placement_size <- mesm_placement_size
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_sector_trends_year
+      radioButton_yearInput <- input$meds_sector_trends_year_input
       placement_size <- meds_placement_size
       
     }
@@ -83,7 +83,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
     #........get values necessary for constructing plot title........
     if (program_acronym == "MESM") {
 
-      radioButton_yearInput <- input$mesm_sector_trends_year
+      radioButton_yearInput <- input$mesm_sector_trends_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
@@ -93,7 +93,7 @@ sectorTrends_plot <- function(input, data, program_acronym) {
 
     } else if (program_acronym == "MEDS") {
 
-      radioButton_yearInput <- input$meds_sector_trends_year
+      radioButton_yearInput <- input$meds_sector_trends_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)

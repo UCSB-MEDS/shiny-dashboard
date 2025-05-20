@@ -21,12 +21,12 @@ placementStatus_plot <- function(input, data, program_acronym) {
     if (program_acronym == "MESM") {
       
       status_size <- mesm_status_size
-      radioButton_yearInput <- input$mesm_placementStatus_year
+      radioButton_yearInput <- input$mesm_placementStatus_year_input
       
     } else if (program_acronym == "MEDS") {
       
       status_size <- meds_status_size
-      radioButton_yearInput <- input$meds_placementStatus_year
+      radioButton_yearInput <- input$meds_placementStatus_year_input
       
     }
     
@@ -84,7 +84,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
     #........get values necessary for constructing plot title........
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_placementStatus_year
+      radioButton_yearInput <- input$mesm_placementStatus_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
@@ -94,7 +94,7 @@ placementStatus_plot <- function(input, data, program_acronym) {
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_placementStatus_year
+      radioButton_yearInput <- input$meds_placementStatus_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)

@@ -49,23 +49,23 @@ server <- function(input, output, session){
   ##  ~ data viz tabBox  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  # MESM data viz tabBox ----
-  output$mesm_salary <- salary_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_salary_by_sector <- salaryBySector_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_salary_by_specialization <- salarySpecialization_plot(input, data = mesm_placement)
-  output$mesm_placement_status <- placementStatus_plot(input, data = mesm_status, program_acronym = "MESM")
-  output$mesm_sector_trends <- sectorTrends_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_sector_satisfaction <- sectorSatisfaction_plot(input, data = mesm_placement, program_acronym = "MESM")
-  output$mesm_job_source <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
-
   # MEDS data viz tabBox ----
-  output$meds_salary <- salary_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_salary_by_sector <- salaryBySector_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_placement_status <- placementStatus_plot(input, data = meds_status, program_acronym = "MEDS")
-  output$meds_sector_trends <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_sector_satisfaction <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS")
-  output$meds_job_source <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_salary_plot <- salary_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_salary_by_sector_plot <- salaryBySector_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_placement_status_plot <- placementStatus_plot(input, data = meds_status, program_acronym = "MEDS")
+  output$meds_sector_trends_plot <- sectorTrends_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_sector_satisfaction_plot <- sectorSatisfaction_plot(input, data = meds_placement, program_acronym = "MEDS")
+  output$meds_job_source_plot <- jobSource_plot(input, data = meds_placement, program_acronym = "MEDS")
   
+  # MESM data viz tabBox ----
+  output$mesm_salary_plot <- salary_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_salary_by_sector_plot <- salaryBySector_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_salary_by_specialization_plot <- salarySpecialization_plot(input, data = mesm_placement)
+  output$mesm_placement_status_plot <- placementStatus_plot(input, data = mesm_status, program_acronym = "MESM")
+  output$mesm_sector_trends_plot <- sectorTrends_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_sector_satisfaction_plot <- sectorSatisfaction_plot(input, data = mesm_placement, program_acronym = "MESM")
+  output$mesm_job_source_plot <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
+
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                      Demographics tabPanel (demo_db)                     ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

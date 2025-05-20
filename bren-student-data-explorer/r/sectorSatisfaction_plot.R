@@ -27,11 +27,11 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     #....................get appropriate inputId.....................
     if (program_acronym == "MESM") {
 
-      radioButton_sectorInput <- input$mesm_sector_types
+      radioButton_sectorInput <- input$mesm_sector_types_input
       
     } else if (program_acronym == "MEDS") {
 
-      radioButton_sectorInput <- input$meds_sector_types
+      radioButton_sectorInput <- input$meds_sector_types_input
       
     }
     
@@ -66,17 +66,17 @@ sectorSatisfaction_plot <- function(input, data, program_acronym) {
     #............get appropriate input and number of years...........
     if (program_acronym == "MESM") {
     
-      radioButton_sectorInput <- input$mesm_sector_types
+      radioButton_sectorInput <- input$mesm_sector_types_input
       
       
     } else if (program_acronym == "MEDS") {
 
-      radioButton_sectorInput <- input$meds_sector_types
+      radioButton_sectorInput <- input$meds_sector_types_input
       
     }
     
     #..create validation message when no alumni from chosen sector...
-    validate(need(nrow(sector_satisfaction()) > 0, paste0("We have not yet had any ", program_acronym, " alumni accept positions in this sector for their initial placements. Check back next year!")))
+    validate(need(nrow(sector_satisfaction()) > 0, paste0("We do not have any ", program_acronym, " alumni who accepted positions in this sector for their initial placements. Check back next year!")))
     
     #...................create ggplot object first...................
     sector_satisfaction_gg <- ggplot(data = sector_satisfaction(), 
