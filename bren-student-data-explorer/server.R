@@ -82,7 +82,7 @@ server <- function(input, output, session){
   ##  ~ demographics tabBox  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  output$overall_diversity_plot <- diversityDemographics_plot(input)
+  output$overall_diversity_plot <- diversityDemographics_plot(input, curr_year = curr_admission_year)
   # output$admit_stats_all <- admissions_plot(input)
   # output$sex_all <- sex_plot(input)
   # output$age_all <- age_plot(input)
