@@ -111,13 +111,6 @@ all_programs_color <- "#09847a"
 
 curr_admission_year <- max(enrolled$admission_year) 
 
-#........use ^ to create 5 year vars for demographics yrs........
-# dem_year1 <- curr_admission_year - 4
-# dem_year2 <- curr_admission_year - 3
-# dem_year3 <- curr_admission_year - 2
-# dem_year4 <- curr_admission_year - 1
-# dem_year5 <- curr_admission_year
-
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##         set current grad class year (that we have career data for)       ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -247,3 +240,19 @@ tot_5yr <- enrolled |>
 #........5yr total number of students across all programs........
 totStudents_allPrograms_5yr <- sum(tot_5yr$size)
 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                           Misc. non-reactive dfs                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#................wrangle sex by year and program.................
+sex_program_time <- enrolled |> 
+  select(c("admission_year", "application_id", "gender", "program")) |>  
+  group_by(admission_year, program, gender) |> 
+  summarize(count = n())
+
+#................join sex data with program sizes................
+sex_stats_time <- left_join(sex_program_time, program_size,
+                            by = c("admission_year", "program")) |> 
+  mutate(percent = round((count / size) * 100)) |> 
+  mutate(gender = factor(gender, levels = c("F", "M", "U"),
+                         labels = c("Female", "Male", "Undeclared")))

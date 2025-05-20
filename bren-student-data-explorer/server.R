@@ -84,7 +84,7 @@ server <- function(input, output, session){
   
   output$overall_diversity_plot <- diversityDemographics_plot(input, curr_year = curr_admission_year)
   output$admit_stats_all_plot <- admissions_plot(input)
-  # output$sex_all <- sex_plot(input)
+  output$sex_all <- sex_plot(input)
   # output$age_all <- age_plot(input)
   # output$residency_all <- residency_plot(input)
   # output$intl_unis <- internationalUniversities_table(input)
