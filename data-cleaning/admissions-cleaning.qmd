@@ -5,10 +5,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-####### app_submission_year == entering class of that year; UPDATED NAME TO `admission_year`; BE SURE TO CHANGE ALL INSTANCES OF app_submission_year > admission_year ####### 
-
-CHANGE app_submission_year == admission_year
-
 program_size => tot_enrolled
 
 check on military status
@@ -153,6 +149,42 @@ apps_clean <- apps |>
     TRUE ~ gender
   )) |> 
   replace_na(list(gender = "U")) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            ensure all CA residents follow same naming convention         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(california_resident = case_when(
+    california_resident == "Yes" ~ "TRUE",
+    california_resident == "No" ~ "FALSE",
+    TRUE ~ california_resident
+  )) |> 
+
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                        categorize residency status                       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(residency_status = case_when(
+    
+    # CA resident ----
+    california_resident == TRUE & visa %in% c(NA, 
+                                              "DACA/AB540",
+                                              "Permanent Resident",
+                                              "None: DACA Recipient",
+                                              "Undocumented Status") ~ "CA Resident",
+    
+    # non-CA resident ----
+    california_resident == FALSE & visa %in% c(NA, 
+                                               "Permanent Resident",
+                                               "Undocumented Status") ~ "Non-CA Resident",
+    
+    # international ----
+    visa %in% c("F-1 Student", 
+                "J-1",
+                "Family of H,H1,H2,H3") ~ "International"
+  )) |> 
+  replace_na(list(residency_status = "Unknown")) |> 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                  convert any country codes to full names                 ----
@@ -319,7 +351,7 @@ program_size_phd <- tot_enrolled |>
 
 ug_location <- enrolled |> 
   select(c(admission_year, program, ug1_location)) |> 
-  mutate(ug1_location = str_remove(ug1_location, "US - ")) |> 
+  mutate(ug1_location = str_remove(ug1_location, "US - ")) |>
   mutate(ug1_location = case_when(
     ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "South Korea",
     ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
@@ -327,7 +359,7 @@ ug_location <- enrolled |>
     ug1_location == "Scotland" ~ "United Kingdom", # NOTE(HD): no geom for just Scotland; had to change to UK (it's part of UK)
     ug1_location == "Taiwan" ~ "China", # NOTE(HD): try to preserve Taiwan in future iterations
     TRUE ~ ug1_location
-  )) |> 
+  )) |>
   group_by(ug1_location) |> 
   summarize(total = n())
 
@@ -437,34 +469,11 @@ Create separate dfs for each diversity demographic (below), then combine into a 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 residency <- enrolled |> 
-  select(c(admission_year, program, citizenship_country, residency_country, california_resident, visa)) |> 
-  mutate(california_resident = case_when(
-    california_resident == "Yes" ~ "TRUE",
-    california_resident == "No" ~ "FALSE",
-    TRUE ~ california_resident
-  )) |> 
-  mutate(demographic = case_when(
-    
-    # CA resident ----
-    california_resident == TRUE & visa %in% c(NA, 
-                                              "DACA/AB540",
-                                              "Permanent Resident",
-                                              "None: DACA Recipient",
-                                              "Undocumented Status") ~ "California Resident",
-    
-    # non-CA resident ----
-    california_resident == FALSE & visa %in% c(NA, 
-                                               "Permanent Resident",
-                                               "Undocumented Status") ~ "Nonresident",
-    
-    # international ----
-    visa %in% c("F-1 Student", 
-                "J-1",
-                "Family of H,H1,H2,H3") ~ "International"
-  )) |> 
+  select(c(admission_year, program, citizenship_country, residency_country, california_resident, residency_status, visa)) |> 
+  rename(demographic = residency_status) |> 
   group_by(program, demographic) |> 
-  summarize(count = n()) |> 
-  replace_na(list(demographic = "Unknown"))
+  summarize(count = n()) #|> 
+  #replace_na(list(demographic = "Unknown"))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
@@ -736,8 +745,8 @@ diversity_all <- rbind(residency, gender, age, military, first_gen, undocumented
 # 
 #..................set demographic factor levels.................
 diversity_df <- diversity_all |> 
-  mutate(demographic = factor(demographic, levels = c("California Resident",
-                                                      "Nonresident",
+  mutate(demographic = factor(demographic, levels = c("CA Resident",
+                                                      "Non-CA Resident",
                                                       "International",
                                                       "Female",
                                                       "Age 25+",

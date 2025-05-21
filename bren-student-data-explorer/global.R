@@ -256,3 +256,28 @@ sex_stats_time <- left_join(sex_program_time, program_size,
   mutate(percent = round((count / size) * 100)) |> 
   mutate(gender = factor(gender, levels = c("F", "M", "U"),
                          labels = c("Female", "Male", "Undeclared")))
+
+#................wrangle age by program and year.................
+age_program_groups <- enrolled |> 
+  select(c(admission_year, application_id, program, dob)) |> 
+  mutate(dob_year = year(dob)) |> 
+  mutate(age = admission_year - dob_year) |> 
+  mutate(age_group = case_when(age >= 20 & age <= 22 ~ "20-22",
+                               age >= 23 & age <= 24 ~ "23-24",
+                               age >= 25 & age <= 29 ~ "25-29",
+                               age >= 30 & age <= 34 ~ "30-34",
+                               age >= 35 & age <= 39 ~ "35-39",
+                               age >= 40 & age <= 49 ~ "40-49",
+                               age >= 50 ~ "50+")) |> 
+  group_by(program, age_group) |> 
+  summarize(count = n())
+
+#...........wrangle residency data by program and year...........
+residency_stats <- enrolled |> 
+  select(c(admission_year, application_id, program, citizenship_country, residency_country, 
+           birth_country, california_resident, residency_status, ca_high_school, visa)) |> 
+  group_by(admission_year, program, residency_status) |>
+  summarize(count = n()) |>
+  left_join(program_size, by = c("admission_year", "program")) |>
+  mutate(percent = round((count / size) * 100, 1)) |>
+  mutate(residency_status = fct_relevel(residency_status, "CA Resident", "Non-CA Resident", "International", "Unknown"))

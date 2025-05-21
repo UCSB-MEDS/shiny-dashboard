@@ -1,69 +1,79 @@
-
-age_plot <- function(input){
+#' Create "Age" plot which visualizes the aggregated distribution of ages by program
+#'
+#' @param input 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
+age_plot <- function(input, curr_year){
   
-  # wrangle data (2017 - curr_year) ----
-  age_program_groups <- enrolled %>% 
-    select(c("app_submission_year", "application_id", "objective1", "dob")) %>%
-    # calculate age
-    mutate(dob_year = year(dob)) %>%
-    mutate(age = app_submission_year - dob_year) %>% 
-    filter(age > 18) %>% # remove outliers incorrectly submitted dobs
-    mutate(age_group = case_when(age >= 20 & age <= 22 ~ "20-22",
-                                 age >= 23 & age <= 24 ~ "23-24",
-                                 age >= 25 & age <= 29 ~ "25-29",
-                                 age >= 30 & age <= 34 ~ "30-34",
-                                 age >= 35 & age <= 39 ~ "35-39",
-                                 age >= 40 & age <= 49 ~ "40-49",
-                                 age >= 50 & age <= 64 ~ "50+",
-                                 age >= 65 ~ "50+")) %>% 
-    group_by(objective1, age_group) %>% 
-    summarize(count = n())
+  #............create year range chr str (for subtitle)............
+  year_min <- curr_year - 4
+  year_max <- curr_year
+  year_range <- paste0(year_min, "-", year_max)
   
-  # create reactive df ----
+  #...............wrangle data & create reactive df................
   age_stats <- reactive({
     
-    left_join(age_program_groups, tot_5yr, by = "objective1") %>% 
-      mutate(percent = round((count / size) * 100, 1)) %>% 
-      filter(objective1 == input$age_prog)
+    left_join(age_program_groups, tot_5yr, by = "program") |> 
+      mutate(percent = round((count / size) * 100, 1)) |> 
+      filter(program == input$age_prog_input)
     
   }) 
   
-  # render plotly ----
+  #..........................render plotly.........................
   plotly::renderPlotly({
     
-    # empty vars
+    # empty vars ----
     color <- NULL
-    year_str <- NULL
+    #year_str <- NULL
     
-    if (input$age_prog == "MESM") {
+    if (input$age_prog_input == "MESM") {
       color <- mesm_color
-      year_str <- "2020-2024"
+      #year_str <- "2020-2024"
     } 
     
-    else if (input$age_prog == "MEDS") {
+    else if (input$age_prog_input == "MEDS") {
       color <- meds_color
-      year_str <- "2020-2024"
+      #year_str <- "2020-2024"
     } 
     
-    else if (input$age_prog == "PhD") {
+    else if (input$age_prog_input == "PhD") {
       color <- phd_color
-      year_str <- "2020-2024"
+      #year_str <- "2020-2024"
     } 
     
-    # create ggplot 
-    age_gg <- ggplot(data = age_stats(), aes(x = age_group, y = percent,
-                                             text = paste0("Age group: ", age_group, " (", percent, "%", ")", "\n", "Sample size: ", size))) +
+    # build ggplot ----
+    age_gg <- ggplot(data = age_stats(), 
+                     aes(x = age_group, y = percent,
+                         text = paste0("Age group: ", age_group, 
+                                       " (", percent, "%", ")", "\n", "Sample size: ", size))) +
       geom_bar(stat = "identity", fill = color) +
+      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
+      labs(title = paste0("Age of graduate students at start of ", 
+                          input$age_prog_input, " program"),
+           x = NULL, y = NULL) +
       theme_minimal() +
       theme(panel.grid.minor = element_blank(),
-            plot.subtitle = element_text(face = "italic")) +
-      scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
-      labs(title = paste0("Age of graduate students at start of ", input$age_prog, " program (", year_str, ")"),
-           x = NULL, y = NULL)
+            plot.subtitle = element_text(face = "italic")) 
     
-    # conver to plotly
-    plotly::ggplotly(age_gg, tooltip = "text") %>%
-      layout(title = list(font = list(size = 16))) |> 
+    # convert to plotly ----
+    plotly::ggplotly(age_gg, tooltip = "text") |> 
+      layout(
+        annotations = list(
+          list(
+            text = paste0("(Data aggregated across years, ", year_range, ")"),
+            x = 0,
+            y = 1.05,
+            xref = "paper",
+            yref = "paper",
+            showarrow = FALSE,
+            font = list(size = 13)
+          )
+        )
+      ) |> 
+      #layout(title = list(font = list(size = 16))) |> 
       config(displayModeBar = FALSE)
     
   })

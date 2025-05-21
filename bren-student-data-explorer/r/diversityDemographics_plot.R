@@ -15,8 +15,8 @@ diversityDemographics_plot <- function(input, curr_year) {
   year_range <- paste0(year_min, "-", year_max)
   
   #..................create vector of plot colors..................
-  plot_colors <- c("California Resident" = "#047c91",
-                   "Nonresident" = "#047c91",
+  plot_colors <- c("CA Resident" = "#047c91",
+                   "Non-CA Resident" = "#047c91",
                    "International" = "#047c91",
                    "Female" = "#9cbebe",
                    "Age 25+" = "#9cbebe",
@@ -69,7 +69,7 @@ diversityDemographics_plot <- function(input, curr_year) {
       layout(
         annotations = list(
           list(
-            text = paste0("(", year_range, ")"),
+            text = paste0("(Data aggregated across years, ", year_range, ")"),
             x = 0,
             y = 1.05,
             xref = "paper",
@@ -78,7 +78,7 @@ diversityDemographics_plot <- function(input, curr_year) {
             font = list(size = 13)
           )
         )
-      )|> 
+      ) |> 
       config(displayModeBar = FALSE)
     
   }) 

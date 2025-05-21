@@ -21,12 +21,12 @@ geographicComparison_plot <- function(input, data, program_acronym) {
     if (program_acronym == "MESM") {
       
       placement_size <- mesm_placement_size
-      radioButton_yearInput <- input$mesm_placementLocation_year
+      radioButton_yearInput <- input$mesm_placementLocation_year_input
       
     } else if (program_acronym == "MEDS") {
       
       placement_size <- meds_placement_size
-      radioButton_yearInput <- input$meds_placementLocation_year
+      radioButton_yearInput <- input$meds_placementLocation_year_input
       
     }
     
@@ -82,7 +82,7 @@ geographicComparison_plot <- function(input, data, program_acronym) {
     #........get values necessary for constructing plot title........
     if (program_acronym == "MESM") {
       
-      radioButton_yearInput <- input$mesm_placementLocation_year
+      radioButton_yearInput <- input$mesm_placementLocation_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- mesm_placement_size
       allYrs_size <- sum(placement_size$program_size)
@@ -92,7 +92,7 @@ geographicComparison_plot <- function(input, data, program_acronym) {
       
     } else if (program_acronym == "MEDS") {
       
-      radioButton_yearInput <- input$meds_placementLocation_year
+      radioButton_yearInput <- input$meds_placementLocation_year_input
       selected_class_year <- radioButton_yearInput
       placement_size <- meds_placement_size
       allYrs_size <- sum(placement_size$program_size)
