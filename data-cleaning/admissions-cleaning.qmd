@@ -23,7 +23,7 @@ librarian::shelf(
 ##      import pre-processed application / admissions data & geometries     ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-apps <- readRDS(here::here("raw-data", "apps_2017_2024.rds"))
+apps <- readRDS(here::here("raw-data", "apps_2017_2025.rds"))
 us_state_geoms <- readRDS(here::here("raw-data", "us_state_geoms.rds"))
 world_geoms <- readRDS(here::here("raw-data", "world_geoms.rds"))
 
@@ -31,7 +31,7 @@ world_geoms <- readRDS(here::here("raw-data", "world_geoms.rds"))
 ##           set current year (most recent year of admissions data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-curr_year <- 2024
+curr_year <- 2025
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                       create vectors of student melt                     ----
@@ -151,9 +151,13 @@ apps_clean <- apps |>
     year(submission_date) == 2022 & month(submission_date) >= 9 ~ 2023,
     year(submission_date) == 2023 & month(submission_date) <= 3 ~ 2023, 
     
-    # 2024 apps: 2022-09-01 to 2023-03-31 ----
+    # 2024 apps: 2023-09-01 to 2024-03-31 ----
     year(submission_date) == 2023 & month(submission_date) >= 9 ~ 2024,
-    year(submission_date) == 2024 & month(submission_date) <= 3 ~ 2024
+    year(submission_date) == 2024 & month(submission_date) <= 3 ~ 2024,
+    
+    # 2025 apps: 2024-09-01 to 2025-03-31 ----
+    year(submission_date) == 2024 & month(submission_date) >= 9 ~ 2025,
+    year(submission_date) == 2025 & month(submission_date) <= 3 ~ 2025
     
   )) |>
   
@@ -295,6 +299,15 @@ apps_clean <- apps |>
                 "Pending Asylum") ~ "Y", 
     TRUE ~ "N")
     ) |>
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                     categorize military service status                   ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(military_service_status = case_when(
+    military_service %in% c("Discharged Veteran", "National Guard", "Active Duty") ~ "Y",
+    TRUE ~ "N"
+  )) |> 
   
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                update undergraduate locations as necessary               ----
@@ -629,17 +642,14 @@ age <- enrolled |>
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# COME BACK TO THIS
-
 military <- enrolled |> 
-  select(c(admission_year, program, military_service)) |>  
-  mutate(military_service = as.numeric(unlist(military_service))) |> 
-  filter(military_service > 1) |>
+  select(c(admission_year, program, military_service_status)) |>  
+  filter(military_service_status == "Y") |> 
   group_by(program) |>
   summarize(count = n()) |>
   mutate(demographic = "Military")
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
 ##----------------------------- FIRST GENERATION--------------------------------
 ##                                                                            --

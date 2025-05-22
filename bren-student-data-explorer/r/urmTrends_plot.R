@@ -74,9 +74,8 @@ urmTrends_plot <- function(input) {
                             aes(x = admission_year, y = percent,
                                 text = paste0("URM ", "(", percent, "%", ")", "\n", "Sample size: ", size))) +
       geom_bar(stat = "identity", fill = color, width = 0.9) +
-      coord_cartesian(xlim = c(2020, 2024), expand = TRUE) + # using this FOR NOW since PhD plot doesn't show 2022 data (no URMs in 2022 and since it's the last year of available data, ggplot excludes it when using the scale_x_continous() code below where max and min x values are set based on data)
-      # scale_x_continuous(breaks = seq(max(urm_trends_df()$app_submission_year),
-      #                                 min(urm_trends_df()$app_submission_year))) +
+      scale_x_continuous(breaks = seq(max(urm_trends_df()$admission_year),
+                                      min(urm_trends_df()$admission_year))) +
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       labs(title = paste0("Underrepresented Minority Trends", " (", input$urm_trends_input, ")"),
            y = NULL, x = NULL) +
