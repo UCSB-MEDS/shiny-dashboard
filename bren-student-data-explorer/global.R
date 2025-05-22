@@ -281,3 +281,10 @@ residency_stats <- enrolled |>
   left_join(program_size, by = c("admission_year", "program")) |>
   mutate(percent = round((count / size) * 100, 1)) |>
   mutate(residency_status = fct_relevel(residency_status, "CA Resident", "Non-CA Resident", "International", "Unknown"))
+
+#..............wrangle international UG universities.............
+intl_unis <- enrolled |> 
+  select(ug1_name, ug1_location) |> 
+  filter(!ug1_location %in% c(state.name, "District of Columbia")) |> 
+  group_by(ug1_location, ug1_name) |> 
+  summarize(count = n())

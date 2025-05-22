@@ -1,3 +1,11 @@
+#' Creates the "Residency" plot which visualizes the aggregated distribution of student residency (CA, non-CA, international) by program
+#'
+#' @param input 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 residency_plot <- function(input) {
   
   #..........................render plotly.........................

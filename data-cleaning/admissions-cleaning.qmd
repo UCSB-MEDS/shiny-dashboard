@@ -137,7 +137,19 @@ apps_clean <- apps |>
     year(submission_date) == 2024 & month(submission_date) <= 3 ~ 2024
     
   )) |>
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 5 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  filter(admission_year %in% (curr_year - 4):curr_year) |>
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                   rename `objective1` column for clarity                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  rename(program = objective1) |>   
+  
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##              ensure all genders follow same naming convention            ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,7 +160,17 @@ apps_clean <- apps |>
     gender == "Unknown" ~ "U",
     TRUE ~ gender
   )) |> 
-  replace_na(list(gender = "U")) |> 
+  replace_na(list(gender = "U")) |>
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##             ensure all first-gen follow same naming convention           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+    mutate(first_generation = case_when(
+    first_generation == "Yes" ~ "Y",
+    first_generation == "No" ~ "N",
+    TRUE ~ first_generation
+  )) |> 
   
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##            ensure all CA residents follow same naming convention         ----
@@ -158,8 +180,17 @@ apps_clean <- apps |>
     california_resident == "Yes" ~ "TRUE",
     california_resident == "No" ~ "FALSE",
     TRUE ~ california_resident
-  )) |> 
+  )) |>
 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##               ensure all CA HS follow same naming convention             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(ca_high_school = case_when(
+    ca_high_school == "Yes" ~ "TRUE",
+    ca_high_school == "No" ~ "FALSE",
+    TRUE ~ ca_high_school
+  )) |>
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                        categorize residency status                       ----
@@ -190,29 +221,99 @@ apps_clean <- apps |>
 ##                  convert any country codes to full names                 ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-# some `citizenship_country` values are country codes, others are spelled out fully (we want full names)
+# some `citizenship_country` & `residency_country` values are country codes, others are spelled out fully (we want full names)
+# 1. convert country codes to full names in new `*_country_full` column 
+# 2. fill NAs in `*_country_full` with existing full names in `*_country`
+# 3. drop original `*_country` column and rename `*_country_full` as `*_country` 
 
-  # convert country codes to full names in new `citizenship_country_full` column ----
+  #..............update `citizenship_country` column...............
   mutate(citizenship_country_full = countrycode::countrycode(citizenship_country, "iso2c", "country.name")) |> 
-  
-  # fill NAs in `citizen_country_full` with existing full names in `citizenship_country`
   mutate(citizenship_country_full = coalesce(citizenship_country_full, citizenship_country)) |>
-  
-  # drop original `citizenship_country` column and rename `citizenship_country_full` as `citizenship_country` ----
   select(-citizenship_country) |> 
   rename(citizenship_country = citizenship_country_full) |>
+  
+  #................update `residency_country` column...............
+  mutate(residency_country_full = countrycode::countrycode(residency_country, "iso2c", "country.name")) |> 
+  mutate(residency_country_full = coalesce(residency_country_full, residency_country)) |>
+  select(-residency_country) |> 
+  rename(residency_country = residency_country_full) |>
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                   rename `objective1` column for clarity                 ----
+##                update undergraduate locations as necessary               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  mutate(ug1_location = str_remove(ug1_location, "US - ")) |>
+  mutate(ug1_location = case_when(
+    ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "South Korea",
+    ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
+    ug1_location == "District Of Columbia" ~ "District of Columbia",
+    TRUE ~ ug1_location
+  )) |>
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##               rename undergraduate universities as necessary             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  rename(program = objective1) |> 
+# only update international universities, which are displayed by name in the Demographics tab
+# SSC NOTE 2025-05-21: too many misspelled international universities to fix; leaving as-is, aside from general mods
+# this small snippet of code is helpful for identifying what needs updating: 
+# intl_ug <- apps_clean |> 
+#   select(ug1_location, ug1_name) |> 
+#   filter(!ug1_location %in% state.name) |> 
+#   distinct()
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                       filter for 5 most recent years                     ----
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #......................general modifications.....................
+  mutate(ug1_name = str_to_title(ug1_name)) |> 
+  mutate(ug1_name = str_remove_all(ug1_name, "^\\*|\\*$")) |> 
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = "\\bUniv\\b", replacement = "University")) |>
+  mutate(ug1_name = str_replace(ug1_name, "U ", "University of ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = "Of ", replacement = "of ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = "And ", replacement = "and ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = "For ", replacement = "for ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = "De ", replacement = "de ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = " Del ", replacement = " del ")) |>
+  mutate(ug1_name = str_replace(string = ug1_name, pattern = " Agri ", replacement = " Agriculture ")) 
 
-  filter(admission_year %in% (curr_year - 4):curr_year)
+  # #................fix misspelled university names.................
+  # mutate(ug1_name = case_when(
+  #   ug1_name %in% c("(Arya Mehr) Sharif U Tech", "Sharif U Tech") ~ "Sharif University of Technology",
+  #   ug1_name == "Albert Ludwig University At Freiburg" ~ "Albert Ludwig University of Freiburg",
+  #   ug1_name %in% c("Bangladesch University of Engr and Tech", "Bangladesh U - Engineer & Tech", "Bangladesch University of Engr and Tech", "Bangladesh University of Engr and Tech") ~ "Bangladesh University of Engineering and Technology",
+  #   ug1_name == "Beijing Inst of Tech" ~ "Beijing Institute of Tecnology",
+  #   ug1_name == "Beijing Institute of Tecnology, Zhuhai Campus, Zhu" ~ "Beijing Institute of Tecnology, Zhuhai Campus",
+  #   ug1_name == "Beijing U Tech" ~ "Beijing University of Technology",
+  #   ug1_name == "Beijing University - Business & Tech" ~ "Beijing Technology and Business University",
+  #   ug1_name == "Beijing University - Chemical Tech" ~ "Beijing University of Chemical Technology",
+  #   ug1_name == "Biju Patnaik U Tech" ~ "Biju Patnaik University of Technology",
+  #   ug1_name %in% c("Birla Inst of Tech & Sci", "Birla Inst of Tech") ~ "Birla Institute of Technology and Science, Pilani",
+  #   ug1_name == "Cetys U -Centr Ensenanza Tec Sup" ~ "CETYS Universidad",
+  #   ug1_name == "China Medical University (Cmu)" ~ "China Medical University",
+  #   ug1_name == "The China University of Geosciences" ~ "The China University of Geosciences",
+  #   ug1_name == "China, Peoples Republic U Political", "China University of Political Science and Law",
+  #   ug1_name == "Dalian U Tech" ~ "Dalian University of Technology", 
+  #   ug1_name == "Delhi College of Engr" ~ "Delhi College of Engineering",
+  #   ug1_name == "East China, Peoples Republic Normal" ~ "East China Normal University",
+  #   ug1_name == "East China, Peoples Republic U Sci" ~ "East China University of Science and Technology",
+  #   ug1_name == "École Polytechnique programs" ~ "École Polytechnique",
+  #   ug1_name == "Eindhoven U Techlgy Stu" ~ "Eindhoven University of Technology",
+  #   ug1_name == "Goethe University Frankfurt Am Main" ~ "Goethe University Frankfurt",
+  #   ug1_name == "Guangdong U Foreign Studies" ~ "Guangdong University of Foreign Studies",
+  #   ug1_name == "Hefei U Tech" ~ "Hefei University of Technology",
+  #   ug1_name == "Hong Kong Baptist C" ~ "Hong Kong Baptist University",
+  #   ug1_name == "Hong Kong U Sci & Tech" ~ "Hong Kong University of Science and Technology",
+  #   ug1_name == "Huazhong U Sci & Tech" ~ "Huazhong U Sci & Tech",
+  #   ug1_name == "Imperial C of Sci & Tech" ~ "Imperial College of Science, Technology and Medicine",
+  #   ug1_name %in% c("Indian Inst of Tech (Iit) - Kharagp", "Indian Inst of Tech (Iit) - Unknown", "Indian Inst Tech (Iit) - Gandhinaga") ~ "Indian Institute of Technology",
+    # ug1_name == "Unive Catolica De Goias" ~ "Pontifícia Universidade Católica de Goiás",
+    # ug1_name == "Ins Tec Y Estudio De Monterrey" ~ "Instituto Tecnológico y de Estudios Superiores de Monterrey",
+    # ug1_name == "Khulna U Engr & Tech" ~ "Khulna University of Engineering & Technology",
+    # ug1_name == "Ms Ramaiah Inst of Tech" ~ "Ramaiah Institute of Technology",
+    # ug1_name == "Mcgill University" ~ "McGill University",
+    # ug1_name == "North South Universi" ~ "North South University",
+    # ug1_name == "Hong Ik University" ~ "Hongik University",
+    # ug1_name == "Kings College London" ~ "King's College London",
+  #   TRUE ~ ug1_name
+  # ))
 ```
 
 2. CLEAN / WRANGLE ENROLLMENT BY YEAR / PROGRAM (saved to df named `enrolled`) 
@@ -349,13 +450,12 @@ program_size_phd <- tot_enrolled |>
 ##            total # of students from each undergraduate location          ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# most ug1_location names are updated in pipeline for `apps_clean` df (above)
+# additional updates necessary based on available geoms
+
 ug_location <- enrolled |> 
   select(c(admission_year, program, ug1_location)) |> 
-  mutate(ug1_location = str_remove(ug1_location, "US - ")) |>
   mutate(ug1_location = case_when(
-    ug1_location %in% c("Korea, Republic Of (South)", "Korea-Republic Of (South)") ~ "South Korea",
-    ug1_location %in% c("China, Peoples Republic", "China, P.R.") ~ "China",
-    ug1_location == "District Of Columbia" ~ "District of Columbia",
     ug1_location == "Scotland" ~ "United Kingdom", # NOTE(HD): no geom for just Scotland; had to change to UK (it's part of UK)
     ug1_location == "Taiwan" ~ "China", # NOTE(HD): try to preserve Taiwan in future iterations
     TRUE ~ ug1_location
@@ -530,11 +630,6 @@ military <- enrolled |>
 
 first_gen <- enrolled |> 
   select(c(admission_year, program, first_generation)) |>  
-  mutate(first_generation = case_when(
-    first_generation == "Yes" ~ "Y",
-    first_generation == "No" ~ "N",
-    TRUE ~ first_generation
-  )) |> 
   group_by(program, first_generation) |>
   summarize(count = n()) |> 
   filter(first_generation == "Y") |>

@@ -87,7 +87,7 @@ server <- function(input, output, session){
   output$sex_all_plot <- sex_plot(input)
   output$age_all_plot <- age_plot(input, curr_year = curr_admission_year)
   output$residency_all_plot <- residency_plot(input)
-  # output$intl_unis <- internationalUniversities_table(input)
+  output$intl_unis_tbl <- internationalUniversities_table(input)
   
   ##~~~~~~~~~~~~~~~~~
   ##  ~ map box  ----
