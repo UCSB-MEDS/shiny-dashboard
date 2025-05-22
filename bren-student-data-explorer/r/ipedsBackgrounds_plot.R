@@ -10,14 +10,14 @@ ipedsBackground_plot <- function(input) {
   
   #.....plot params (title & color) based on category clicked .....
   plot_params <- list(
-    list("Native Hawaiian or Other Pacific Islander", "#9cbebe"),
-    list("American Indian or Alaska Native", "#003660"),
-    list("Black or African American", "#dcd6cc"),
     list("Unknown race and ethnicity", "#09847a"),
     list("Two or more races", "#79a540"),
-    list("Asian", "#047c91"),
     list("Hispanic or Latino", "#6d7d33"),
-    list("White", "#dce1e5"))
+    list("White", "#dce1e5"),
+    list("Native Hawaiian or Other Pacific Islander", "#9cbebe"),
+    list("Black or African American", "#dcd6cc"),
+    list("Asian", "#047c91"),
+    list("American Indian or Alaska Native", "#003660"))
   
   
   #..........................render plotly.........................
@@ -54,8 +54,8 @@ ipedsBackground_plot <- function(input) {
           group_by(background) |> 
           summarize(count = n()) |> 
           mutate(size = totStudents_allPrograms_5yr) |> 
-          mutate(percent = round((count / size) * 100, 1)) |> 
-          mutate(background = fct_reorder(background, percent))
+          mutate(percent = round((count / size) * 100, 1)) #|> 
+          #mutate(background = fct_reorder(background, percent))
         
       }
       
@@ -74,8 +74,8 @@ ipedsBackground_plot <- function(input) {
           summarize(count = n()) |>
           left_join(tot_5yr, by = "program") |> 
           mutate(percent = round((count / size) * 100, 1)) |> 
-          filter(program == input$race_input) |> 
-          mutate(background = fct_reorder(background, percent))
+          filter(program == input$race_input) #|> 
+          #mutate(background = fct_reorder(background, percent))
         
       } 
       

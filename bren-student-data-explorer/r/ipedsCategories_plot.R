@@ -36,8 +36,9 @@ ipedsCategories_plot <- function(input) {
         group_by(category_ipeds) |> 
         summarize(count = n()) |> 
         mutate(size = totStudents_allPrograms_5yr) |>
-        mutate(percent = round((count / size) * 100, 1)) |> 
-        mutate(category_ipeds = fct_reorder(category_ipeds, percent, .desc = TRUE))
+        mutate(percent = round((count / size) * 100, 1)) #|> 
+        #mutate(category_ipeds = fct_reorder(category_ipeds, if_else(n == 0, Inf, -n)))
+        #mutate(category_ipeds = fct_reorder(category_ipeds, percent, .desc = TRUE))
       
     } # END if statement
     
@@ -48,8 +49,9 @@ ipedsCategories_plot <- function(input) {
         summarize(count = n()) %>% 
         left_join(tot_5yr, by = "program") |> 
         mutate(percent = round((count / size) * 100, 1)) |> 
-        filter(program == input$race_input) |> 
-        mutate(category_ipeds = fct_reorder(category_ipeds, percent, .desc = TRUE))
+        filter(program == input$race_input) #|> 
+        #mutate(category_ipeds = fct_reorder(category_ipeds, if_else(n == 0, Inf, -n)))
+        #mutate(category_ipeds = fct_reorder(category_ipeds, percent, .desc = TRUE))
       
     } # END else statement
     
