@@ -100,9 +100,9 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
   output$urm_trends_plot <- urmTrends_plot(input)
-  # output$race_trends_pltly <- ipedsTrends_plot(input)
-  # output$race_pltly <- ipedsCategories_plot(input)
-  # output$background_pltly <- ipedsBackground_plot(input)
+  output$race_trends_plot <- ipedsTrends_plot(input)
+  output$race_plot <- ipedsCategories_plot(input)
+  output$background_plot <- ipedsBackground_plot(input)
   
 } # END server
 

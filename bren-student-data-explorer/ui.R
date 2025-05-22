@@ -648,11 +648,11 @@ body <- dashboardBody(
                               tabPanel(title = "Race / Category Trends (IPEDS)",
                                        
                                        # IPEDS trends plotly output
-                                       plotly::plotlyOutput(outputId = "race_trends_pltly") |>
+                                       plotly::plotlyOutput(outputId = "race_trends_plot") |>
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       program_radioButtons(inputId = "race_trends", selected = "All Programs", include_all = TRUE),
+                                       program_radioButtons(inputId = "race_trends_input", selected = "All Programs", include_all = TRUE),
                                        
                                        # IPEDS definition caption ----
                                        includeMarkdown("text/ipeds_definition.md")
