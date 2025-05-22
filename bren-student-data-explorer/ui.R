@@ -663,11 +663,11 @@ body <- dashboardBody(
                               tabPanel(title = "Race / Category (IPEDS)",
                                        
                                        # IPEDS plotly output ----
-                                       plotly::plotlyOutput(outputId = "race_pltly") |>
+                                       plotly::plotlyOutput(outputId = "race_plot") |>
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       program_radioButtons(inputId = "race", selected = "All Programs", include_all = TRUE)
+                                       program_radioButtons(inputId = "race_input", selected = "All Programs", include_all = TRUE)
                                        
                               ) # END (TAB 3) IPEDS tabPanel
                               
@@ -682,7 +682,7 @@ body <- dashboardBody(
                   solidHeader = TRUE, status = "navy",
                   
                   # background plotly output ----
-                  plotly::plotlyOutput(outputId = "background_pltly") |>
+                  plotly::plotlyOutput(outputId = "background_plot") |>
                     withSpinner(color = "#003660", type = 1),
                   
                   # IPEDS definition caption ----

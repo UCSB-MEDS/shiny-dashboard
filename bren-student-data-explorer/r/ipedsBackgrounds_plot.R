@@ -1,19 +1,26 @@
-
+#' Creates the "IPEDS Backgrounds and Distributions" plots, which are selected by clicking ona group in the "IPEDS Categories and Distribution" plot
+#'
+#' @param input 
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 ipedsBackground_plot <- function(input) { 
   
-  # plot params (title & color) based on category clicked ----
+  #.....plot params (title & color) based on category clicked .....
   plot_params <- list(
+    list("Native Hawaiian or Other Pacific Islander", "#9cbebe"),
+    list("American Indian or Alaska Native", "#003660"),
+    list("Black or African American", "#dcd6cc"),
     list("Unknown race and ethnicity", "#09847a"),
     list("Two or more races", "#79a540"),
-    list("Hispanic or Latino", "#6d7d33"),
-    list("White", "#dce1e5"),
-    list("Native Hawaiian or Other Pacific Islander", "#9cbebe"),
-    list("Black or African American", "#dcd6cc"),
     list("Asian", "#047c91"),
-    list("American Indian or Alaska Native", "#003660"))
+    list("Hispanic or Latino", "#6d7d33"),
+    list("White", "#dce1e5"))
   
   
-  # render plotly ----
+  #..........................render plotly.........................
   renderPlotly({
     
     # reactive event based on plotly click in race plot ----
@@ -30,53 +37,52 @@ ipedsBackground_plot <- function(input) {
     race_str <- plot_params[[race_num]][[1]]
     color <- plot_params[[race_num]][[2]]
     
-    # wrangle data & create reactive df
+    # wrangle data & create reactive df ----
     background_stats <- reactive({
       
-      if (background_click()$y == race_num && input$race == "All Programs") {
+      if (background_click()$y == race_num && input$race_input == "All Programs") {
         
-        # breakdown of background all programs
-        ipeds %>% 
-          filter(category_ipeds == race_str) %>% 
+        # breakdown of background all programs ----
+        ipeds |> 
+          filter(category_ipeds == race_str) |> 
           mutate(background = case_when(
             is.na(background) == TRUE ~ "Unknown race and ethnicity",
             TRUE ~ background
-          )) %>%
-          mutate(background = str_split(background, "; ")) %>% 
-          unnest(background) %>% 
-          group_by(background) %>% 
-          summarize(count = n()) %>% 
-          # total number of enrolled students in the past 5 years
-          mutate(size = totStudents_allPrograms_5yr) %>% # SC NOTE 2023-02-08: was hardcoded as 604
-          mutate(percent = round((count / size) * 100, 1))
+          ))|> 
+          mutate(background = str_split(background, "; ")) |> 
+          unnest(background) |> 
+          group_by(background) |> 
+          summarize(count = n()) |> 
+          mutate(size = totStudents_allPrograms_5yr) |> 
+          mutate(percent = round((count / size) * 100, 1)) |> 
+          mutate(background = fct_reorder(background, percent))
         
       }
       
       else {
         
-        # breakdown of background by program
-        ipeds %>% 
-          filter(category_ipeds == race_str) %>% 
+        # breakdown of background by program ----
+        ipeds |> 
+          filter(category_ipeds == race_str) |> 
           mutate(background = case_when(
             is.na(background) == TRUE ~ "Unknown race and ethnicity",
             TRUE ~ background
-          )) %>%
-          mutate(background = str_split(background, "; ")) %>% 
-          unnest(background) %>% 
-          group_by(objective1,
-                   background) %>% 
-          summarize(count = n()) %>% 
-          # join with df with tot of enrolled students (5 yrs) by degree program
-          left_join(tot_5yr, by = "objective1") %>% 
-          mutate(percent = round((count / size) * 100, 1)) %>% 
-          filter(objective1 == input$race)
+          )) |>
+          mutate(background = str_split(background, "; ")) |> 
+          unnest(background) |>
+          group_by(program, background) |> 
+          summarize(count = n()) |>
+          left_join(tot_5yr, by = "program") |> 
+          mutate(percent = round((count / size) * 100, 1)) |> 
+          filter(program == input$race_input) |> 
+          mutate(background = fct_reorder(background, percent))
         
       } 
       
     }) # END reactive df
     
     # validation message appears when no background data available for particular program and/or category ----
-    validate(need(nrow(background_stats()) > 0, paste0("There are no data on ", race_str, " racial category for ", input$race, " degree program."))) 
+    validate(need(nrow(background_stats()) > 0, paste0("There are no data on ", race_str, " racial category for ", input$race_input, " degree program."))) 
     
     # create ggplot ----
     background_gg <- ggplot(data = background_stats(),
@@ -91,10 +97,10 @@ ipedsBackground_plot <- function(input) {
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       theme_minimal() +
       theme(legend.position = "none") +
-      labs(title = paste0(race_str, " Category ", "\n", "Backgrounds (", input$race, ")"),
+      labs(title = paste0(race_str, " Category ", "\n", "Backgrounds (", input$race_input, ")"),
            x = NULL, y = NULL, fill = NULL)
     
-    # convert to plotly
+    # convert to plotly ----
     plotly::ggplotly(background_gg, tooltip = "text") %>% 
       layout(title = list(font = list(size = 15))) |> 
       config(displayModeBar = FALSE)
