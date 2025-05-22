@@ -80,9 +80,7 @@ body <- dashboardBody(
                                             box(width = 12,
                                                 title = "About the MEDS Career Data",
                                                 solidHeader = TRUE, status = "success",
-                                                includeMarkdown("text/meds_career_data_info.md")
-                                                
-                                            ) # END explore MEDS career info box
+                                                includeMarkdown("text/meds_career_data_info.md")) # END explore MEDS career info box
                                             
                                           ), # END fluidRow
                                           
@@ -186,8 +184,6 @@ body <- dashboardBody(
                                                  ) # END (TAB 6) meds job source tabPanel
                                                  
                                           ) # END meds career data visualizations tabBox
-                                          
-                                          #) # END meds career data viz tabBox fluidRow # SSC: COME BACK TO THIS???
                                           
                                    ) # END right-hand column
                                    
