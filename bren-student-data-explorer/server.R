@@ -93,7 +93,7 @@ server <- function(input, output, session){
   ##  ~ map box  ----
   ##~~~~~~~~~~~~~~~~~
   
-  # output$origins_map <- origins_map(input)
+  output$origins_map <- origins_map(input)
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ race / category tabBox  ----
