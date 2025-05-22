@@ -5,10 +5,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-program_size => tot_enrolled
-
-check on military status
-
 0. SETUP
 
 ```{r}
@@ -74,6 +70,29 @@ mesm2026 <- c(202412, 203729, 201351, 201643, 204194,
 1. CLEAN `apps` (filtered for 5 most recent years)
 
 ```{r}
+#...............................................................................
+#  From K. Duarte re: URM definition, which is defined in the following data   .
+#  wrangling code:                                                             .
+#                                                                              .
+#  UCOP (Office of the President) information on demographics reporting: Here  .
+#  is also a definition provided in reports from the regents: The term         .
+#  “minorities” refers to four of the five categories required for reporting   .
+#  under federal affirmative action regulations: African American, Hispanic    .
+#  (includes Chicano/Latino), Asian (includes Pacific Islander), and Native    .
+#  American (American Indian). The fifth category is White or Caucasian. The   .
+#  term “underrepresented minorities” (or URM) refers to three of the above    .
+#  categories that are underrepresented overall among students in higher       .
+#  education: African American, Hispanic (Chicano/Latino) and Native American  .
+#  (American Indian). Although Asians are underrepresented among faculty in    .
+#  some fields, they are overrepresented overall among UC student populations  .
+#  and reflect differing demographic trends among faculty.  For UC reporting,  .
+#  there is a roll-up procedure (similar to those used in aggregated federal   .
+#  reports mentioned above) for those who identify as multiple racial groups.  .
+#  If a person identifies as multiple races and one of the groups they         .
+#  selected is a URM, they will get reported with that URM status.             .
+#                                                                              .
+#...............................................................................
+
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
 ##------------------------ CLEAN / WRANGLE ALL ADMITS---------------------------
@@ -216,7 +235,7 @@ apps_clean <- apps |>
                 "Family of H,H1,H2,H3") ~ "International"
   )) |> 
   replace_na(list(residency_status = "Unknown")) |> 
-
+  
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                  convert any country codes to full names                 ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -237,7 +256,46 @@ apps_clean <- apps |>
   mutate(residency_country_full = coalesce(residency_country_full, residency_country)) |>
   select(-residency_country) |> 
   rename(residency_country = residency_country_full) |>
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            categorize URM status                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# create a urm_status column based on hispanic/latino, citizenship country, visa, racial categories ----
+
+  mutate(urm_status = case_when(
+    
+    # us citizens who are hispanic/latino ----
+    hispanic_latino == TRUE & citizenship_country == "United States" ~ "Y", # recent years encode as "United States"
+    
+    # permanent residents who are hispanic/latino ----
+    hispanic_latino == TRUE & visa %in% c("Permanent Residency Pending (Work Permit)", "Permanent Resident") ~ "Y",
+    
+    # us citizens who identify as urms ----
+    str_detect(racial_categories, str_c(c("African American / Black", "American Indian / Alaska Native"), collapse = "|")) & citizenship_country == "United States" ~ "Y",
+    
+    # permanent residents who identify as urms ----
+    str_detect(racial_categories, str_c(c("African American / Black", "American Indian / Alaska Native"), collapse = "|")) & visa %in% c("Permanent Residency Pending (Work Permit)", "Permanent Resident") ~ "Y",
+    
+    # everyone else ----
+    TRUE ~ "N")) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                        categorize documented status                      ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(undocumented_status = case_when(
+    visa %in% c("DACA/AB540", 
+                "DACA, AB-540", 
+                "Undocumented Status",
+                "Undocumented",
+                "None, I have DACA",
+                "Undocumented due to expired visitor visa from 2005",
+                "None: DACA Recipient", 
+                "Pending Asylum") ~ "Y", 
+    TRUE ~ "N")
+    ) |>
+  
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                update undergraduate locations as necessary               ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,47 +331,6 @@ apps_clean <- apps |>
   mutate(ug1_name = str_replace(string = ug1_name, pattern = "De ", replacement = "de ")) |>
   mutate(ug1_name = str_replace(string = ug1_name, pattern = " Del ", replacement = " del ")) |>
   mutate(ug1_name = str_replace(string = ug1_name, pattern = " Agri ", replacement = " Agriculture ")) 
-
-  # #................fix misspelled university names.................
-  # mutate(ug1_name = case_when(
-  #   ug1_name %in% c("(Arya Mehr) Sharif U Tech", "Sharif U Tech") ~ "Sharif University of Technology",
-  #   ug1_name == "Albert Ludwig University At Freiburg" ~ "Albert Ludwig University of Freiburg",
-  #   ug1_name %in% c("Bangladesch University of Engr and Tech", "Bangladesh U - Engineer & Tech", "Bangladesch University of Engr and Tech", "Bangladesh University of Engr and Tech") ~ "Bangladesh University of Engineering and Technology",
-  #   ug1_name == "Beijing Inst of Tech" ~ "Beijing Institute of Tecnology",
-  #   ug1_name == "Beijing Institute of Tecnology, Zhuhai Campus, Zhu" ~ "Beijing Institute of Tecnology, Zhuhai Campus",
-  #   ug1_name == "Beijing U Tech" ~ "Beijing University of Technology",
-  #   ug1_name == "Beijing University - Business & Tech" ~ "Beijing Technology and Business University",
-  #   ug1_name == "Beijing University - Chemical Tech" ~ "Beijing University of Chemical Technology",
-  #   ug1_name == "Biju Patnaik U Tech" ~ "Biju Patnaik University of Technology",
-  #   ug1_name %in% c("Birla Inst of Tech & Sci", "Birla Inst of Tech") ~ "Birla Institute of Technology and Science, Pilani",
-  #   ug1_name == "Cetys U -Centr Ensenanza Tec Sup" ~ "CETYS Universidad",
-  #   ug1_name == "China Medical University (Cmu)" ~ "China Medical University",
-  #   ug1_name == "The China University of Geosciences" ~ "The China University of Geosciences",
-  #   ug1_name == "China, Peoples Republic U Political", "China University of Political Science and Law",
-  #   ug1_name == "Dalian U Tech" ~ "Dalian University of Technology", 
-  #   ug1_name == "Delhi College of Engr" ~ "Delhi College of Engineering",
-  #   ug1_name == "East China, Peoples Republic Normal" ~ "East China Normal University",
-  #   ug1_name == "East China, Peoples Republic U Sci" ~ "East China University of Science and Technology",
-  #   ug1_name == "École Polytechnique programs" ~ "École Polytechnique",
-  #   ug1_name == "Eindhoven U Techlgy Stu" ~ "Eindhoven University of Technology",
-  #   ug1_name == "Goethe University Frankfurt Am Main" ~ "Goethe University Frankfurt",
-  #   ug1_name == "Guangdong U Foreign Studies" ~ "Guangdong University of Foreign Studies",
-  #   ug1_name == "Hefei U Tech" ~ "Hefei University of Technology",
-  #   ug1_name == "Hong Kong Baptist C" ~ "Hong Kong Baptist University",
-  #   ug1_name == "Hong Kong U Sci & Tech" ~ "Hong Kong University of Science and Technology",
-  #   ug1_name == "Huazhong U Sci & Tech" ~ "Huazhong U Sci & Tech",
-  #   ug1_name == "Imperial C of Sci & Tech" ~ "Imperial College of Science, Technology and Medicine",
-  #   ug1_name %in% c("Indian Inst of Tech (Iit) - Kharagp", "Indian Inst of Tech (Iit) - Unknown", "Indian Inst Tech (Iit) - Gandhinaga") ~ "Indian Institute of Technology",
-    # ug1_name == "Unive Catolica De Goias" ~ "Pontifícia Universidade Católica de Goiás",
-    # ug1_name == "Ins Tec Y Estudio De Monterrey" ~ "Instituto Tecnológico y de Estudios Superiores de Monterrey",
-    # ug1_name == "Khulna U Engr & Tech" ~ "Khulna University of Engineering & Technology",
-    # ug1_name == "Ms Ramaiah Inst of Tech" ~ "Ramaiah Institute of Technology",
-    # ug1_name == "Mcgill University" ~ "McGill University",
-    # ug1_name == "North South Universi" ~ "North South University",
-    # ug1_name == "Hong Ik University" ~ "Hongik University",
-    # ug1_name == "Kings College London" ~ "King's College London",
-  #   TRUE ~ ug1_name
-  # ))
 ```
 
 2. CLEAN / WRANGLE ENROLLMENT BY YEAR / PROGRAM (saved to df named `enrolled`) 
@@ -643,14 +660,10 @@ first_gen <- enrolled |>
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 undocumented <- enrolled |> 
-  select(c(admission_year, program, visa)) |> 
-  mutate(undocumented_status = case_when(visa %in% c("DACA/AB540",
-                                                     "Undocumented Status",
-                                                     "None: DACA Recipient") ~ "Yes", 
-                                         TRUE ~ "No")) |> 
+  select(c(admission_year, program, visa, undocumented_status)) |>
   group_by(program, undocumented_status) |> 
   summarize(count = n()) |> 
-  filter(undocumented_status == "Yes") |> 
+  filter(undocumented_status == "Y") |> 
   mutate(demographic = "Undocumented") |> 
   select(-undocumented_status)
 
@@ -660,62 +673,10 @@ undocumented <- enrolled |>
 ##                                                                            --
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#...............................................................................
-#  From K. Duarte:                                                             .
-#                                                                              .
-#  UCOP (Office of the President) information on demographics reporting: Here  .
-#  is also a definition provided in reports from the regents: The term         .
-#  “minorities” refers to four of the five categories required for reporting   .
-#  under federal affirmative action regulations: African American, Hispanic    .
-#  (includes Chicano/Latino), Asian (includes Pacific Islander), and Native    .
-#  American (American Indian). The fifth category is White or Caucasian. The   .
-#  term “underrepresented minorities” (or URM) refers to three of the above    .
-#  categories that are underrepresented overall among students in higher       .
-#  education: African American, Hispanic (Chicano/Latino) and Native American  .
-#  (American Indian). Although Asians are underrepresented among faculty in    .
-#  some fields, they are overrepresented overall among UC student populations  .
-#  and reflect differing demographic trends among faculty.  For UC reporting,  .
-#  there is a roll-up procedure (similar to those used in aggregated federal   .
-#  reports mentioned above) for those who identify as multiple racial groups.  .
-#  If a person identifies as multiple races and one of the groups they         .
-#  selected is a URM, they will get reported with that URM status.             .
-#                                                                              .
-#...............................................................................
-
-#.........................URM categories.........................
-category_urms <- c("African American / Black",
-                   "American Indian / Alaska Native")
-
-visa_urms <- c("Permanent Residency Pending (Work Permit)",
-               "Permanent Resident")
-
 #............................wrangle.............................
 urm <- enrolled |>  
-  
-  # select relevant columns ----
   select(admission_year, application_id, program, citizenship_country, residency_country,
-         birth_country, visa, background, racial_categories, hispanic_latino) |>  
-
-  # create a urm_status column based on hispanic/latino, citizenship country, visa, racial categories ----
-  mutate(urm_status = case_when(
-    
-    # us citizens who are hispanic/latino ----
-    hispanic_latino == TRUE & citizenship_country == "US" ~ "Y", # earlier years encoded "United States" as "US"
-    hispanic_latino == TRUE & citizenship_country == "United States" ~ "Y", # recent years encode as "United States"
-    
-    # permanent residents who are hispanic/latino ----
-    hispanic_latino == TRUE & visa %in% visa_urms ~ "Y",
-    
-    # us citizens who identify as urms ----
-    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & citizenship_country == "US" ~ "Y",
-    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & citizenship_country == "United States" ~ "Y",
-    # # permanent residents who identify as urms ----
-    str_detect(racial_categories, str_c(category_urms, collapse = "|")) & visa %in% visa_urms ~ "Y",
-    
-    # everyone else ----
-    TRUE ~ "N")) |> 
-  
-  # summarize & wrangle ----
+         birth_country, visa, background, racial_categories, hispanic_latino, urm_status) |>  
   group_by(program, urm_status) |>  
   summarize(count = n()) |>  
   filter(urm_status == "Y") |>  

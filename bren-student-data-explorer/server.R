@@ -99,7 +99,7 @@ server <- function(input, output, session){
   ##  ~ race / category tabBox  ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  # output$urm_trends_pltly <- urmTrends_plot(input)
+  output$urm_trends_plot <- urmTrends_plot(input)
   # output$race_trends_pltly <- ipedsTrends_plot(input)
   # output$race_pltly <- ipedsCategories_plot(input)
   # output$background_pltly <- ipedsBackground_plot(input)

@@ -633,11 +633,11 @@ body <- dashboardBody(
                               tabPanel("URM Trends",
                                        
                                        # urm trends plotly output ----
-                                       plotly::plotlyOutput(outputId = "urm_trends_pltly") |>
+                                       plotly::plotlyOutput(outputId = "urm_trends_plot") |>
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButton input ----
-                                       program_radioButtons(inputId = "urm_trends", selected = "All Programs", include_all = TRUE),
+                                       program_radioButtons(inputId = "urm_trends_input", selected = "All Programs", include_all = TRUE),
                                        
                                        # urm definition caption ----
                                        includeMarkdown("text/urm_definition.md")
