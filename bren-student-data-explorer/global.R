@@ -1,12 +1,3 @@
-# ---- SC REMINDERS (2023-02): THINGS TO CHECK/UPDATE AS NEW DATA ARE ADDED: ----
-# update curr_year vars, below 
-# once MEDS hits 3 years, use salary_plot() & salaryBySector_plot() fxns for generating plots (until then, add 2023 to meds_salary_plot() & meds_salaryBySector_plot())
-# update class sizes by year in placementStatus_plot()
-# update num_years for MEDS in sectorSatisfaction_plot()
-# assess/adjust as needed the x-axis ticks in urmTrends_plot() -- updated during Feb 2023 because 2022 data for PhDs not showing up as originally coded (no URM PhDs in 2022)
-# update plot title (year ranges) in age_plot() whenever years are added/removed
-# DATA CLEANING UPDATES SHOULD BE MADE TO FILES IN `/data_cleaning`
-  # TODO: MOVE ug1_name & ug1_location in internationalUniversities_table() to data-cleaning files
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
@@ -288,3 +279,13 @@ intl_unis <- enrolled |>
   filter(!ug1_location %in% c(state.name, "District of Columbia")) |> 
   group_by(ug1_location, ug1_name) |> 
   summarize(count = n())
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                                                            --
+##------------------------- DEFINE UI TEXT ELEMENTS-----------------------------
+##                                                                            --
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#footer_date_text <- paste0("Last updated: ", format(Sys.Date(), format = "%B %Y"))
+# career_years_text <- paste0("All information presented here draw from initial job placement data collected on the graduating classes of ", curr_grad_year-2, "-", curr_grad_year, ".", "<br>",
+#                             "test")

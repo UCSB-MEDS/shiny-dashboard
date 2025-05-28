@@ -1,4 +1,4 @@
-This interactive data explorer was built to visualize admissions and career outcome data of current students and recent graduates. It includes demographics of all Bren students and career outcomes for master's students (MEDS & MESM).
+This interactive data explorer visualizes career outcome and admissions data of current students and recent graduates of the <a href="https://bren.ucsb.edu/" target="_blank">Bren School of Environmental Science & Management</a>. It includes career outcomes for master's students (MEDS & MESM) and demographic information for all students (MEDS, MESM & PhD).
 
 We developed this explorer with the intention of supporting:
 

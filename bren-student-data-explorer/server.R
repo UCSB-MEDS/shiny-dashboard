@@ -2,9 +2,16 @@
 server <- function(input, output, session){
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##                        Career tabPanel (career_db)                       ----
+  ##                        Career tabPanel (career_page)                     ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ text elements  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  
+  output$meds_about_career_data_text <- career_data_text(program_acronym = "MEDS")
+  output$mesm_about_career_data_text <- career_data_text(program_acronym = "MESM")
+  
   ##~~~~~~~~~~~~~~~~~~~~
   ##  ~ valueBoxes  ----
   ##~~~~~~~~~~~~~~~~~~~~
@@ -67,8 +74,14 @@ server <- function(input, output, session){
   output$mesm_job_source_plot <- jobSource_plot(input, data = mesm_placement, program_acronym = "MESM")
 
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ##                      Demographics tabPanel (demo_db)                     ----
+  ##                  Demographics tabPanel (demographics_page)               ----
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ text elements  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  
+  output$demographic_programs_text <- demographics_programs_text()
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ program size valueBoxes  ----
@@ -104,7 +117,14 @@ server <- function(input, output, session){
   output$race_plot <- ipedsCategories_plot(input)
   output$background_plot <- ipedsBackground_plot(input)
   
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ##                        About tabPanel (about_page)                       ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  ##  ~ text elements  ----
+  ##~~~~~~~~~~~~~~~~~~~~~~~
+  
+  output$footer_date_text <- footer_date_text()
+  
 } # END server
-
-
-

@@ -21,9 +21,9 @@ sidebar <- dashboardSidebar(
   
   sidebarMenu(id = "sidebarID",
               
-              menuItem(tabName = "career_db", text = "Career Outcomes", icon = icon("road", lib = "glyphicon")),
-              menuItem(tabName = "demo_db", text = "Demographics", icon = icon("user", lib = "glyphicon")),
-              menuItem(tabName = "about", text = "About this Dashboard", icon = icon("star", lib = "glyphicon"), badgeColor = "green") 
+              menuItem(tabName = "career_page", text = "Career Outcomes", icon = icon("road", lib = "glyphicon")),
+              menuItem(tabName = "demographics_page", text = "Demographics", icon = icon("user", lib = "glyphicon")),
+              menuItem(tabName = "about_page", text = "About this Dashboard", icon = icon("star", lib = "glyphicon"), badgeColor = "green") 
               
   ) # END sidebarMenu
   
@@ -49,13 +49,13 @@ body <- dashboardBody(
   useShinyjs(), # call shinyjs; Note(HD): initially added to use hidden() ----
   
   tabItems(
-    
+
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ##                           career tab (career_db)                         ----
+    ##                          career tab (career_page)                        ----
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     # START career tabItem ----
-    tabItem(tabName = "career_db",
+    tabItem(tabName = "career_page",
             
             # START career tabsetPanel ----
             tabsetPanel(id = "career_tabpanels",
@@ -79,8 +79,8 @@ body <- dashboardBody(
                                             # START explore MEDS career info box ----
                                             box(width = 12,
                                                 title = "About the MEDS Career Data",
-                                                solidHeader = TRUE, status = "success",
-                                                includeMarkdown("text/meds_career_data_info.md")) # END explore MEDS career info box
+                                                solidHeader = TRUE, status = "navy", 
+                                                uiOutput("meds_about_career_data_text")) # END explore MEDS career info box
                                             
                                           ), # END fluidRow
                                           
@@ -115,7 +115,7 @@ body <- dashboardBody(
                                                             withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
-                                                          tags$p(tags$em("Data includes Full-Time Career positions only."))
+                                                          div(style = "text-align: right; font-style: italic;", "Data includes Full-Time Career positions only.")
                                                           
                                                  ), # END (TAB 1) meds salary tabPanel
                                                  
@@ -126,11 +126,11 @@ body <- dashboardBody(
                                                           plotlyOutput(outputId = "meds_salary_by_sector_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
-                                                          # caption ----
-                                                          tags$p(tags$em("Data includes Full-Time Career positions only.")),
-                                                          
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "meds_salarySector_year_input")
+                                                          year_radioButtons(inputId = "meds_salarySector_year_input"),
+                                                          
+                                                          # caption ----
+                                                          div(style = "text-align: right; font-style: italic;", "Data includes Full-Time Career positions only.")
                                                           
                                                  ), # END (TAB 2) meds salary by sector tabPanel
                                                  
@@ -221,11 +221,11 @@ body <- dashboardBody(
                                                    plotly::plotlyOutput(outputId = "meds_geogComparison_plot") |>
                                                      withSpinner(color = "#003660", type = 1),
                                                    
-                                                   # note about percentages that don't add to 100% ----
-                                                   includeMarkdown("text/geog_comparison_perc.md"),
-                                                   
                                                    # year radioButtons input ----
-                                                   year_radioButtons(inputId = "meds_placementLocation_year_input")
+                                                   year_radioButtons(inputId = "meds_placementLocation_year_input"),
+                                                   
+                                                   # note about percentages that don't add to 100% ----
+                                                   div(style = "text-align: right; font-style: italic;", includeMarkdown("text/geog_comparison_perc.md"))
                                                    
                                           ) # (TAB 3) meds geographic comparison tabPanel
                                           
@@ -278,8 +278,8 @@ body <- dashboardBody(
                                             # START explore MESM career info box ----
                                             box(width = 12,
                                                 title = "About the MESM Career Data",
-                                                solidHeader = TRUE, status = "success",
-                                                includeMarkdown("text/mesm_career_data_info.md")
+                                                solidHeader = TRUE, status = "navy", 
+                                                uiOutput("mesm_about_career_data_text")
                                             ) # END explore MESM career info box
                                             
                                           ), # END fluidRow
@@ -314,7 +314,8 @@ body <- dashboardBody(
                                                           plotlyOutput(outputId = "mesm_salary_plot") |> withSpinner(color = "#003660", type = 1),
                                                           
                                                           # caption ----
-                                                          tags$p(tags$em("Data includes Full-Time Career positions only."))
+                                                          div(style = "text-align: right; font-style: italic;", "Data includes Full-Time Career positions only.")
+
                                                  ), # END (TAB 1) mesm salary tabPanel
                                                  
                                                  # START (TAB 2) mesm salary by sector tabPanel ----
@@ -323,12 +324,12 @@ body <- dashboardBody(
                                                           # mesm salary by sector plotly output ----
                                                           plotlyOutput(outputId = "mesm_salary_by_sector_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
+
+                                                          # year radioButtons input ----
+                                                          year_radioButtons(inputId = "mesm_salarySector_year_input"),
                                                           
                                                           # caption ----
-                                                          tags$p(tags$em("Data includes Full-Time Career positions only.")),
-                                                          
-                                                          # year radioButtons input ----
-                                                          year_radioButtons(inputId = "mesm_salarySector_year_input")
+                                                          div(style = "text-align: right; font-style: italic;", "Data includes Full-Time Career positions only.")
                                                           
                                                  ), # END (TAB 2) mesm salary by sector tabPanel
                                                  
@@ -339,11 +340,11 @@ body <- dashboardBody(
                                                           plotlyOutput(outputId = "mesm_salary_by_specialization_plot") |>
                                                             withSpinner(color = "#003660", type = 1),
                                                           
-                                                          # caption ----
-                                                          tags$p(tags$em("Data includes Full-Time Career positions only.")),
-                                                          
                                                           # year radioButtons input ----
-                                                          year_radioButtons(inputId = "mesm_salary_by_specialization_year_input")
+                                                          year_radioButtons(inputId = "mesm_salary_by_specialization_year_input"),
+                                                          
+                                                          # caption ----
+                                                          div(style = "text-align: right; font-style: italic;", "Data includes Full-Time Career positions only.")
                                                           
                                                  ), # END (TAB 3) mesm salary by specialization tabPanel
                                                  
@@ -469,15 +470,16 @@ body <- dashboardBody(
                                  
                         ) # END MESM career tabPanel
                         
-            ) # END tabsetPanel career_db
+            ) # END tabsetPanel career_page
             
-    ), # END tabItem career_db
-    
+    ), # END tabItem career_page
+
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ##                         demographics tab (demo_db)                       ----
+    ##                    demographics tab (demographics_page)                  ----
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    tabItem(tabName = "demo_db",
+
+    tabItem(tabName = "demographics_page",
             
             # START fluidRow ----
             fluidRow(
@@ -487,9 +489,11 @@ body <- dashboardBody(
                      
                      # START learn more box ----
                      box(width = 12,
-                         title = "Learn more about students at Bren!",
-                         includeMarkdown("text/demo_about.md"),
-                         solidHeader = TRUE, status = "success"), # END learn more box
+                         title = "About Bren's Programs & Demographics Data", #"Learn more about students at Bren!",
+                         solidHeader = TRUE,  status = "navy",
+                         uiOutput("demographic_programs_text")), # END learn more box
+                     
+                     #includeMarkdown("text/demo_about.md")
                      
                      # START map box ----
                      box(width = 12,
@@ -537,7 +541,7 @@ body <- dashboardBody(
                                        program_radioButtons(inputId = "diversity_stats_all_input", selected = "MEDS"),
                                        
                                        # urm definition caption ----
-                                       includeMarkdown("text/urm_definition.md")
+                                       div(style = "text-align: right; font-style: italic;", includeMarkdown("text/urm_definition.md"))
                                        
                               ), # END (TAB 1) overall diversity demographics tabPanel
                               
@@ -605,11 +609,9 @@ body <- dashboardBody(
               
               # START definitions box ----
               box(width = 12, id = "ipeds_def",
-                  
                   title = "Race and Background Reporting Defintions",
-                  collapsible = TRUE, collapsed = FALSE,
-                  span(tags$div(class = "lrg-bold", includeMarkdown("text/ipeds_text.md"))),
-                  background = "green") # END definitions box
+                  collapsible = TRUE, collapsed = FALSE, solidHeader = TRUE, status = "navy", # was background = "green"
+                  span(tags$div(class = "lrg-bold", includeMarkdown("text/ipeds_text.md")))) # END definitions box
               
             ), # END fluidRow (contains IPEDS definitions) ----
             
@@ -633,10 +635,10 @@ body <- dashboardBody(
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButton input ----
-                                       program_radioButtons(inputId = "urm_trends_input", selected = "All Programs", include_all = TRUE),
+                                       program_radioButtons(inputId = "urm_trends_input", selected = "All Programs", include_all = TRUE)
                                        
-                                       # urm definition caption ----
-                                       includeMarkdown("text/urm_definition.md")
+                                       # # urm definition caption ----
+                                       # div(style = "text-align: right; font-style: italic;", includeMarkdown("text/urm_definition.md"))
                                        
                               ), # END (TAB 1) URM trends tabPanel
                               
@@ -648,10 +650,10 @@ body <- dashboardBody(
                                          withSpinner(color = "#003660", type = 1),
                                        
                                        # program radioButtons input ----
-                                       program_radioButtons(inputId = "race_trends_input", selected = "All Programs", include_all = TRUE),
+                                       program_radioButtons(inputId = "race_trends_input", selected = "All Programs", include_all = TRUE)
                                        
-                                       # IPEDS definition caption ----
-                                       includeMarkdown("text/ipeds_definition.md")
+                                       # # IPEDS definition caption ----
+                                       # div(style = "text-align: right; font-style: italic;", includeMarkdown("text/ipeds_definition.md"))
                                        
                               ), # END (TAB 2) IPEDS trends tabPanel
                               
@@ -679,22 +681,22 @@ body <- dashboardBody(
                   
                   # background plotly output ----
                   plotly::plotlyOutput(outputId = "background_plot") |>
-                    withSpinner(color = "#003660", type = 1),
+                    withSpinner(color = "#003660", type = 1)
                   
-                  # IPEDS definition caption ----
-                  includeMarkdown("text/ipeds_definition.md")
+                  # # IPEDS definition caption ----
+                  # div(style = "text-align: right; font-style: italic;", includeMarkdown("text/ipeds_definition.md"))
                   
               ) # END ethnicity/background box
               
             ) # END fluidRow (contains race & ethnicity plots)
             
-    ), # END demographics tab (demo_db)
-    
+    ), # END demographics tab (demographics_page)
+
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ##                                  about tab                               ----
+    ##                           about tab (about_page)                         ----
     ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    tabItem(tabName = "about",
+    tabItem(tabName = "about_page",
             
             # add banner image ----
             tags$img(class = "banner", src = "images/Bren-hi-res.jpg"),
@@ -707,35 +709,29 @@ body <- dashboardBody(
                      
                      # START intro box ----
                      box(width = NULL, id = "intro_what_box",
-                         
-                         title = tagList(icon("users"), "Learn about students at the Bren School"),
+                         title = "Our motivation",
                          solidHeader = TRUE, status = "navy",
-                         includeMarkdown("text/welcome_what_text.md")
-                         
-                     ) # END intro box
-                     
+                         includeMarkdown("text/about-motivation.md")) # END intro box
+
               ), # END left-hand column
               
               # START right-hand column ----
               column(width = 6,
+                       
+                       # START about the data box ----
+                       box(width = NULL, id = "intro_data_box",
+                           title = "Data sources & code",
+                           solidHeader = TRUE, status = "navy",
+                           includeMarkdown("text/about-data.md")), # END about the data box
                      
-                     # START about the data box ----
-                     box(width = NULL, id = "intro_data_box",
-                         
-                         title = tagList(icon("database"), "About the data"),
-                         solidHeader = TRUE, status = "navy",
-                         includeMarkdown("text/welcome_data_text.md")
-                         
-                     ) # END about the data box
-                     
+                     # footer ----
+                     div(style = "text-align: right;", uiOutput("footer_date_text"))
+                       
               ) # END right-hand column
               
-            ), # END fluidRow
+            ) # END fluidRow
             
-            # footer ----
-            includeHTML("text/footer.html")
-            
-    ) # END about tabItem
+    ) # END about_page tabItem
     
   ) # END tabItems
   

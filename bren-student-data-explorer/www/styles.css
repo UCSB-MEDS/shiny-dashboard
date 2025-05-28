@@ -170,7 +170,7 @@ img.phd_hex {
 .lrg-bold a {
   font-size: medium;
   font-weight: bold;
-  color: #fff;
+  /*color: #fff;*/
   text-decoration: underline;
 }
 
@@ -202,3 +202,9 @@ img.phd_hex {
   border-top-color: #07528c;
   border-top-width: medium;
 }
+
+.markdown-text {
+  font-size: 30px;       /* Adjust to your liking */
+  line-height: 1.6;      /* Optional: improves readability */
+}
+
