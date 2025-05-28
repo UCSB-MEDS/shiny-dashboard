@@ -150,6 +150,25 @@ meds2 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admiss
 meds3 <- tot_enrolled |> filter(program == "MEDS", admission_year == curr_admission_year - 3) |> pull(enrolled) 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##      get unique # of states and countries that Bren students come from   ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..............unique US states students come from...............
+unique_us_states_unis <- ug_geoms |> 
+  filter(ug1_location %in% state.name) |> 
+  nrow()
+
+#..............unique countries students come from...............
+# doesn't include USA ---
+unique_non_us_countries_unis <- ug_geoms |> 
+  filter(!ug1_location %in% state.name) |> 
+  filter(ug1_location != "District of Columbia") |> 
+  nrow() 
+
+# add USA ----
+unique_countries_unis <- unique_non_us_countries_unis + 1
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                                                            --
 ##--------------- CREATE DFS THAT ARE USED THROUGHOUT DASHBOARD-----------------
 ##                                                                            --
@@ -279,13 +298,3 @@ intl_unis <- enrolled |>
   filter(!ug1_location %in% c(state.name, "District of Columbia")) |> 
   group_by(ug1_location, ug1_name) |> 
   summarize(count = n())
-
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##                                                                            --
-##------------------------- DEFINE UI TEXT ELEMENTS-----------------------------
-##                                                                            --
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#footer_date_text <- paste0("Last updated: ", format(Sys.Date(), format = "%B %Y"))
-# career_years_text <- paste0("All information presented here draw from initial job placement data collected on the graduating classes of ", curr_grad_year-2, "-", curr_grad_year, ".", "<br>",
-#                             "test")

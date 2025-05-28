@@ -505,8 +505,11 @@ body <- dashboardBody(
                            withSpinner(color = "#003660", type = 1),
                          
                          # origins map caption ----
+                         uiOutput("student_origin_text")
+                         
+                         # origins map caption ----
                          # see data-cleaning/undergrad_map_caption_values.R script to calculate updated caption values ----
-                         includeMarkdown("text/undergrad_map_caption.md")
+                         # includeMarkdown("text/undergrad_map_caption.md")
                          
                      ) # END map box
                      

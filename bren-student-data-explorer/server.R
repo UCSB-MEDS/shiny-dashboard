@@ -82,6 +82,7 @@ server <- function(input, output, session){
   ##~~~~~~~~~~~~~~~~~~~~~~~
   
   output$demographic_programs_text <- demographics_programs_text()
+  output$student_origin_text <- student_origin_text()
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##  ~ program size valueBoxes  ----
