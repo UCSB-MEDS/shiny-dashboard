@@ -22,13 +22,9 @@ librarian::shelf(
 
 mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
 mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
-# apps <- readRDS(here::here("raw-data", "apps_2017_2024.rds")) |> 
-#   select(sheet_name_year, full_name, application_id) |> 
-#   mutate(application_id = map(application_id, as.character)) |> 
-#   unnest(application_id)
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##           set current year (most recent year of admissions data)         ----
+##            set current year (most recent year of placement data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 curr_year <- 2024

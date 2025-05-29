@@ -22,7 +22,7 @@ meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2024.rds")
 meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##           set current year (most recent year of admissions data)         ----
+##            set current year (most recent year of placement data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 curr_year <- 2024
