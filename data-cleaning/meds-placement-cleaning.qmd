@@ -1,0 +1,143 @@
+---
+title: "Cleaning MEDS initial career placement data"
+format: html
+---
+
+0. SETUP
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+librarian::shelf(
+  tidyverse
+  )
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                 import pre-processed initial placement data              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2024.rds")) 
+meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            set current year (most recent year of placement data)         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# using `meds_placement` here, but should be the same for `meds_status`
+
+curr_year <- as.numeric(max(meds_placement$year)) 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                         create place names vectors                       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+us_names <- c("USA", "US", "Usa")
+```
+
+1. WRANGLE / CLEAN MEDS ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+
+# unique(meds_status$member_status)
+
+meds_status_cleaned <- meds_status |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      assign status to broader buckets                    ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status)) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              combine first & last names & update `year` name             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  mutate(full_name = str_c(first_name, last_name, sep = " ")) |> 
+  select(full_name, year = class_year, campaign_name, member_status, status) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+2. WRANGLE / CLEAN MEDS INITIAL PLACEMENT DATA
+
+```{r}
+meds_placement_cleaned <- meds_placement |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            remove repeat alumni                          ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# alumni may be repeated if they filled out the job placement survey more than once when getting a new job
+# keep the row that describes their very first job placement 
+
+  filter(full_name != "Charles Wesley Disbrow Hendrickson" | employer_account_name != "Chaminade University of Honolulu") |> # 2022
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                          fix state abbreviations                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# `work_location_state` column should contain state abbreviations (all capitalized)
+
+  mutate(work_location_state = ifelse(test = !is.na(usdata::state2abbr(work_location_state)),
+                                      yes = usdata::state2abbr(work_location_state),
+                                      no = work_location_state)) |> 
+  mutate(work_location_state = toupper(work_location_state)) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              fix country names                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# country names should be spelled out fully (e.g. United States rather than US or USA)
+
+  mutate(work_location_country = case_when(
+    work_location_country %in% us_names ~ "United States",
+    work_location_country == "Korea (the Republic of)" ~ "South Korea",
+    work_location_country == "United Kingdom of Great Britain and Northern Ireland (the)" ~ "United Kingdom",
+    TRUE ~ work_location_country
+  )) |> 
+ 
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          create `location` column for in/out state & international       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(location = case_when(
+    work_location_state == "CA" ~ "Domestic (California)",
+    work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
+    work_location_country != "United States" ~ "International"
+  )) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+3. WRITE TO FILE
+
+```{r}
+write_rds(meds_status_cleaned, here::here("bren-student-data-explorer", "data", "meds_status_cleaned.rds")) 
+write_rds(meds_placement_cleaned, here::here("bren-student-data-explorer", "data", "meds_placement_cleaned.rds")) 
+```
+

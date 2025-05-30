@@ -1,1 +1,0 @@
-*Integrated Postsecondary Education Data System (IPEDS) defines race by first designating ethnicity as Hispanic or Latino or Not Hispanic or Latino. Then, an individual can apply one or more of the following categories: American Indian or Alaska Native, Asian, Black or African American, Native Hawaiian or Other Pacific Islander, White.*

@@ -1,0 +1,243 @@
+---
+title: "mesm-placement-cleaning"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+0. SETUP
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               load libraries                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+librarian::shelf(
+  tidyverse
+  )
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                 import pre-processed initial placement data              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
+mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            set current year (most recent year of placement data)         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# using `mesm_placement` here, but should be the same for `mesm_status`
+
+curr_year <- as.numeric(max(mesm_placement$year)) 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  create name vectors for cleaning pipeline               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+us_names <- c("USA", "US", "Usa")
+ca_cities <- c("Santa Barbara", "Goleta", "Los Angeles", "Paso Robles", 
+               "Oxnard", "Claremont", "Costa Mesa", "Redwood City", "Sacramento",
+               "San Diego", "San Francisco", "Santa Cruz", "Santa Rosa", "Ventura",
+               "Humboldt Bay NWR / Sonny Bono Salton Sea NWR", "Irvine", "Rosemead",
+               "Lacey", "Lake Forest")
+wa_cities <- c("Seattle")
+or_cities <- c("Portland")
+co_cities <- c("Fort Collins")
+ny_cities <- c("New York, New York (Remote)")
+mi_cities <- c("Lansing, MI")
+dc_names <- c("Washington D.C.", "Washington DC", "Washington, DC", "Washington. DC", "Washington")
+us_cities <- c("CA", "WA", "OR", "CO", "DC", "NY", "MI")
+international_cities <- c("Ontario", "Tautira", "Michoacan", "Galapagos", "Bonaire", "Maharashtra", "N/A")
+```
+
+1. WRANGLE / CLEAN MESM ACTIVE PLACEMENT (STATUS) DATA
+
+```{r}
+mesm_status_cleaned <- mesm_status |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      assign status to broader buckets                    ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(status = case_when(
+          member_status %in% c("FT Career",
+                               "FT Temporary Career",
+                               "PT Temporary Career",
+                               "FT Career-Sponsored",
+                               "PT Career") ~ "Career",
+          member_status %in% c("FT New Business",
+                               "FT Eco-E") ~ "Eco-Entrepreneurship/New Business",
+          member_status %in% c("Internship/Fellowship",
+                               "Continuing Internship",
+                               "Short-term/Project") ~ "Internship, Fellowship, or Short-term Project",
+          TRUE ~ member_status)) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##              combine first & last names & update `year` name             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  mutate(full_name = str_c(first_name, last_name, sep = " ")) |> 
+  select(full_name, year = class_year, campaign_name, member_status, status) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+2. WRANGLE / CLEAN MESM INITIAL PLACEMENT DATA
+
+```{r}
+mesm_placement_cleaned <- mesm_placement |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                            remove repeat alumni                          ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# alumni may be repeated if they filled out the job placement survey more than once when getting a new job
+# keep the row that describes their very first job placement 
+
+  filter(full_name != "Adele Ann Colwell" | job_title != "Senior Analyst, Social Impact & Sustainability") |> # 2024
+  filter(full_name != "Devon Michelle Rossi" | job_title != "California Sea Grant Fellow") |> # 2023
+  filter(full_name != "Grace Alice Kumaishi" | job_title != "California Sea Grant Fellow") |> # 2022
+  filter(full_name != "Haley Marie Grant" | job_title != "Seasonal Park Aide") |> # 2021
+  filter(full_name != "Ignacio Requena" | job_title != "Project Coordinator") |> # 2024
+  filter(full_name != "Kiera Madison Matiska" | job_title != "Energy Strategy Analyst 1") |> # 2023
+  filter(full_name != "Meet Muchhala" | job_title != "Instructor") |> # 2024
+  filter(full_name != "Sage Adam Davis" | job_title != "TBD") |>  # 2024
+  filter(full_name != "Sage Adam Davis" | job_source == "Personal/Professional Contact") |> # 2024; SD repeated 3x
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                        fix incorrectly entered data                      ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(employment_type = case_when(
+    full_name == "Katelyn Elizabeth Toigo" ~ "Internship", # Full-Time > Internship; update requested by K.Birney 2023-02-16
+    TRUE ~ employment_type
+  )) |> 
+  
+    mutate(employer_sector = case_when(
+    employer_sector == "Corporate; Foreign Government; Tribal Government" ~ "Corporate", # found by SShanny-Csik 2025-05-19
+    TRUE ~ employer_sector
+  )) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  update employer names that have changed                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# employer name updates are made when requested by Career Team staff (e.g. K.Birney requested ViacomCBS update on 2023-02-16)
+
+  mutate(employer_account_name = case_when(
+    employer_account_name == "ViacomCBS" ~ "Paramount (Formerly ViacomCSB)",
+    employer_account_name == "The R?hui Forum and Resource Center" ~ "Rāhui Forum and Resource Center",
+    employer_account_name == "Clean, Renewable and Environmental Opportunities (CREO)CREO" ~ "Clean, Renewable and Environmental Opportunities (CREO)",
+    employer_account_name == "Environmental Incentives. LLC" ~ "Environmental Incentives, LLC",
+    TRUE ~ employer_account_name
+  )) |> 
+
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                  update / simplify specialization titles                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    mutate(mesm_program_enrollment_specializations = case_when(
+          mesm_program_enrollment_specializations == "Business and Sustainability (formerly CEM)" ~ "Business and Sustainability",
+          mesm_program_enrollment_specializations == "Coastal Resources Management (formerly CMRM)" ~ "Coastal Resources Management",
+          mesm_program_enrollment_specializations == "Environmental Policy (formerly EPE)" ~ "Environmental Policy",
+          str_detect(mesm_program_enrollment_specializations, ";") ~ "Dual Specialization",
+          TRUE ~ mesm_program_enrollment_specializations
+        )) |>
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                          fix state abbreviations                         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# `work_location_state` column should contain state abbreviations (all capitalized)
+# must also remove any values for locations that are not within the USA
+
+  mutate(work_location_state = ifelse(test = !is.na(usdata::state2abbr(work_location_state)),
+                                      yes = usdata::state2abbr(work_location_state),
+                                      no = work_location_state)) |> 
+  mutate(work_location_state = toupper(work_location_state)) |> 
+  mutate(work_location_state = ifelse(test = str_length(work_location_state) > 2,
+                                      yes = str_to_title(work_location_state),
+                                      no = work_location_state)) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                      fix state abbreviations / names                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# some entries have a city listed, but not the associated state
+# add city name to vectors (e.g. ca_cities) in part 0
+# also fix any international state names (replace with NA, as necessary)
+
+  mutate(work_location_state = case_when(
+    work_location_city %in% ca_cities ~ "CA",
+    work_location_city %in% wa_cities ~ "WA",
+    work_location_city %in% or_cities ~ "OR",
+    work_location_city %in% co_cities ~ "CO",
+    work_location_city %in% dc_names ~ "DC",
+    work_location_city %in% ny_cities ~ "NY",
+    work_location_city %in% mi_cities ~ "MI",
+    work_location_state == "(Remote)" ~ "Remote",
+    work_location_state %in% international_cities ~ NA,
+    TRUE ~ work_location_state
+  )) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                    fix incorrectly specified city names                  ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# some city names are spelled incorrectly or inconsistently or have additional text that should be removed
+
+  mutate(work_location_city = case_when(
+    work_location_state == "DC" ~ "Washington",
+    work_location_city == "New York, New York (Remote)" ~ "New York",
+    work_location_city == "Lansing, MI" ~ "Lansing",
+    TRUE ~ work_location_city
+  )) |> 
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                              fix country names                           ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# country names should be spelled out fully (e.g. United States rather than US or USA)
+
+  mutate(work_location_country = case_when(
+    work_location_country %in% us_names ~ "United States",
+    work_location_state %in% us_cities ~ "United States",
+    work_location_city == "Dalyan" ~ "Turkey",
+    work_location_country == "Bonaire (Dutch Caribbean)"~ "Bonaire",
+    work_location_city == "Mumbai" ~ "India",
+    TRUE ~ work_location_country
+  )) |> 
+    
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##          create `location` column for in/out state & international       ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  mutate(location = case_when(
+    work_location_state == "CA" ~ "Domestic (California)",
+    work_location_state != "CA" & work_location_country == "United States" ~ "Domestic (Out of State)",
+    work_location_country != "United States" ~ "International"
+  )) |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                       filter for 3 most recent years                     ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(year %in% (curr_year - 2):curr_year)
+```
+
+##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
+
+3. WRITE TO FILE
+
+```{r}
+write_rds(mesm_status_cleaned, here::here("bren-student-data-explorer", "data", "mesm_status_cleaned.rds")) 
+write_rds(mesm_placement_cleaned, here::here("bren-student-data-explorer", "data", "mesm_placement_cleaned.rds"))
+```

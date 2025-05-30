@@ -21,7 +21,9 @@
 .Rproj.user/
 
 # Data files
+raw-data/
 *data/
+bren-student-data-explorer/data/*
 
 # image files
 #*images/

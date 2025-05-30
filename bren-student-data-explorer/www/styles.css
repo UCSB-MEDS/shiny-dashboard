@@ -1,0 +1,210 @@
+/* DASHBOARD STYLES*/
+
+/* image resizing for banner img */
+img.banner {
+  display:block;
+  max-width: 100%;
+  width: auto; 
+  margin-bottom: 1rem;
+}
+
+/* increase font size of tabs on sidebar */
+#sidebarItemExpanded ul {
+  font-size: medium;
+}
+
+/* image resizing for program hexes on welcome pg */
+img.meds_hex {
+  max-width: 22px;
+}
+img.mesm_hex {
+  max-width: 22px;
+}
+img.phd_hex {
+  max-width: 22px;
+}
+
+/* reduce margin in text boxes on welcome page */
+.intro_box_title p {
+  margin: 0;
+  font-size: large !important;
+}
+
+/* increase margin btwn title and icon on welcome page */
+.intro_box_title i {
+  margin-right: 0.5rem;
+}
+
+/* increase font size in text boxes on welcome page */
+#intro_what_box p {
+  font-size: medium;
+}
+#intro_what_box ul {
+  font-size: medium;
+}
+#intro_data_box p {
+  font-size: medium;
+}
+#intro_data_box ul {
+  font-size: medium;
+}
+
+/* image resizing bren hex sidebar */
+/* NOTE(HD): general logo size is 32px */
+.main-header .logo img {
+  max-width: 32px;
+  min-width: 32px;
+  height: auto;
+}
+
+/* BOX TITLE STYLING */
+.intro_box_title span {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* top nav bar */
+.skin-blue .main-header .navbar {
+  background-color: #003660;
+}
+/* top header */
+.skin-blue .main-header .logo {
+  background-color: #003660;
+}
+.skin-blue .main-header .logo:hover {
+  background-color: #07528c;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+  background-color: #07528c;
+}
+/* side bar */
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+  background-color: #fff;
+}
+.skin-blue .sidebar-menu > li.active > a, .skin-blue .sidebar-menu > li.menu-open > a, .skin-blue .sidebar-menu > li:hover > a {
+  background: #74a1c4;
+}
+.skin-blue .sidebar-menu > li.active > a {
+  background-color: #07528c;
+}
+.skin-blue .sidebar-menu > li.active > a {
+  border-left-color: #07528c;
+}
+/* text color */
+.skin-blue .sidebar a {
+  color: #414445;
+}
+
+
+
+/* CAREER DB STYLES */
+#career_tabpanels a {
+  color: #fff !important;
+  background-color: #74a1c4;
+  font-size: medium;
+}
+#career_tabpanels > li.active > a {
+  background: #07528c;
+}
+
+/* this is not working figure out later */
+.small-box.bg-light-blue {
+  background-color: #168496 !important;
+}
+
+.small-box.bg-blue  {
+  background-color: #003660 !important;
+}
+
+.small-box.bg-green {
+  background-color: #6d7d33 !important;
+}
+
+/* intro box background color */
+.box.box-solid.box-success {
+  border: 1px solid #79A540 !important;
+}
+.box.box-solid.box-success > .box-header {
+  background-color:#79A540 !important;
+}
+
+/* initial employers and sectors table color */
+.box.box-solid.box-navy > .box-header {
+  background-color: #003660;
+}
+
+/* styling font on tabsetPanel on career db*/
+.mesm_main_tab {
+  font-size: large;
+  font-weight: bold;
+  color: #fff;
+  background-color: #07528c;
+}
+/* change background color of tabsetPanel when selected on career db*/
+.mesm_main_tab>li.active>a {
+  background-color: #013660;
+}
+
+/* styling padding inbtwn main tabs and  career db*/
+.tab-content {
+  margin-top: 0.5rem;
+}
+
+/* styling font on placement by sector bar plot career db*/
+.italic_sector {
+  font-style: italic;
+  text-align: center;
+}
+
+/* italicize font */
+.italic {
+  font-style: italic;
+}
+
+/* styling large and bold font */
+.lrg-bold {
+  font-size: medium;
+}
+
+/* styling large and bold font; link (a tag) white and underline */
+.lrg-bold a {
+  font-size: medium;
+  font-weight: bold;
+  /*color: #fff;*/
+  text-decoration: underline;
+}
+
+.btn.btn-box-tool.btn-sm {
+  color: #fff !important;
+}
+
+.meds_career_update_text {
+  font-size: large;
+}
+
+/* top border color for tabboxes */
+/* Note(HD): same element, no space */
+.nav-tabs-custom .nav-tabs li {
+  border-top-color: #74a1c4;
+}
+/* top border color for tabboxes when tab is selected */
+.nav-tabs-custom .nav-tabs li.active {
+  border-top-color: #07528c;
+}
+
+/* top border color for boxes with tabpanels */
+#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li a {
+  border-top-color: #74a1c4;
+  border-top-width: medium;
+}
+/* top border color for boxes with tabpanels when tab is selected */
+#race_tabsetPanel.nav.nav-tabs.shiny-tab-input.shiny-bound-input li.active a {
+  border-top-color: #07528c;
+  border-top-width: medium;
+}
+
+.markdown-text {
+  font-size: 30px;       /* Adjust to your liking */
+  line-height: 1.6;      /* Optional: improves readability */
+}
+

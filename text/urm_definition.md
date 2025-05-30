@@ -1,1 +1,0 @@
-**URM or Underrepresented Minority is defined as a U.S. citizen who identifies as Black/African American, Hispanic/Latino, or American Indian, which is consistent with the UC definition of URM.*
