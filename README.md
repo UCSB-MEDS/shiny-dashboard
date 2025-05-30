@@ -6,7 +6,7 @@ The [Bren Student Data Exporer](https://shinyapps.bren.ucsb.edu/student-data-exp
 - Bren departments and staff with their reporting requirements
 - All Bren communities and stakeholders from the past, present, and future by upholding data transparency and data integrity principles through an accessible application
 
-## Dashboard updates
+## Dashboard updates & maintenance
 
 Data are updated annually by Bren staff. Visit the [wiki](https://github.com/UCSB-MEDS/shiny-dashboard/wiki) to review important information and detailed instructions for updating and maintaining the Bren Student Data Explorer.
 
@@ -29,7 +29,7 @@ Data are updated annually by Bren staff. Visit the [wiki](https://github.com/UCS
 └── shiny-dashboard.Rproj 
 ```
 
-## Application Updates
+## Update log
 * **February 2023, updates by [Sam Shanny-Csik](https://github.com/samanthacsik):** refactored code base, added career data for MEDS and MESM graduating classes of 2022
 * **July 2024, updates by [Sam Shanny-Csik](https://github.com/samanthacsik), [Jamie Montgomery](https://github.com/jamiecmontgomery), & [Kat Le](https://github.com/katleyq):** added career data for MEDS and MESM graduating classes of 2023, added admissions data for the 2023 entering classes, refactored code for maps (`{tmap}` > `{leaflet}` + removed data wrangling from server to improve loading speeds)
 * **October 2024, updates by [Sam Shanny-Csik](https://github.com/samanthacsik):** redesigned career plots so that they are a bit easier to interpret, added a secondary table of job titles, and continued refactoring code (i.e. simplifying and removing unncessary code)
