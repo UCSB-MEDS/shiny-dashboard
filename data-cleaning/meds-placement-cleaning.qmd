@@ -25,7 +25,9 @@ meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
 ##            set current year (most recent year of placement data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-curr_year <- 2024
+# using `meds_placement` here, but should be the same for `meds_status`
+
+curr_year <- as.numeric(max(meds_placement$year)) 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                         create place names vectors                       ----

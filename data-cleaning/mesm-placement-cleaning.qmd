@@ -27,7 +27,9 @@ mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
 ##            set current year (most recent year of placement data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-curr_year <- 2024
+# using `mesm_placement` here, but should be the same for `mesm_status`
+
+curr_year <- as.numeric(max(mesm_placement$year)) 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                  create name vectors for cleaning pipeline               ----

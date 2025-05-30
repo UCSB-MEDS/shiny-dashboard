@@ -1,5 +1,5 @@
 ---
-title: "Cleaning Bren admissions data"
+title: "Cleaning Bren application data"
 format: html
 editor_options: 
   chunk_output_type: console
@@ -31,7 +31,7 @@ world_geoms <- readRDS(here::here("raw-data", "world_geoms.rds"))
 ##           set current year (most recent year of admissions data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-curr_year <- 2025
+curr_year <- as.numeric(max(apps$sheet_name_year)) 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                       create vectors of student melt                     ----
@@ -42,6 +42,7 @@ curr_year <- 2025
 # we remove these students, who SIR'ed "yes", from the enrolled student data 
 # we do this using their `application_id` (no names exist in this data set)
 # vectors below are named in accordance with the graduating class year (e.g. `meds2021` includes application_ids for students who would have been a part of the MEDS graduating class of 2021)
+# these updates won't happen until ~end of fall quarter each year 
 
 #..............................MEDS..............................
 meds2021 <- c(160140)
@@ -114,7 +115,7 @@ apps_clean <- apps |>
   mutate(dob = as_date(dob)) |> 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-##        create `app_submission_year` col based on `submission_date`       ----
+##           create `admission_year` col based on `submission_date`         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # determine admission year based on the application submission date
