@@ -48,7 +48,7 @@ vignettes/*.pdf
 .Renviron
 
 # google analytics
-www/google-analytics.html
+bren-student-data-explorer/www/google-analytics.html
 
 # .DS_Store
 .DS_Store
