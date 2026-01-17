@@ -806,7 +806,7 @@ unk <- ipeds |>
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #...................combine all individual dfs...................
-diversity_all <- rbind(residency, gender, age, military, first_gen, undocumented, 
+diversity_all <- rbind(residency, gender, age, military, first_gen, #undocumented, # removed at request of K.Duarte 2026-01-16
                        amIndian_alNat, asian, black, hispanic_latino, natHI_pi, white, two_more, unk, 
                        urm)
 # 

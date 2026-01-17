@@ -22,7 +22,7 @@ diversityDemographics_plot <- function(input, curr_year) {
                    "Age 25+" = "#9cbebe",
                    "Military" = "#9cbebe",
                    "First generation" = "#9cbebe",
-                   "Undocumented" = "#9cbebe",
+                   #"Undocumented" = "#9cbebe",
                    "URM" = "#09847a",
                    "American Indian or Alaska Native" = "#09847a",
                    "Asian" = "#09847a",
@@ -37,6 +37,7 @@ diversityDemographics_plot <- function(input, curr_year) {
   diversity_overall <- reactive({
     
    diversity_overall <- diversity_stats |> 
+      filter(demographic != "Undocumented") |> 
       filter(program == input$diversity_stats_all_input)
     
   }) 
@@ -52,10 +53,10 @@ diversityDemographics_plot <- function(input, curr_year) {
                                              "\n", "Sample size: ", size))) +
       geom_bar(stat = "identity") +
       coord_flip() +
-      scale_x_discrete(limits = rev(levels(diversity_overall()$demographic))) + 
+      scale_x_discrete(limits = rev(unique(diversity_overall()$demographic))) + 
       scale_y_continuous(labels = scales::percent_format(accuracy = 1, scale = 1)) +
       scale_fill_manual(values = plot_colors) +
-      labs(title = paste0(input$diversity_stats_all_input, " Diversity Demographics"),
+      labs(title = paste0(input$diversity_stats_all_input, " Demographics"),
            x = NULL, y = NULL) +
       theme_minimal() +
       theme(

@@ -534,7 +534,7 @@ body <- dashboardBody(
                        tabBox(width = 12,
                               
                               # START (TAB 1) overall diversity demographics tabPanel ----
-                              tabPanel(title = "Diversity Demographics",
+                              tabPanel(title = "Demographics",
                                        
                                        # overall_diversity plotly output ----
                                        plotly::plotlyOutput(outputId = "overall_diversity_plot") |>

@@ -62,7 +62,7 @@ meds_dom_placement_data <- readRDS("data/meds_domestic_placement_data.rds")
 admissions <- readRDS("data/admissions.rds") 
 enrolled <- readRDS("data/enrolled.rds") 
 ipeds <- readRDS("data/ipeds.rds") 
-diversity_stats <- readRDS("data/diversity_stats.rds")
+diversity_stats <- readRDS("data/diversity_stats.rds") #|> filter(demographic != "Undocumented")
 ug_geoms <- readRDS("data/ug_geoms.rds")
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
