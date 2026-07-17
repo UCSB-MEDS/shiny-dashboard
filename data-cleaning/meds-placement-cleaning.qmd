@@ -18,8 +18,8 @@ librarian::shelf(
 ##                 import pre-processed initial placement data              ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2024.rds")) 
-meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2024.rds"))
+meds_placement <- readRDS(here::here("raw-data", "meds_placement_2022_2025.rds")) 
+meds_status <- readRDS(here::here("raw-data", "meds_status_2022_2025.rds"))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##            set current year (most recent year of placement data)         ----
@@ -72,7 +72,7 @@ meds_status_cleaned <- meds_status |>
 ##                       filter for 3 most recent years                     ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  filter(year %in% (curr_year - 2):curr_year)
+  filter(year %in% c((curr_year - 2):curr_year))
 ```
 
 ##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##

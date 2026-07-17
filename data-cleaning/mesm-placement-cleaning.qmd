@@ -20,12 +20,17 @@ librarian::shelf(
 ##                 import pre-processed initial placement data              ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2024.rds")) 
-mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2024.rds"))
+mesm_placement <- readRDS(here::here("raw-data", "mesm_placement_2019_2025.rds")) 
+mesm_status <- readRDS(here::here("raw-data", "mesm_status_2019_2025.rds"))
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##            set current year (most recent year of placement data)         ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# filtering out NAs guards against curr_year = NA
+
+mesm_placement <- mesm_placement |>
+  filter(!is.na(full_name))
 
 # using `mesm_placement` here, but should be the same for `mesm_status`
 
@@ -84,7 +89,7 @@ mesm_status_cleaned <- mesm_status |>
 ##                       filter for 3 most recent years                     ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  filter(year %in% (curr_year - 2):curr_year)
+  filter(year %in% c((curr_year - 2):curr_year))
 ```
 
 ##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
@@ -110,6 +115,9 @@ mesm_placement_cleaned <- mesm_placement |>
   filter(full_name != "Meet Muchhala" | job_title != "Instructor") |> # 2024
   filter(full_name != "Sage Adam Davis" | job_title != "TBD") |>  # 2024
   filter(full_name != "Sage Adam Davis" | job_source == "Personal/Professional Contact") |> # 2024; SD repeated 3x
+  
+  # Priscilla Mi Tin Ta has the *exact* entry, twice (regular filtering won't work -- using distinct)
+  distinct() |>
   
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                        fix incorrectly entered data                      ----
@@ -198,6 +206,8 @@ mesm_placement_cleaned <- mesm_placement |>
     work_location_state == "DC" ~ "Washington",
     work_location_city == "New York, New York (Remote)" ~ "New York",
     work_location_city == "Lansing, MI" ~ "Lansing",
+    work_location_city == "Los angeles" ~ "Los Angeles",
+    work_location_city == "SANTA BARBARA" ~ "Santa Barbara",
     TRUE ~ work_location_city
   )) |> 
 
