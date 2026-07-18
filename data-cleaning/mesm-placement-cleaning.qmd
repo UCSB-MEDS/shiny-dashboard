@@ -89,7 +89,7 @@ mesm_status_cleaned <- mesm_status |>
 ##                       filter for 3 most recent years                     ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  filter(year %in% (curr_year - 2):curr_year)
+  filter(year %in% c((curr_year - 2):curr_year))
 ```
 
 ##--------------- PAUSE. CHECK FOR ADDITIONAL WRANGLING NEEDS ----------------##
