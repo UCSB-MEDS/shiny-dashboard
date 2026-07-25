@@ -55,6 +55,12 @@ international_cities <- c("Ontario", "Tautira", "Michoacan", "Galapagos", "Bonai
 
 ```{r}
 mesm_status_cleaned <- mesm_status |> 
+  
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##            remove individuals who never filled out career survey         ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  filter(!member_status == "Sent") |>
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                      assign status to broader buckets                    ----
